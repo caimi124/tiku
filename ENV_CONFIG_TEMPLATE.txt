@@ -1,0 +1,33 @@
+# ⚙️ 环境变量配置模板
+
+请将此文件复制为 `.env.local` 并填写实际的配置值
+
+---
+
+## 数据库配置
+DATABASE_URL="postgresql://username:password@localhost:5432/medexam_dev"
+# 或使用 Supabase
+# DATABASE_URL="postgresql://postgres:password@db.xxx.supabase.co:5432/postgres"
+
+## NextAuth 配置
+NEXTAUTH_SECRET="your-secret-key-here-change-in-production"
+NEXTAUTH_URL="http://localhost:3000"
+
+## OpenAI API（AI功能）
+OPENAI_API_KEY="sk-your-openai-api-key"
+
+## Supabase 配置（可选）
+NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
+
+## Stripe 支付
+STRIPE_SECRET_KEY="sk_test_your-stripe-secret-key"
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_your-publishable-key"
+
+## Google Analytics
+NEXT_PUBLIC_GA_ID="G-XXXXXXXXXX"
+
+## 环境标识
+NODE_ENV="development"
+NEXT_PUBLIC_SITE_URL="http://localhost:3000"
+
