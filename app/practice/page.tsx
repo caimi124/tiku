@@ -13,7 +13,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 
-const practiceM odes = [
+const practiceModes = [
   {
     id: "chapter",
     title: "章节练习",
