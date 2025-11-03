@@ -351,6 +351,311 @@ async function main() {
 
   console.log(`✓ 创建了 ${sessions.length} 条学习记录`);
 
+  // 7. 创建培训机构
+  console.log('创建培训机构...');
+
+  const institutions = await Promise.all([
+    prisma.institution.create({
+      data: {
+        name: '医学教育网',
+        description: '国内领先的医学远程教育基地，专注医药卫生类考试培训20年',
+        foundedYear: 2003,
+        website: 'https://www.med66.com',
+        overallRating: 4.8,
+        priceRating: 4.5,
+        hitRateRating: 4.9,
+        serviceRating: 4.7,
+        reviewCount: 3280,
+        courseCount: 156,
+        materialCount: 89,
+        studentCount: 120000,
+        isVerified: true,
+        isPremium: true,
+        tags: ['名师授课', '高通过率', '全程督学', '24小时答疑'],
+        examTypes: ['执业药师', '护士资格', '药学职称', '中医执业医师'],
+      },
+    }),
+    prisma.institution.create({
+      data: {
+        name: '环球网校',
+        description: '职业教育行业知名品牌，医药类考试培训经验丰富',
+        foundedYear: 2001,
+        website: 'https://www.hqwx.com',
+        overallRating: 4.6,
+        priceRating: 4.8,
+        hitRateRating: 4.5,
+        serviceRating: 4.6,
+        reviewCount: 2150,
+        courseCount: 128,
+        materialCount: 76,
+        studentCount: 85000,
+        isVerified: true,
+        isPremium: true,
+        tags: ['性价比高', '课程丰富', '服务完善'],
+        examTypes: ['执业药师', '护士资格', '药学职称'],
+      },
+    }),
+    prisma.institution.create({
+      data: {
+        name: '润德教育',
+        description: '专注执业药师培训，通过率业内领先',
+        foundedYear: 2008,
+        website: 'https://www.rundeedu.com',
+        overallRating: 4.7,
+        priceRating: 4.4,
+        hitRateRating: 4.8,
+        serviceRating: 4.6,
+        reviewCount: 2420,
+        courseCount: 64,
+        materialCount: 52,
+        studentCount: 78000,
+        isVerified: true,
+        isPremium: true,
+        tags: ['执业药师专家', '高通过率', '针对性强'],
+        examTypes: ['执业药师', '药学职称'],
+      },
+    }),
+  ]);
+
+  console.log(`✓ 创建了 ${institutions.length} 个培训机构`);
+
+  // 8. 创建学习资料
+  console.log('创建学习资料...');
+
+  const materials = await Promise.all([
+    prisma.material.create({
+      data: {
+        institutionId: institutions[0].id,
+        name: '2024执业药师核心考点精编',
+        type: 'PDF讲义',
+        examType: '执业药师',
+        subject: '药学综合',
+        year: 2024,
+        description: '涵盖所有高频考点，浓缩精华内容，适合冲刺复习',
+        price: 0,
+        hitRate: 88.5,
+        coverageRate: 92.3,
+        accuracyScore: 4.8,
+        downloadCount: 15230,
+        viewCount: 28500,
+        rating: 4.8,
+        reviewCount: 486,
+        pageCount: 256,
+        isActive: true,
+        isFeatured: true,
+        isPremium: false,
+      },
+    }),
+    prisma.material.create({
+      data: {
+        institutionId: institutions[1].id,
+        name: '执业药师历年真题详解（2019-2023）',
+        type: '真题集',
+        examType: '执业药师',
+        subject: '全科',
+        year: 2023,
+        description: '5年真题完整收录，每题配详细解析和考点标注',
+        price: 98,
+        hitRate: 95.2,
+        coverageRate: 98.5,
+        accuracyScore: 4.9,
+        downloadCount: 12850,
+        viewCount: 21400,
+        rating: 4.9,
+        reviewCount: 623,
+        pageCount: 428,
+        isActive: true,
+        isFeatured: true,
+        isPremium: true,
+      },
+    }),
+    prisma.material.create({
+      data: {
+        institutionId: institutions[0].id,
+        name: '2024护士资格考前押题包',
+        type: '押题',
+        examType: '护士资格',
+        subject: '全科',
+        year: 2024,
+        description: 'AI智能预测，精选300道高频题，历年命中率92%',
+        price: 198,
+        hitRate: 92.0,
+        coverageRate: 85.6,
+        accuracyScore: 4.7,
+        downloadCount: 8960,
+        viewCount: 15200,
+        rating: 4.7,
+        reviewCount: 324,
+        pageCount: 180,
+        isActive: true,
+        isFeatured: true,
+        isPremium: true,
+      },
+    }),
+  ]);
+
+  console.log(`✓ 创建了 ${materials.length} 个学习资料`);
+
+  // 9. 创建押题包
+  console.log('创建押题包...');
+
+  const predictionPackages = await Promise.all([
+    prisma.predictionPackage.create({
+      data: {
+        name: '2024执业药师考前冲刺押题包',
+        examType: '执业药师',
+        subject: '全科',
+        year: 2024,
+        description: 'AI智能分析历年考题规律，精准预测2024年高频考点',
+        price: 398,
+        discountPrice: 198,
+        questionCount: 500,
+        questionIds: [], // 实际应关联题目ID
+        hitRate: 92.5,
+        confidenceScore: 95,
+        features: ['AI智能预测', '名师精选', '真题同源', '考前密训', '命中率保障'],
+        purchaseCount: 12580,
+        viewCount: 28400,
+        rating: 4.9,
+        reviewCount: 1246,
+        isActive: true,
+        isFeatured: true,
+      },
+    }),
+    prisma.predictionPackage.create({
+      data: {
+        name: '护士资格终极押题300题',
+        examType: '护士资格',
+        subject: '全科',
+        year: 2024,
+        description: '历年押题命中率90%+，覆盖所有核心考点',
+        price: 298,
+        discountPrice: 148,
+        questionCount: 300,
+        questionIds: [],
+        hitRate: 90.2,
+        confidenceScore: 92,
+        features: ['高频考点', '精准预测', '快速提分', '考前必刷'],
+        purchaseCount: 8960,
+        viewCount: 16800,
+        rating: 4.8,
+        reviewCount: 876,
+        isActive: true,
+        isFeatured: true,
+      },
+    }),
+  ]);
+
+  console.log(`✓ 创建了 ${predictionPackages.length} 个押题包`);
+
+  // 10. 创建评价
+  console.log('创建评价...');
+
+  const reviews = await Promise.all([
+    prisma.review.create({
+      data: {
+        userId: users[1].id,
+        targetType: 'institution',
+        targetId: institutions[0].id,
+        institutionId: institutions[0].id,
+        overallRating: 5,
+        priceRating: 4.5,
+        contentRating: 5,
+        serviceRating: 4.5,
+        title: '非常专业的培训机构',
+        content: '老师讲得非常详细，重点突出，押题也很准确。我是零基础，跟着课程学习，一次通过了执业药师考试。客服态度也很好，有问必答。强烈推荐！',
+        tags: ['通过考试', '老师专业', '服务好'],
+        examType: '执业药师',
+        passedExam: true,
+        helpfulCount: 128,
+        isVerified: true,
+      },
+    }),
+    prisma.review.create({
+      data: {
+        userId: users[2].id,
+        targetType: 'material',
+        targetId: materials[0].id,
+        materialId: materials[0].id,
+        overallRating: 4.5,
+        priceRating: 5,
+        contentRating: 4.5,
+        title: '性价比很高的资料',
+        content: '资料整理得很系统，重点突出，而且是免费的！对于预算有限的考生来说非常友好。配合课程使用效果更好。',
+        tags: ['免费', '重点突出', '系统全面'],
+        examType: '执业药师',
+        helpfulCount: 86,
+        isVerified: false,
+      },
+    }),
+  ]);
+
+  console.log(`✓ 创建了 ${reviews.length} 条评价`);
+
+  // 11. 创建UGC内容
+  console.log('创建UGC内容...');
+
+  const userContents = await Promise.all([
+    prisma.userContent.create({
+      data: {
+        userId: users[1].id,
+        contentType: 'experience',
+        title: '零基础一次通过执业药师，我的备考经验分享',
+        content: '大家好！我是一名零基础考生，今年一次性通过了执业药师考试，想和大家分享一下我的备考经验。首先，要制定合理的学习计划，我是从6个月前开始准备的。第一阶段（2个月）：系统学习教材，跟着网课过一遍。第二阶段（2个月）：做题巩固，重点突破薄弱环节。第三阶段（2个月）：冲刺复习，背诵考点，做押题。其次，要选择适合自己的培训机构和资料...',
+        tags: ['零基础', '通关经验', '备考计划', '学习方法'],
+        examType: '执业药师',
+        viewCount: 12850,
+        likeCount: 2340,
+        commentCount: 186,
+        isPinned: true,
+        isFeatured: true,
+        isPublished: true,
+      },
+    }),
+    prisma.userContent.create({
+      data: {
+        userId: users[2].id,
+        contentType: 'note',
+        title: '护理学基础知识点总结（超详细）',
+        content: '整理了三个月的笔记，覆盖所有重点章节，希望对大家有帮助。包括：基础护理技术、内科护理、外科护理、妇产科护理等。每个章节都有详细的知识点梳理和重点标注...',
+        tags: ['知识点总结', '笔记分享', '护理学基础'],
+        examType: '护士资格',
+        subject: '基础护理学',
+        viewCount: 8960,
+        likeCount: 1520,
+        commentCount: 94,
+        isFeatured: true,
+        isPublished: true,
+      },
+    }),
+  ]);
+
+  console.log(`✓ 创建了 ${userContents.length} 条UGC内容`);
+
+  // 12. 创建评论
+  console.log('创建评论...');
+
+  const comments = await Promise.all([
+    prisma.comment.create({
+      data: {
+        userId: users[3].id,
+        contentId: userContents[0].id,
+        content: '非常感谢分享！你的经验对我很有帮助，我也是零基础，正在备考中。',
+        likeCount: 24,
+      },
+    }),
+    prisma.comment.create({
+      data: {
+        userId: users[4].id,
+        contentId: userContents[0].id,
+        content: '请问你报的是哪个培训机构？推荐一下呗',
+        likeCount: 18,
+      },
+    }),
+  ]);
+
+  console.log(`✓ 创建了 ${comments.length} 条评论`);
+
   console.log('\n✅ 种子数据插入完成！');
   console.log('\n📊 数据统计：');
   console.log(`   - 用户：${users.length} 个`);
@@ -359,9 +664,17 @@ async function main() {
   console.log(`   - 错题记录：${wrongQuestions.length} 条`);
   console.log(`   - 收藏记录：${favorites.length} 条`);
   console.log(`   - 学习记录：${sessions.length} 条`);
+  console.log(`   - 培训机构：${institutions.length} 个`);
+  console.log(`   - 学习资料：${materials.length} 个`);
+  console.log(`   - 押题包：${predictionPackages.length} 个`);
+  console.log(`   - 评价：${reviews.length} 条`);
+  console.log(`   - UGC内容：${userContents.length} 条`);
+  console.log(`   - 评论：${comments.length} 条`);
   console.log('\n🔐 测试账号：');
   console.log('   管理员：admin@medexam.pro / admin123456');
   console.log('   用户1：user1@example.com / password123');
+  console.log('\n💡 提示：运行 `npm run db:push` 推送数据库架构');
+  console.log('   然后运行 `npx prisma db seed` 插入种子数据');
 }
 
 main()
