@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import {
   BookOpen,
@@ -26,7 +26,7 @@ interface Question {
   knowledgePoints: string[];
 }
 
-export default function YearPracticePage() {
+function YearPracticeContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -384,5 +384,20 @@ export default function YearPracticePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function YearPracticePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mb-4"></div>
+          <p className="text-gray-600">加载题目中...</p>
+        </div>
+      </div>
+    }>
+      <YearPracticeContent />
+    </Suspense>
   );
 }
