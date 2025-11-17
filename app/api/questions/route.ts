@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
     const examType = searchParams.get("examType");
     const subject = searchParams.get("subject");
     const chapter = searchParams.get("chapter");
+    const sourceYear = searchParams.get("sourceYear");
     const mode = searchParams.get("mode") || "chapter";
     const limit = parseInt(searchParams.get("limit") || "20");
     const offset = parseInt(searchParams.get("offset") || "0");
@@ -20,6 +21,7 @@ export async function GET(request: NextRequest) {
     if (examType) where.examType = examType;
     if (subject) where.subject = subject;
     if (chapter) where.chapter = chapter;
+    if (sourceYear) where.sourceYear = parseInt(sourceYear);
 
     // 获取题目
     let questions;

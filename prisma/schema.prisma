@@ -51,6 +51,8 @@ model Question {
   aiExplanation   String?  @db.Text
   difficulty      Int      @default(1) // 1-5
   knowledgePoints String[] // 知识点标签
+  sourceType      String?  // 来源类型：真题/模拟题/练习题
+  sourceYear      Int?     // 来源年份：2024/2023等
   isPublished     Boolean  @default(true)
   viewCount       Int      @default(0)
   correctCount    Int      @default(0)
@@ -65,6 +67,7 @@ model Question {
 
   @@index([examType, subject])
   @@index([isPublished])
+  @@index([sourceYear])
   @@map("questions")
 }
 

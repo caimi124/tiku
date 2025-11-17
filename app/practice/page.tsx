@@ -24,6 +24,15 @@ const practiceModes = [
     features: ["系统学习", "循序渐进", "知识点全面"],
   },
   {
+    id: "history",
+    title: "历年真题",
+    description: "历年考试真题，把握考试方向和重点",
+    icon: FileText,
+    color: "bg-orange-50 border-orange-200",
+    iconColor: "text-orange-500",
+    features: ["真题演练", "把握趋势", "提前适应"],
+  },
+  {
     id: "random",
     title: "随机练习",
     description: "随机抽取题目，全面检验掌握程度",
