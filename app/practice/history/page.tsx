@@ -38,42 +38,41 @@ function HistoryExamContent() {
   const fetchYearData = async () => {
     try {
       setLoading(true);
-      // 模拟数据，实际应该从API获取
-      const mockData: YearData[] = [
-        {
-          year: 2024,
-          totalQuestions: 120,
-          completedQuestions: 45,
-          correctRate: 82,
-          subjects: [
-            { name: "中药学综合知识与技能", count: 120 },
-          ],
-        },
-        {
-          year: 2023,
-          totalQuestions: 120,
-          completedQuestions: 0,
-          correctRate: 0,
-          subjects: [
-            { name: "中药学综合知识与技能", count: 120 },
-          ],
-        },
-        {
-          year: 2022,
-          totalQuestions: 0,
-          completedQuestions: 0,
-          correctRate: 0,
-          subjects: [],
-        },
-        {
-          year: 2021,
-          totalQuestions: 0,
-          completedQuestions: 0,
-          correctRate: 0,
-          subjects: [],
-        },
-      ];
-      setYearData(mockData);
+      
+      // 从API获取真实的年份统计数据
+      const years = [2024, 2023, 2022, 2021];
+      const yearDataPromises = years.map(async (year) => {
+        try {
+          const response = await fetch(
+            `/api/questions?sourceYear=${year}&subject=中药学综合知识与技能&limit=1`
+          );
+          const data = await response.json();
+          
+          const totalQuestions = data.success ? data.data.total : 0;
+          
+          return {
+            year,
+            totalQuestions,
+            completedQuestions: 0, // TODO: 从用户答题记录获取
+            correctRate: 0, // TODO: 从用户答题记录计算
+            subjects: totalQuestions > 0 
+              ? [{ name: "中药学综合知识与技能", count: totalQuestions }]
+              : [],
+          };
+        } catch (error) {
+          console.error(`获取${year}年数据失败:`, error);
+          return {
+            year,
+            totalQuestions: 0,
+            completedQuestions: 0,
+            correctRate: 0,
+            subjects: [],
+          };
+        }
+      });
+      
+      const results = await Promise.all(yearDataPromises);
+      setYearData(results);
     } catch (error) {
       console.error("获取年份数据失败:", error);
     } finally {
