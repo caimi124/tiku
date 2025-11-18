@@ -1,0 +1,506 @@
+// Prisma Schema for MedExam Pro - 医考必过
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public", "auth"]
+}
+
+// ==================== 用户系统 ====================
+
+// 用户表
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String?
+  passwordHash  String
+  avatarUrl     String?
+  isVip         Boolean   @default(false)
+  vipExpireDate DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // 关联关系
+  answers        UserAnswer[]
+  wrongQuestions WrongQuestion[]
+  favorites      Favorite[]
+  studySessions  StudySession[]
+  reviews        Review[]
+  userContents   UserContent[]
+  comments       Comment[]
+  purchases      PredictionPurchase[]
+
+  @@map("users")
+}
+
+// ==================== 题库系统 ====================
+
+// 题目表
+model Question {
+  id              String   @id @default(cuid())
+  examType        String   // 考试类型：执业药师、药学职称等
+  subject         String   // 科目
+  chapter         String?  // 章节
+  questionType    String   // 题型：single/multiple/judge
+  content         String   @db.Text
+  options         Json     // [{key: 'A', value: '...'}]
+  correctAnswer   String
+  explanation     String?  @db.Text
+  aiExplanation   String?  @db.Text
+  difficulty      Int      @default(1) // 1-5
+  knowledgePoints String[] // 知识点标签
+  sourceType      String?  // 来源类型：真题/模拟题/练习题
+  sourceYear      Int?     // 来源年份：2024/2023等
+  isPublished     Boolean  @default(true)
+  viewCount       Int      @default(0)
+  correctCount    Int      @default(0)
+  answerCount     Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // 关联关系
+  answers        UserAnswer[]
+  wrongQuestions WrongQuestion[]
+  favorites      Favorite[]
+
+  @@index([examType, subject])
+  @@index([isPublished])
+  @@index([sourceYear])
+  @@map("questions")
+}
+
+// 用户答题记录
+model UserAnswer {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String
+  userAnswer String
+  isCorrect  Boolean
+  timeSpent  Int      // 答题用时（秒）
+  answeredAt DateTime @default(now())
+
+  // 关联关系
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([questionId])
+  @@map("user_answers")
+}
+
+// 错题本
+model WrongQuestion {
+  id           String   @id @default(cuid())
+  userId       String
+  questionId   String
+  wrongCount   Int      @default(1)
+  lastWrongAt  DateTime @default(now())
+  isMastered   Boolean  @default(false)
+
+  // 关联关系
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+  @@index([userId])
+  @@map("wrong_questions")
+}
+
+// 收藏表
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String
+  createdAt  DateTime @default(now())
+
+  // 关联关系
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+  @@index([userId])
+  @@map("favorites")
+}
+
+// 学习记录
+model StudySession {
+  id             String    @id @default(cuid())
+  userId         String
+  examType       String?
+  questionsCount Int
+  correctCount   Int
+  timeSpent      Int       // 秒
+  startedAt      DateTime
+  endedAt        DateTime?
+
+  // 关联关系
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("study_sessions")
+}
+
+// ==================== 机构和资料系统 ====================
+
+// 培训机构表
+model Institution {
+  id               String   @id @default(cuid())
+  name             String   @unique
+  logo             String?
+  description      String?  @db.Text
+  foundedYear      Int?
+  website          String?
+  affiliateLink    String?  // 联盟推广链接
+  contactInfo      Json?    // {phone, email, wechat}
+  
+  // 评分数据
+  overallRating    Float    @default(0)
+  priceRating      Float    @default(0)
+  hitRateRating    Float    @default(0)
+  serviceRating    Float    @default(0)
+  reviewCount      Int      @default(0)
+  
+  // 统计数据
+  courseCount      Int      @default(0)
+  materialCount    Int      @default(0)
+  studentCount     Int      @default(0)
+  
+  // 认证标识
+  isVerified       Boolean  @default(false)
+  isPremium        Boolean  @default(false)
+  isPublished      Boolean  @default(true)
+  tags             String[] // 标签：名师授课、高通过率等
+  examTypes        String[] // 适用考试类型
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // 关联关系
+  materials        Material[]
+  reviews          Review[]
+  courses          Course[]
+
+  @@index([overallRating])
+  @@index([isVerified])
+  @@index([isPublished])
+  @@map("institutions")
+}
+
+// 课程表
+model Course {
+  id               String   @id @default(cuid())
+  institutionId    String
+  name             String
+  examType         String   // 考试类型
+  subject          String   // 科目
+  price            Float
+  discountPrice    Float?
+  duration         Int      // 课时
+  description      String?  @db.Text
+  syllabus         Json?    // 课程大纲
+  
+  // 评分统计
+  rating           Float    @default(0)
+  enrollCount      Int      @default(0)
+  
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // 关联关系
+  institution      Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+
+  @@index([examType, subject])
+  @@index([institutionId])
+  @@map("courses")
+}
+
+// 学习资料表
+model Material {
+  id               String   @id @default(cuid())
+  institutionId    String?
+  name             String
+  type             String   // PDF讲义, 真题集, 押题包, 视频课程
+  examType         String
+  subject          String
+  year             Int?     // 年份
+  
+  // 资料详情
+  description      String?  @db.Text
+  fileUrl          String?
+  previewUrl       String?
+  coverImage       String?
+  pageCount        Int?
+  fileSize         String?
+  price            Float    @default(0)
+  
+  // 命中率数据
+  hitRate          Float?   // 命中率百分比
+  coverageRate     Float?   // 覆盖率
+  accuracyScore    Float?   // 准确度评分
+  
+  // 统计数据
+  downloadCount    Int      @default(0)
+  viewCount        Int      @default(0)
+  rating           Float    @default(0)
+  reviewCount      Int      @default(0)
+  
+  isActive         Boolean  @default(true)
+  isFeatured       Boolean  @default(false)
+  isPremium        Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // 关联关系
+  institution      Institution? @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+  reviews          Review[]
+
+  @@index([examType, subject])
+  @@index([type])
+  @@index([hitRate])
+  @@index([isFeatured])
+  @@map("materials")
+}
+
+// 评价表（机构、资料、课程通用）
+model Review {
+  id               String   @id @default(cuid())
+  userId           String
+  targetType       String   // institution, material, course
+  targetId         String
+  institutionId    String?
+  materialId       String?
+  
+  // 评分
+  overallRating    Float    // 总体评分 1-5
+  priceRating      Float?   // 性价比
+  contentRating    Float?   // 内容质量
+  serviceRating    Float?   // 服务质量
+  
+  // 评价内容
+  title            String?
+  content          String   @db.Text
+  tags             String[] // 标签
+  examType         String?  // 报考类型
+  passedExam       Boolean  @default(false) // 是否通过考试
+  
+  // 统计
+  helpfulCount     Int      @default(0)
+  isVerified       Boolean  @default(false) // 已验证购买
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // 关联关系
+  user             User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institution      Institution? @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  material         Material? @relation(fields: [materialId], references: [id], onDelete: Cascade)
+
+  @@index([targetType, targetId])
+  @@index([userId])
+  @@index([institutionId])
+  @@index([materialId])
+  @@map("reviews")
+}
+
+// ==================== AI推荐系统 ====================
+
+// AI推荐记录表
+model Recommendation {
+  id               String   @id @default(cuid())
+  userId           String?
+  sessionId        String   // 匿名用户的会话ID
+  
+  // 用户输入
+  examType         String
+  subjects         String[]
+  budget           Float?
+  studyTime        Int?     // 学习时间（天）
+  currentLevel     String?  // 基础水平：beginner/intermediate/advanced
+  targetScore      Int?     // 目标分数
+  
+  // AI推荐结果
+  recommendedItems Json     // 推荐的机构、课程、资料列表
+  reasoning        String?  @db.Text // AI推荐理由
+  
+  // 用户反馈
+  userFeedback     String?
+  rating           Float?
+  
+  createdAt        DateTime @default(now())
+
+  @@index([userId])
+  @@index([examType])
+  @@index([sessionId])
+  @@map("recommendations")
+}
+
+// ==================== 押题系统 ====================
+
+// 押题包表
+model PredictionPackage {
+  id               String   @id @default(cuid())
+  name             String
+  examType         String
+  subject          String
+  year             Int
+  
+  description      String?  @db.Text
+  coverImage       String?
+  
+  // 定价
+  price            Float
+  discountPrice    Float?
+  
+  // 押题数据
+  questionCount    Int
+  questionIds      String[] // 关联的题目ID
+  hitRate          Float?   // 历年命中率
+  confidenceScore  Float?   // 置信度评分
+  
+  // 内容特点
+  features         String[] // 特点标签
+  highlights       Json?    // 亮点说明
+  
+  // 统计
+  purchaseCount    Int      @default(0)
+  viewCount        Int      @default(0)
+  rating           Float    @default(0)
+  reviewCount      Int      @default(0)
+  
+  isActive         Boolean  @default(true)
+  isFeatured       Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // 关联关系
+  purchases        PredictionPurchase[]
+
+  @@index([examType, subject, year])
+  @@index([isActive])
+  @@index([isFeatured])
+  @@map("prediction_packages")
+}
+
+// 押题包购买记录
+model PredictionPurchase {
+  id               String   @id @default(cuid())
+  userId           String
+  packageId        String
+  
+  price            Float
+  paymentMethod    String
+  transactionId    String?
+  
+  status           String   // pending, completed, refunded
+  purchasedAt      DateTime @default(now())
+
+  // 关联关系
+  user             User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  package          PredictionPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([packageId])
+  @@map("prediction_purchases")
+}
+
+// ==================== UGC社区系统 ====================
+
+// UGC内容表（笔记、讨论、经验分享）
+model UserContent {
+  id               String   @id @default(cuid())
+  userId           String
+  contentType      String   // note, discussion, tip, experience
+  
+  title            String
+  content          String   @db.Text
+  tags             String[]
+  examType         String?
+  subject          String?
+  
+  // 关联
+  relatedQuestionId String?
+  
+  // 互动数据
+  viewCount        Int      @default(0)
+  likeCount        Int      @default(0)
+  commentCount     Int      @default(0)
+  
+  // 状态
+  isPublished      Boolean  @default(true)
+  isPinned         Boolean  @default(false)
+  isFeatured       Boolean  @default(false)
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // 关联关系
+  user             User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments         Comment[]
+
+  @@index([userId])
+  @@index([contentType])
+  @@index([examType])
+  @@index([isPinned])
+  @@index([isFeatured])
+  @@map("user_contents")
+}
+
+// 评论表
+model Comment {
+  id               String   @id @default(cuid())
+  userId           String
+  contentId        String
+  parentId         String?  // 用于回复评论
+  
+  content          String   @db.Text
+  likeCount        Int      @default(0)
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // 关联关系
+  user             User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userContent      UserContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@index([contentId])
+  @@index([userId])
+  @@index([parentId])
+  @@map("comments")
+}
+
+// ==================== PDF生成系统 ====================
+
+// PDF生成记录表
+model PDFGeneration {
+  id               String   @id @default(cuid())
+  userId           String?
+  sessionId        String?  // 匿名用户
+  
+  pdfType          String   // recommendation_report, practice_set, study_plan
+  
+  // 内容配置
+  config           Json     // PDF生成配置
+  content          Json     // PDF内容数据
+  
+  // 文件信息
+  filename         String
+  fileUrl          String?
+  fileSize         Int?
+  
+  // 水印和品牌
+  hasWatermark     Boolean  @default(true)
+  isPaid           Boolean  @default(false)
+  
+  downloadCount    Int      @default(0)
+  createdAt        DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([pdfType])
+  @@map("pdf_generations")
+}
