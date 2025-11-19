@@ -1,0 +1,53 @@
+===============================================
+2024年执业药师中药综合真题 - 分批导入指南
+===============================================
+
+【方案】分3次手动执行导入
+脚本文件：prisma/import-all-120-questions.ts
+
+========== 第1批：导入1-40题 ==========
+
+1. 打开 prisma/import-all-120-questions.ts
+2. 找到第27行的 allQuestions 数组
+3. 删除示例题目，复制粘贴第1-40题的数据
+4. 运行命令：npx tsx prisma/import-all-120-questions.ts
+5. 等待导入完成
+
+========== 第2批：导入41-80题 ==========
+
+1. 打开 prisma/import-all-120-questions.ts  
+2. 清空 allQuestions 数组中的内容
+3. 复制粘贴第41-80题的数据
+4. 运行命令：npx tsx prisma/import-all-120-questions.ts
+5. 等待导入完成
+
+========== 第3批：导入81-120题 ==========
+
+1. 打开 prisma/import-all-120-questions.ts
+2. 清空 allQuestions 数组中的内容  
+3. 复制粘贴第81-120题的数据
+4. 运行命令：npx tsx prisma/import-all-120-questions.ts
+5. 等待导入完成
+
+========== 题目数据格式 ==========
+
+每道题的格式（紧凑版，一行一题）：
+
+{examType:'执业药师',subject:'中药学综合知识与技能',chapter:'章节',questionType:'single',content:'题干',options:[{key:'A',value:'选项A'},{key:'B',value:'选项B'},{key:'C',value:'选项C'},{key:'D',value:'选项D'},{key:'E',value:'选项E'}],correctAnswer:'C',explanation:'解析',difficulty:2,knowledgePoints:['知识点1','知识点2'],sourceType:'历年真题',sourceYear:2024},
+
+注意：
+- 题目之间用逗号分隔
+- 最后一题后面不要加逗号
+- 确保引号配对正确
+
+========== 验证导入结果 ==========
+
+每次导入完成后，脚本会显示：
+✅ 成功导入: XX 道题目
+✅ 数据库验证: 现有【2024年中药学综合知识与技能】题目 XX 道
+
+最终应该有120道题目。
+
+===============================================
+如需帮助，请查看 README-导入说明.md
+===============================================
