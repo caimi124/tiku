@@ -33,33 +33,40 @@ export async function POST(request: Request) {
       targetScore,
     });
 
-    // 保存推荐记录
-    const recommendation = await prisma.recommendation.create({
-      data: {
-        userId: userId || null,
-        sessionId: sessionId || `session_${Date.now()}`,
-        examType,
-        subjects,
-        budget: budget ? parseFloat(budget) : null,
-        studyTime: studyTime ? parseInt(studyTime) : null,
-        currentLevel: currentLevel || null,
-        targetScore: targetScore ? parseInt(targetScore) : null,
-        recommendedItems: recommendations,
-        reasoning: generateReasoning(recommendations, {
-          examType,
-          currentLevel,
-          budget,
-          studyTime,
-        }),
-      },
+    // TODO: 保存推荐记录（需要在schema中添加recommendation模型）
+    // const recommendation = await prisma.recommendation.create({
+    //   data: {
+    //     userId: userId || null,
+    //     sessionId: sessionId || `session_${Date.now()}`,
+    //     examType,
+    //     subjects,
+    //     budget: budget ? parseFloat(budget) : null,
+    //     studyTime: studyTime ? parseInt(studyTime) : null,
+    //     currentLevel: currentLevel || null,
+    //     targetScore: targetScore ? parseInt(targetScore) : null,
+    //     recommendedItems: recommendations,
+    //     reasoning: generateReasoning(recommendations, {
+    //       examType,
+    //       currentLevel,
+    //       budget,
+    //       studyTime,
+    //     }),
+    //   },
+    // });
+
+    const reasoning = generateReasoning(recommendations, {
+      examType,
+      currentLevel,
+      budget,
+      studyTime,
     });
 
     return NextResponse.json({
       success: true,
       data: {
-        recommendationId: recommendation.id,
+        recommendationId: `temp_${Date.now()}`,
         recommendations: recommendations,
-        reasoning: recommendation.reasoning,
+        reasoning: reasoning,
       },
     });
   } catch (error) {
@@ -75,42 +82,73 @@ export async function POST(request: Request) {
 async function generateRecommendations(criteria: any) {
   const { examType, subjects, budget, studyTime, currentLevel } = criteria;
 
-  // 获取匹配的机构
-  const institutions = await prisma.institution.findMany({
-    where: {
-      isVerified: true,
+  // TODO: 从数据库获取真实数据（需要在schema中添加institution, material, predictionPackage模型）
+  // const institutions = await prisma.institution.findMany({
+  //   where: { isVerified: true },
+  //   orderBy: { overallRating: "desc" },
+  //   take: 3,
+  // });
+  
+  // 使用模拟数据
+  const institutions = [
+    {
+      id: "inst_1",
+      name: "示例培训机构A",
+      logo: "/images/inst-1.png",
+      overallRating: 4.8,
+      hitRateRating: 4.9,
+      priceRating: 4.5,
+      reviewCount: 1580,
+      isPremium: true,
     },
-    orderBy: {
-      overallRating: "desc",
+    {
+      id: "inst_2",
+      name: "示例培训机构B",
+      logo: "/images/inst-2.png",
+      overallRating: 4.6,
+      hitRateRating: 4.7,
+      priceRating: 4.8,
+      reviewCount: 980,
+      isPremium: false,
     },
-    take: 3,
-  });
+  ];
 
-  // 获取匹配的资料
-  const materials = await prisma.material.findMany({
-    where: {
+  const materials = [
+    {
+      id: "mat_1",
+      name: "2024年执业药师考试精讲",
+      type: "视频课程",
       examType: examType,
+      hitRate: 85,
+      price: 1280,
+      rating: 4.7,
       isActive: true,
     },
-    orderBy: [
-      { hitRate: "desc" },
-      { rating: "desc" },
-    ],
-    take: 5,
-  });
+    {
+      id: "mat_2",
+      name: "历年真题解析",
+      type: "题库",
+      examType: examType,
+      hitRate: 90,
+      price: 680,
+      rating: 4.8,
+      isActive: true,
+    },
+  ];
 
-  // 获取押题包
-  const predictionPackages = await prisma.predictionPackage.findMany({
-    where: {
+  const predictionPackages = [
+    {
+      id: "pkg_1",
+      name: "考前押题密卷",
+      price: 398,
+      hitRate: 88,
+      questionCount: 500,
+      features: ["高频考点", "真题预测", "名师解析"],
       examType: examType,
       isActive: true,
       isFeatured: true,
     },
-    orderBy: {
-      hitRate: "desc",
-    },
-    take: 3,
-  });
+  ];
 
   return {
     institutions: institutions.map((inst) => ({
