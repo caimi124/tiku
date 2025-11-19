@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const question = await prisma.question.findUnique({
+    const question = await prisma.questions.findUnique({
       where: {
         id: params.id,
       },
@@ -24,10 +24,10 @@ export async function GET(
     }
 
     // 增加查看次数
-    await prisma.question.update({
+    await prisma.questions.update({
       where: { id: params.id },
       data: {
-        viewCount: {
+        view_count: {
           increment: 1,
         },
       },
@@ -57,7 +57,7 @@ export async function PUT(
   try {
     const body = await request.json();
 
-    const question = await prisma.question.update({
+    const question = await prisma.questions.update({
       where: {
         id: params.id,
       },
@@ -86,7 +86,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    await prisma.question.delete({
+    await prisma.questions.delete({
       where: {
         id: params.id,
       },

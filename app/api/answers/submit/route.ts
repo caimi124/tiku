@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 获取题目信息
-    const question = await prisma.question.findUnique({
+    const question = await prisma.questions.findUnique({
       where: { id: questionId },
     });
 
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 判断答案是否正确
-    const isCorrect = userAnswer === question.correctAnswer;
+    const isCorrect = userAnswer === question.correct_answer;
 
     // 记录答题
     const answer = await prisma.userAnswer.create({
@@ -48,14 +48,14 @@ export async function POST(request: NextRequest) {
     });
 
     // 更新题目统计
-    await prisma.question.update({
+    await prisma.questions.update({
       where: { id: questionId },
       data: {
-        answerCount: {
+        answer_count: {
           increment: 1,
         },
         ...(isCorrect && {
-          correctCount: {
+          correct_count: {
             increment: 1,
           },
         }),
@@ -148,9 +148,9 @@ export async function POST(request: NextRequest) {
       data: {
         answer,
         isCorrect,
-        correctAnswer: question.correctAnswer,
+        correctAnswer: question.correct_answer,
         explanation: question.explanation,
-        aiExplanation: question.aiExplanation,
+        aiExplanation: question.ai_explanation,
       },
     });
   } catch (error) {

@@ -15,13 +15,13 @@ export async function GET(request: NextRequest) {
 
     // 构建查询条件
     const where: any = {
-      isPublished: true,
+      is_published: true,
     };
 
-    if (examType) where.examType = examType;
+    if (examType) where.exam_type = examType;
     if (subject) where.subject = subject;
     if (chapter) where.chapter = chapter;
-    if (sourceYear) where.sourceYear = parseInt(sourceYear);
+    if (sourceYear) where.source_year = parseInt(sourceYear);
 
     // 获取题目
     let questions;
@@ -37,18 +37,18 @@ export async function GET(request: NextRequest) {
       `;
     } else {
       // 其他模式：正常分页查询
-      questions = await prisma.question.findMany({
+      questions = await prisma.questions.findMany({
         where,
         take: limit,
         skip: offset,
         orderBy: {
-          createdAt: "desc",
+          created_at: "desc",
         },
       });
     }
 
     // 获取总数
-    const total = await prisma.question.count({ where });
+    const total = await prisma.questions.count({ where });
 
     return NextResponse.json({
       success: true,
@@ -102,20 +102,20 @@ export async function POST(request: NextRequest) {
     }
 
     // 创建题目
-    const question = await prisma.question.create({
+    const question = await prisma.questions.create({
       data: {
-        examType,
+        exam_type: examType,
         subject,
         chapter,
-        questionType,
+        question_type: questionType,
         content,
         options,
-        correctAnswer,
+        correct_answer: correctAnswer,
         explanation,
-        aiExplanation,
+        ai_explanation: aiExplanation,
         difficulty: difficulty || 1,
-        knowledgePoints: knowledgePoints || [],
-        isPublished: true,
+        knowledge_points: knowledgePoints || [],
+        is_published: true,
       },
     });
 
