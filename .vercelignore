@@ -1,0 +1,21 @@
+# 数据导入脚本 - 不需要部署到生产环境
+prisma/import-*.ts
+prisma/direct-import-*.ts
+prisma/*-import-*.ts
+prisma/seed.ts
+prisma/*.json
+
+# 开发工具和临时文件
+*.bat
+*.ps1
+*.sql
+*.txt
+*.md
+!README.md
+!package.json
+!tsconfig.json
+
+# 环境变量示例文件
+.env.example
+.env.local.template
+.env.import
