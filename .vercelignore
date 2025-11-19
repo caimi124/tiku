@@ -1,9 +1,21 @@
-# 数据导入脚本 - 不需要部署到生产环境
+# Prisma工具脚本 - 不需要部署到生产环境
 prisma/import-*.ts
 prisma/direct-import-*.ts
 prisma/*-import-*.ts
 prisma/seed.ts
 prisma/*.json
+
+# 根目录工具脚本 - 不需要部署到生产环境
+setup-db-*.ts
+test-*.ts
+import-*.ts
+*-import-*.ts
+verify-*.ts
+diagnose-*.ts
+generate-*.ts
+auto-*.ts
+quick-*.ts
+final-*.ts
 
 # 开发工具和临时文件
 *.bat

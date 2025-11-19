@@ -32,7 +32,17 @@
     "prisma/import-*.ts",
     "prisma/direct-import-*.ts",
     "prisma/*-import-*.ts",
-    "prisma/seed.ts"
+    "prisma/seed.ts",
+    "setup-db-*.ts",
+    "test-*.ts",
+    "import-*.ts",
+    "*-import-*.ts",
+    "verify-*.ts",
+    "diagnose-*.ts",
+    "generate-*.ts",
+    "auto-*.ts",
+    "quick-*.ts",
+    "final-*.ts"
   ]
 }
 
