@@ -51,34 +51,35 @@ export async function POST(request: Request) {
       pdfContent = addWatermark(pdfContent);
     }
 
-    // 保存PDF生成记录
-    const pdfGeneration = await prisma.pDFGeneration.create({
-      data: {
-        userId: userId || null,
-        sessionId: sessionId || `session_${Date.now()}`,
-        pdfType,
-        config: config || {},
-        content,
-        filename,
-        fileUrl: null, // TODO: 上传到云存储后更新
-        fileSize: null,
-        hasWatermark,
-        isPaid,
-      },
-    });
+    // TODO: 保存PDF生成记录到数据库（需要先在schema中添加pDFGeneration模型）
+    // const pdfGeneration = await prisma.pDFGeneration.create({
+    //   data: {
+    //     userId: userId || null,
+    //     sessionId: sessionId || `session_${Date.now()}`,
+    //     pdfType,
+    //     config: config || {},
+    //     content,
+    //     filename,
+    //     fileUrl: null,
+    //     fileSize: null,
+    //     hasWatermark,
+    //     isPaid,
+    //   },
+    // });
 
-    // TODO: 实际生成PDF文件
+    // 实际生成PDF文件
     // 这里使用简单的HTML转PDF方案
     // 生产环境建议使用 puppeteer, jsPDF, pdfkit 等库
     const htmlContent = generateHTMLContent(pdfType, content, config, hasWatermark);
+    const generationId = `temp_${Date.now()}`;
 
     return NextResponse.json({
       success: true,
       data: {
-        generationId: pdfGeneration.id,
+        generationId,
         filename,
         htmlContent, // 临时返回HTML，前端可以使用打印功能生成PDF
-        downloadUrl: `/api/pdf/download/${pdfGeneration.id}`,
+        downloadUrl: `/api/pdf/download/${generationId}`,
       },
     });
   } catch (error) {
