@@ -37,13 +37,13 @@ export async function POST(request: NextRequest) {
     const isCorrect = userAnswer === question.correct_answer;
 
     // 记录答题
-    const answer = await prisma.userAnswer.create({
+    const answer = await prisma.user_answers.create({
       data: {
-        userId,
-        questionId,
-        userAnswer,
-        isCorrect,
-        timeSpent: timeSpent || 0,
+        user_id: userId,
+        question_id: questionId,
+        user_answer: userAnswer,
+        is_correct: isCorrect,
+        time_spent: timeSpent || 0,
       },
     });
 
@@ -64,79 +64,79 @@ export async function POST(request: NextRequest) {
 
     // 如果答错，添加到错题本
     if (!isCorrect) {
-      const existingWrongQuestion = await prisma.wrongQuestion.findUnique({
+      const existingWrongQuestion = await prisma.wrong_questions.findUnique({
         where: {
-          userId_questionId: {
-            userId,
-            questionId,
+          user_id_question_id: {
+            user_id: userId,
+            question_id: questionId,
           },
         },
       });
 
       if (existingWrongQuestion) {
         // 更新错题记录
-        await prisma.wrongQuestion.update({
+        await prisma.wrong_questions.update({
           where: {
-            userId_questionId: {
-              userId,
-              questionId,
+            user_id_question_id: {
+              user_id: userId,
+              question_id: questionId,
             },
           },
           data: {
-            wrongCount: {
+            wrong_count: {
               increment: 1,
             },
-            lastWrongAt: new Date(),
-            isMastered: false,
+            last_wrong_at: new Date(),
+            is_mastered: false,
           },
         });
       } else {
         // 创建新的错题记录
-        await prisma.wrongQuestion.create({
+        await prisma.wrong_questions.create({
           data: {
-            userId,
-            questionId,
-            wrongCount: 1,
+            user_id: userId,
+            question_id: questionId,
+            wrong_count: 1,
           },
         });
       }
     } else {
       // 如果答对，检查是否应该标记为已掌握
-      const wrongQuestion = await prisma.wrongQuestion.findUnique({
+      const wrongQuestion = await prisma.wrong_questions.findUnique({
         where: {
-          userId_questionId: {
-            userId,
-            questionId,
+          user_id_question_id: {
+            user_id: userId,
+            question_id: questionId,
           },
         },
       });
 
       if (wrongQuestion) {
         // 检查最近3次答题是否都正确
-        const recentAnswers = await prisma.userAnswer.findMany({
+        const recentAnswers = await prisma.user_answers.findMany({
           where: {
-            userId,
-            questionId,
+            user_id: userId,
+            question_id: questionId,
           },
           orderBy: {
-            answeredAt: "desc",
+            answered_at: "desc",
           },
           take: 3,
         });
 
-        const allCorrect = recentAnswers.every((a) => a.isCorrect);
+        const allCorrect = recentAnswers.every((a) => a.is_correct);
 
         if (allCorrect && recentAnswers.length >= 3) {
           // 标记为已掌握
-          await prisma.wrongQuestion.update({
+          await prisma.wrong_questions.update({
             where: {
-              userId_questionId: {
-                userId,
-                questionId,
+              user_id_question_id: {
+                user_id: userId,
+                question_id: questionId,
               },
             },
             data: {
-              isMastered: true,
+              is_mastered: true,
             },
           });
         }
