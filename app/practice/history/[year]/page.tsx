@@ -26,6 +26,14 @@ interface Question {
   knowledgePoints: string[];
 }
 
+interface QuestionSection {
+  type: string;
+  title: string;
+  startIndex: number;
+  endIndex: number;
+  count: number;
+}
+
 function YearPracticeContent() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -34,6 +42,7 @@ function YearPracticeContent() {
   const examType = searchParams.get("exam") || "pharmacist";
 
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [sections, setSections] = useState<QuestionSection[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -55,7 +64,49 @@ function YearPracticeContent() {
       const data = await response.json();
 
       if (data.success && data.data.questions) {
-        setQuestions(data.data.questions);
+        const allQuestions = data.data.questions;
+        setQuestions(allQuestions);
+        
+        // 按题型分组统计
+        const grouped: Record<string, Question[]> = {
+          single: [],
+          match: [],
+          comprehensive: [],
+          multiple: [],
+        };
+
+        allQuestions.forEach((q: Question) => {
+          const type = q.questionType;
+          if (grouped[type]) {
+            grouped[type].push(q);
+          }
+        });
+
+        // 创建题型分组
+        const questionSections: QuestionSection[] = [];
+        let currentIdx = 0;
+
+        const typeOrder = [
+          { type: 'single', title: '一、最佳选择题' },
+          { type: 'match', title: '二、配伍选择题' },
+          { type: 'comprehensive', title: '三、综合分析题' },
+          { type: 'multiple', title: '四、多项选择题' },
+        ];
+
+        typeOrder.forEach(({ type, title }) => {
+          if (grouped[type].length > 0) {
+            questionSections.push({
+              type,
+              title,
+              startIndex: currentIdx,
+              endIndex: currentIdx + grouped[type].length - 1,
+              count: grouped[type].length,
+            });
+            currentIdx += grouped[type].length;
+          }
+        });
+
+        setSections(questionSections);
       } else {
         console.error("获取题目失败:", data.error);
       }
@@ -166,33 +217,33 @@ function YearPracticeContent() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 顶部导航 */}
-      <div className="bg-white border-b sticky top-0 z-10">
+      <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
+          <div className="flex items-center justify-between h-14 md:h-16">
+            <div className="flex items-center space-x-2 md:space-x-4">
               <Link
                 href={`/practice/history?exam=${examType}`}
                 className="flex items-center text-gray-600 hover:text-primary-500 transition"
               >
-                <ArrowLeft className="w-4 h-4 mr-1" />
-                返回
+                <ArrowLeft className="w-4 h-4 md:mr-1" />
+                <span className="hidden md:inline">返回</span>
               </Link>
               <div className="h-6 w-px bg-gray-200"></div>
-              <h1 className="text-lg font-semibold text-gray-900">
+              <h1 className="text-sm md:text-lg font-semibold text-gray-900">
                 {year}年真题练习
               </h1>
             </div>
 
-            <div className="flex items-center space-x-6">
-              <div className="text-sm text-gray-600">
+            <div className="flex items-center space-x-2 md:space-x-6 text-xs md:text-sm">
+              <div className="text-gray-600">
                 <span className="font-medium text-primary-500">{currentIndex + 1}</span>
                 <span className="mx-1">/</span>
                 <span>{questions.length}</span>
               </div>
-              <div className="text-sm text-gray-600">
+              <div className="text-gray-600">
                 已答: <span className="font-medium text-blue-500">{stats.answered}</span>
               </div>
-              <div className="text-sm text-gray-600">
+              <div className="text-gray-600">
                 正确: <span className="font-medium text-green-500">{stats.correct}</span>
               </div>
             </div>
@@ -200,21 +251,29 @@ function YearPracticeContent() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
         <div className="max-w-4xl mx-auto">
           {/* 题目卡片 */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
+          <div className="bg-white rounded-lg md:rounded-xl shadow-sm border border-gray-100 p-4 md:p-8 mb-4 md:mb-6">
             {/* 题目标签 */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-3">
-                <span className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm font-medium">
+            <div className="flex items-center justify-between mb-4 md:mb-6">
+              <div className="flex items-center space-x-2 md:space-x-3 flex-wrap gap-y-2">
+                <span className="px-2 md:px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-xs md:text-sm font-medium">
                   {year}年真题
                 </span>
-                <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm">
-                  {currentQuestion.questionType === "single" ? "单选题" : "多选题"}
+                <span className="px-2 md:px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs md:text-sm">
+                  {(() => {
+                    const typeMap: Record<string, string> = {
+                      single: '最佳选择题',
+                      match: '配伍选择题',
+                      comprehensive: '综合分析题',
+                      multiple: '多项选择题',
+                    };
+                    return typeMap[currentQuestion.questionType] || currentQuestion.questionType;
+                  })()}
                 </span>
                 {currentQuestion.chapter && (
-                  <span className="px-3 py-1 bg-gray-50 text-gray-600 rounded-full text-sm">
+                  <span className="px-2 md:px-3 py-1 bg-gray-50 text-gray-600 rounded-full text-xs md:text-sm">
                     {currentQuestion.chapter}
                   </span>
                 )}
@@ -232,33 +291,33 @@ function YearPracticeContent() {
             </div>
 
             {/* 题目内容 */}
-            <div className="mb-6">
+            <div className="mb-4 md:mb-6">
               <div className="flex items-start">
-                <span className="text-lg font-semibold text-gray-900 mr-3">
+                <span className="text-base md:text-lg font-semibold text-gray-900 mr-2 md:mr-3 flex-shrink-0">
                   {currentIndex + 1}.
                 </span>
-                <p className="text-lg text-gray-900 leading-relaxed flex-1">
+                <p className="text-base md:text-lg text-gray-900 leading-relaxed flex-1">
                   {currentQuestion.content}
                 </p>
               </div>
             </div>
 
             {/* 选项 */}
-            <div className="space-y-3 mb-6">
+            <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
               {currentQuestion.options.map((option) => (
                 <button
                   key={option.key}
                   onClick={() => handleAnswerSelect(option.key)}
                   disabled={isSubmitted}
-                  className={`w-full text-left p-4 rounded-lg border-2 transition ${getAnswerClass(
+                  className={`w-full text-left p-3 md:p-4 rounded-lg border-2 transition active:scale-[0.98] ${getAnswerClass(
                     option.key
                   )} ${isSubmitted ? "cursor-default" : "cursor-pointer"}`}
                 >
                   <div className="flex items-start">
-                    <span className="font-semibold text-gray-700 mr-3 mt-0.5">
+                    <span className="font-semibold text-gray-700 mr-2 md:mr-3 mt-0.5 flex-shrink-0 text-sm md:text-base">
                       {option.key}.
                     </span>
-                    <span className="flex-1 text-gray-700">{option.value}</span>
+                    <span className="flex-1 text-gray-700 text-sm md:text-base leading-relaxed">{option.value}</span>
                     {isSubmitted && option.key === currentQuestion.correctAnswer && (
                       <CheckCircle2 className="w-5 h-5 text-green-500 ml-2 flex-shrink-0" />
                     )}
@@ -274,12 +333,12 @@ function YearPracticeContent() {
 
             {/* 答案解析 */}
             {isSubmitted && (
-              <div className="border-t pt-6">
+              <div className="border-t pt-4 md:pt-6">
                 <button
                   onClick={() => setShowExplanation(!showExplanation)}
-                  className="flex items-center justify-between w-full mb-4 text-left"
+                  className="flex items-center justify-between w-full mb-3 md:mb-4 text-left"
                 >
-                  <h3 className="text-lg font-semibold text-gray-900">答案解析</h3>
+                  <h3 className="text-base md:text-lg font-semibold text-gray-900">答案解析</h3>
                   {showExplanation ? (
                     <EyeOff className="w-5 h-5 text-gray-400" />
                   ) : (
@@ -289,7 +348,7 @@ function YearPracticeContent() {
 
                 {showExplanation && (
                   <div className="space-y-4">
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3 md:p-4">
                       <div className="flex items-center mb-2">
                         <CheckCircle2 className="w-5 h-5 text-green-600 mr-2" />
                         <span className="font-medium text-green-900">
@@ -298,8 +357,8 @@ function YearPracticeContent() {
                       </div>
                     </div>
 
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <p className="text-gray-700 leading-relaxed">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
+                      <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                         {currentQuestion.explanation}
                       </p>
                     </div>
@@ -309,7 +368,7 @@ function YearPracticeContent() {
                         {currentQuestion.knowledgePoints.map((point, index) => (
                           <span
                             key={index}
-                            className="px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm"
+                            className="px-2 md:px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-xs md:text-sm"
                           >
                             {point}
                           </span>
@@ -322,13 +381,13 @@ function YearPracticeContent() {
             )}
 
             {/* 操作按钮 */}
-            <div className="flex items-center justify-between mt-6 pt-6 border-t">
+            <div className="flex items-center justify-between mt-4 md:mt-6 pt-4 md:pt-6 border-t">
               <button
                 onClick={handlePrevious}
                 disabled={currentIndex === 0}
-                className="flex items-center px-4 py-2 text-gray-600 hover:text-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="flex items-center px-3 md:px-4 py-2 text-sm md:text-base text-gray-600 hover:text-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition active:scale-95"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeft className="w-4 h-4 mr-1 md:mr-2" />
                 上一题
               </button>
 
@@ -336,7 +395,7 @@ function YearPracticeContent() {
                 <button
                   onClick={handleSubmit}
                   disabled={!selectedAnswer}
-                  className="px-6 py-2 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="px-4 md:px-6 py-2 text-sm md:text-base bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition active:scale-95"
                 >
                   提交答案
                 </button>
@@ -344,19 +403,59 @@ function YearPracticeContent() {
                 <button
                   onClick={handleNext}
                   disabled={currentIndex === questions.length - 1}
-                  className="flex items-center px-6 py-2 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="flex items-center px-4 md:px-6 py-2 text-sm md:text-base bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition active:scale-95"
                 >
                   下一题
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <ArrowRight className="w-4 h-4 ml-1 md:ml-2" />
                 </button>
               )}
             </div>
           </div>
 
+          {/* 题型分组导航 */}
+          {sections.length > 0 && (
+            <div className="bg-white rounded-lg md:rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-4 md:mb-6">
+              <h3 className="text-sm md:text-base font-semibold text-gray-900 mb-3 md:mb-4">题型分组</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {sections.map((section, idx) => {
+                  const isCurrentSection = currentIndex >= section.startIndex && currentIndex <= section.endIndex;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setCurrentIndex(section.startIndex);
+                        setSelectedAnswer(answers[section.startIndex] || "");
+                        setIsSubmitted(!!answers[section.startIndex]);
+                        setShowExplanation(false);
+                      }}
+                      className={`p-3 md:p-4 rounded-lg border-2 text-left transition active:scale-[0.98] ${
+                        isCurrentSection
+                          ? 'border-primary-500 bg-primary-50'
+                          : 'border-gray-200 hover:border-primary-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm md:text-base font-semibold text-gray-900 mb-1">{section.title}</div>
+                          <div className="text-xs md:text-sm text-gray-600">
+                            第 {section.startIndex + 1}-{section.endIndex + 1} 题 · 共 {section.count} 题
+                          </div>
+                        </div>
+                        {isCurrentSection && (
+                          <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* 题目导航 */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">题目导航</h3>
-            <div className="grid grid-cols-10 gap-2">
+          <div className="bg-white rounded-lg md:rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-20">
+            <h3 className="text-sm md:text-base font-semibold text-gray-900 mb-3 md:mb-4">题目导航</h3>
+            <div className="grid grid-cols-8 md:grid-cols-10 gap-2">
               {questions.map((_, index) => (
                 <button
                   key={index}
@@ -366,7 +465,7 @@ function YearPracticeContent() {
                     setIsSubmitted(!!answers[index]);
                     setShowExplanation(false);
                   }}
-                  className={`aspect-square rounded-lg text-sm font-medium transition ${
+                  className={`aspect-square rounded-lg text-xs md:text-sm font-medium transition active:scale-90 ${
                     index === currentIndex
                       ? "bg-primary-500 text-white"
                       : answers[index]
