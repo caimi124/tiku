@@ -21,9 +21,11 @@ interface Question {
   options: { key: string; value: string }[];
   correctAnswer: string;
   explanation: string;
+  aiExplanation?: string;
   questionType: string;
   chapter: string;
   knowledgePoints: string[];
+  subject: string;
 }
 
 interface QuestionSection {
@@ -40,6 +42,7 @@ function YearPracticeContent() {
   const router = useRouter();
   const year = params.year as string;
   const examType = searchParams.get("exam") || "pharmacist";
+  const subject = searchParams.get("subject") || "中药学综合知识与技能";
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [sections, setSections] = useState<QuestionSection[]>([]);
@@ -59,7 +62,7 @@ function YearPracticeContent() {
     try {
       setLoading(true);
       const response = await fetch(
-        `/api/questions?sourceYear=${year}&subject=中药学综合知识与技能&limit=200`
+        `/api/questions?sourceYear=${year}&subject=${encodeURIComponent(subject)}&limit=200`
       );
       const data = await response.json();
 
@@ -296,9 +299,39 @@ function YearPracticeContent() {
                 <span className="text-base md:text-lg font-semibold text-gray-900 mr-2 md:mr-3 flex-shrink-0">
                   {currentIndex + 1}.
                 </span>
-                <p className="text-base md:text-lg text-gray-900 leading-relaxed flex-1">
-                  {currentQuestion.content}
-                </p>
+                <div className="flex-1">
+                  <p className="text-base md:text-lg text-gray-900 leading-relaxed mb-4">
+                    {currentQuestion.content.replace('\n\n【题目包含图片】', '')}
+                  </p>
+                  {/* 显示题目图片 */}
+                  {currentQuestion.aiExplanation && (() => {
+                    try {
+                      const data = JSON.parse(currentQuestion.aiExplanation);
+                      if (data.images && data.images.length > 0) {
+                        return (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                            {data.images.map((imgUrl: string, idx: number) => (
+                              <div key={idx} className="border rounded-lg overflow-hidden bg-gray-50">
+                                <img
+                                  src={imgUrl}
+                                  alt={`题目图片 ${idx + 1}`}
+                                  className="w-full h-auto object-contain"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                  }}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      }
+                    } catch (e) {
+                      // 解析失败，不显示图片
+                    }
+                    return null;
+                  })()}
+                </div>
               </div>
             </div>
 

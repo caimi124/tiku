@@ -41,23 +41,33 @@ function HistoryExamContent() {
       
       // 从API获取真实的年份统计数据
       const years = [2024, 2023, 2022, 2021];
+      const subjects = [
+        "中药学综合知识与技能",
+        "药学专业知识（一）"
+      ];
+      
       const yearDataPromises = years.map(async (year) => {
         try {
-          const response = await fetch(
-            `/api/questions?sourceYear=${year}&subject=中药学综合知识与技能&limit=1`
-          );
-          const data = await response.json();
+          // 查询所有科目
+          const subjectPromises = subjects.map(async (subject) => {
+            const response = await fetch(
+              `/api/questions?sourceYear=${year}&subject=${encodeURIComponent(subject)}&limit=1`
+            );
+            const data = await response.json();
+            const count = data.success ? data.data.total : 0;
+            return count > 0 ? { name: subject, count } : null;
+          });
           
-          const totalQuestions = data.success ? data.data.total : 0;
+          const subjectResults = await Promise.all(subjectPromises);
+          const availableSubjects = subjectResults.filter(s => s !== null) as { name: string; count: number }[];
+          const totalQuestions = availableSubjects.reduce((sum, s) => sum + s.count, 0);
           
           return {
             year,
             totalQuestions,
             completedQuestions: 0, // TODO: 从用户答题记录获取
             correctRate: 0, // TODO: 从用户答题记录计算
-            subjects: totalQuestions > 0 
-              ? [{ name: "中药学综合知识与技能", count: totalQuestions }]
-              : [],
+            subjects: availableSubjects,
           };
         } catch (error) {
           console.error(`获取${year}年数据失败:`, error);
@@ -247,9 +257,10 @@ function HistoryExamContent() {
                     {year.subjects.length > 0 && (
                       <div className="space-y-2 mb-4">
                         {year.subjects.map((subject, index) => (
-                          <div
+                          <Link
                             key={index}
-                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                            href={`/practice/history/${year.year}?exam=${examType}&subject=${encodeURIComponent(subject.name)}`}
+                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
                           >
                             <span className="text-sm text-gray-700">
                               {subject.name}
@@ -257,7 +268,7 @@ function HistoryExamContent() {
                             <span className="text-sm text-gray-500">
                               {subject.count} 道题
                             </span>
-                          </div>
+                          </Link>
                         ))}
                       </div>
                     )}
