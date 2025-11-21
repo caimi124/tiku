@@ -69,10 +69,10 @@ function YearPracticeContent() {
         
         // 按题型分组统计
         const grouped: Record<string, Question[]> = {
-          single: [],
-          match: [],
-          comprehensive: [],
-          multiple: [],
+          最佳选择题: [],
+          配伍选择题: [],
+          综合分析题: [],
+          多项选择题: [],
         };
 
         allQuestions.forEach((q: Question) => {
@@ -87,10 +87,10 @@ function YearPracticeContent() {
         let currentIdx = 0;
 
         const typeOrder = [
-          { type: 'single', title: '一、最佳选择题' },
-          { type: 'match', title: '二、配伍选择题' },
-          { type: 'comprehensive', title: '三、综合分析题' },
-          { type: 'multiple', title: '四、多项选择题' },
+          { type: '最佳选择题', title: '一、最佳选择题' },
+          { type: '配伍选择题', title: '二、配伍选择题' },
+          { type: '综合分析题', title: '三、综合分析题' },
+          { type: '多项选择题', title: '四、多项选择题' },
         ];
 
         typeOrder.forEach(({ type, title }) => {

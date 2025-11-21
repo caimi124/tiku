@@ -1,6 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// 转换选项格式：对象 -> 数组
+function formatOptions(options: any) {
+  if (!options) return [];
+  
+  // 如果已经是数组格式，直接返回
+  if (Array.isArray(options)) return options;
+  
+  // 如果是对象格式，转换为数组
+  if (typeof options === 'object') {
+    return Object.entries(options).map(([key, value]) => ({
+      key,
+      value: value as string
+    }));
+  }
+  
+  return [];
+}
+
+// 格式化单个题目
+function formatQuestion(question: any) {
+  return {
+    ...question,
+    options: formatOptions(question.options),
+    correctAnswer: question.correct_answer,
+    questionType: question.question_type,
+    examType: question.exam_type,
+    sourceYear: question.source_year,
+    sourceType: question.source_type,
+    knowledgePoints: question.knowledge_points || [],
+    isPublished: question.is_published,
+  };
+}
+
 // GET /api/questions - 获取题目列表
 export async function GET(request: NextRequest) {
   try {
@@ -24,7 +57,7 @@ export async function GET(request: NextRequest) {
     if (sourceYear) where.source_year = parseInt(sourceYear);
 
     // 获取题目
-    let questions;
+    let questions: any[];
 
     if (mode === "random") {
       // 随机模式：使用数据库的随机排序
@@ -34,7 +67,7 @@ export async function GET(request: NextRequest) {
         ${examType ? `AND exam_type = ${examType}` : ""}
         ORDER BY RANDOM()
         LIMIT ${limit}
-      `;
+      ` as any[];
     } else {
       // 其他模式：正常分页查询
       questions = await prisma.questions.findMany({
@@ -50,10 +83,13 @@ export async function GET(request: NextRequest) {
     // 获取总数
     const total = await prisma.questions.count({ where });
 
+    // 格式化题目数据
+    const formattedQuestions = questions.map(formatQuestion);
+
     return NextResponse.json({
       success: true,
       data: {
-        questions,
+        questions: formattedQuestions,
         total,
         limit,
         offset,

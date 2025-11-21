@@ -69,10 +69,10 @@ function MockExamContent() {
         
         // 按题型分组
         const grouped: Record<string, Question[]> = {
-          single: [],
-          match: [],
-          comprehensive: [],
-          multiple: [],
+          最佳选择题: [],
+          配伍选择题: [],
+          综合分析题: [],
+          多项选择题: [],
         };
 
         questions.forEach((q: Question) => {
@@ -86,45 +86,45 @@ function MockExamContent() {
         const questionSections: QuestionSection[] = [];
         let currentIndex = 0;
 
-        if (grouped.single.length > 0) {
+        if (grouped['最佳选择题'].length > 0) {
           questionSections.push({
-            type: 'single',
+            type: '最佳选择题',
             title: '一、最佳选择题',
             description: '每题的备选项中，只有1个最佳答案',
-            questions: grouped.single,
+            questions: grouped['最佳选择题'],
             startIndex: currentIndex,
           });
-          currentIndex += grouped.single.length;
+          currentIndex += grouped['最佳选择题'].length;
         }
 
-        if (grouped.match.length > 0) {
+        if (grouped['配伍选择题'].length > 0) {
           questionSections.push({
-            type: 'match',
+            type: '配伍选择题',
             title: '二、配伍选择题',
             description: '共用备选答案，每组2-5题，选择最佳答案',
-            questions: grouped.match,
+            questions: grouped['配伍选择题'],
             startIndex: currentIndex,
           });
-          currentIndex += grouped.match.length;
+          currentIndex += grouped['配伍选择题'].length;
         }
 
-        if (grouped.comprehensive.length > 0) {
+        if (grouped['综合分析题'].length > 0) {
           questionSections.push({
-            type: 'comprehensive',
+            type: '综合分析题',
             title: '三、综合分析题',
             description: '包括多个知识点，每组2-5题',
-            questions: grouped.comprehensive,
+            questions: grouped['综合分析题'],
             startIndex: currentIndex,
           });
-          currentIndex += grouped.comprehensive.length;
+          currentIndex += grouped['综合分析题'].length;
         }
 
-        if (grouped.multiple.length > 0) {
+        if (grouped['多项选择题'].length > 0) {
           questionSections.push({
-            type: 'multiple',
+            type: '多项选择题',
             title: '四、多项选择题',
             description: '每题有2个或2个以上符合题意的正确答案',
-            questions: grouped.multiple,
+            questions: grouped['多项选择题'],
             startIndex: currentIndex,
           });
         }
