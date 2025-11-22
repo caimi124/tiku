@@ -31,6 +31,7 @@ function formatQuestion(question: any) {
     sourceType: question.source_type,
     knowledgePoints: question.knowledge_points || [],
     isPublished: question.is_published,
+    aiExplanation: question.ai_explanation,  // 添加图片数据字段映射
   };
 }
 
