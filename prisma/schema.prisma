@@ -561,6 +561,7 @@ model questions {
   subject                String
   chapter                String?
   question_type          String
+  question_number        Int?
   content                String
   options                Json
   correct_answer         String
@@ -592,6 +593,7 @@ model questions {
   @@index([source_year, subject], map: "idx_questions_source_year_subject")
   @@index([subject], map: "idx_questions_subject")
   @@index([question_type], map: "idx_questions_type")
+  @@index([source_year, subject, question_number], map: "idx_questions_sort_order")
   @@schema("public")
 }
 

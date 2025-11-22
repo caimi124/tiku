@@ -71,13 +71,16 @@ export async function GET(request: NextRequest) {
       ` as any[];
     } else {
       // 其他模式：正常分页查询
+      // 如果有年份和科目，按题号排序（历年真题）；否则按创建时间排序
+      const orderBy = (sourceYear && subject) 
+        ? [{ question_number: 'asc' as const }, { created_at: 'desc' as const }]
+        : [{ created_at: 'desc' as const }];
+      
       questions = await prisma.questions.findMany({
         where,
         take: limit,
         skip: offset,
-        orderBy: {
-          created_at: "desc",
-        },
+        orderBy,
       });
     }
 
