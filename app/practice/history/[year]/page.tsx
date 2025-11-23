@@ -48,6 +48,7 @@ function YearPracticeContent() {
   const [sections, setSections] = useState<QuestionSection[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
+  const [selectedMultipleAnswers, setSelectedMultipleAnswers] = useState<Set<string>>(new Set());
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -124,7 +125,26 @@ function YearPracticeContent() {
 
   const handleAnswerSelect = (answer: string) => {
     if (isSubmitted) return;
-    setSelectedAnswer(answer);
+    
+    const isMultiple = currentQuestion?.questionType === 'multiple';
+    
+    if (isMultiple) {
+      // 多选题逻辑
+      const newSelected = new Set(selectedMultipleAnswers);
+      if (newSelected.has(answer)) {
+        newSelected.delete(answer);
+      } else {
+        newSelected.add(answer);
+      }
+      setSelectedMultipleAnswers(newSelected);
+      // 将Set转换为排序后的字符串（如"ABCD"）
+      const sortedAnswer = Array.from(newSelected).sort().join('');
+      setSelectedAnswer(sortedAnswer);
+    } else {
+      // 单选题逻辑
+      setSelectedAnswer(answer);
+      setSelectedMultipleAnswers(new Set());
+    }
   };
 
   const handleSubmit = () => {
@@ -137,18 +157,34 @@ function YearPracticeContent() {
   const handleNext = () => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
-      setSelectedAnswer(answers[currentIndex + 1] || "");
+      const nextAnswer = answers[currentIndex + 1] || "";
+      setSelectedAnswer(nextAnswer);
       setIsSubmitted(!!answers[currentIndex + 1]);
       setShowExplanation(false);
+      
+      // 恢复多选题的选中状态
+      if (questions[currentIndex + 1]?.questionType === 'multiple' && nextAnswer) {
+        setSelectedMultipleAnswers(new Set(nextAnswer.split('')));
+      } else {
+        setSelectedMultipleAnswers(new Set());
+      }
     }
   };
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      setSelectedAnswer(answers[currentIndex - 1] || "");
+      const prevAnswer = answers[currentIndex - 1] || "";
+      setSelectedAnswer(prevAnswer);
       setIsSubmitted(!!answers[currentIndex - 1]);
       setShowExplanation(false);
+      
+      // 恢复多选题的选中状态
+      if (questions[currentIndex - 1]?.questionType === 'multiple' && prevAnswer) {
+        setSelectedMultipleAnswers(new Set(prevAnswer.split('')));
+      } else {
+        setSelectedMultipleAnswers(new Set());
+      }
     }
   };
 
@@ -163,18 +199,34 @@ function YearPracticeContent() {
   };
 
   const getAnswerClass = (optionKey: string) => {
+    const isMultiple = currentQuestion?.questionType === 'multiple';
+    const correctAnswers = currentQuestion?.correctAnswer?.split('') || [];
+    
     if (!isSubmitted) {
-      return selectedAnswer === optionKey
-        ? "border-primary-500 bg-primary-50"
-        : "border-gray-200 hover:border-primary-300";
+      if (isMultiple) {
+        return selectedMultipleAnswers.has(optionKey)
+          ? "border-primary-500 bg-primary-50"
+          : "border-gray-200 hover:border-primary-300";
+      } else {
+        return selectedAnswer === optionKey
+          ? "border-primary-500 bg-primary-50"
+          : "border-gray-200 hover:border-primary-300";
+      }
     }
 
-    if (optionKey === currentQuestion.correctAnswer) {
+    // 提交后的样式
+    if (correctAnswers.includes(optionKey)) {
       return "border-green-500 bg-green-50";
     }
 
-    if (selectedAnswer === optionKey && optionKey !== currentQuestion.correctAnswer) {
-      return "border-red-500 bg-red-50";
+    if (isMultiple) {
+      if (selectedMultipleAnswers.has(optionKey) && !correctAnswers.includes(optionKey)) {
+        return "border-red-500 bg-red-50";
+      }
+    } else {
+      if (selectedAnswer === optionKey && optionKey !== currentQuestion.correctAnswer) {
+        return "border-red-500 bg-red-50";
+      }
     }
 
     return "border-gray-200";
@@ -183,7 +235,19 @@ function YearPracticeContent() {
   const getAnswerStats = () => {
     const answered = Object.keys(answers).length;
     const correct = Object.entries(answers).filter(
-      ([index, answer]) => questions[parseInt(index)]?.correctAnswer === answer
+      ([index, answer]) => {
+        const question = questions[parseInt(index)];
+        if (!question) return false;
+        
+        // 对于多选题，需要排序后比较
+        if (question.questionType === 'multiple') {
+          const userAnswer = answer.split('').sort().join('');
+          const correctAnswer = question.correctAnswer.split('').sort().join('');
+          return userAnswer === correctAnswer;
+        }
+        
+        return question.correctAnswer === answer;
+      }
     ).length;
     return { answered, correct };
   };
@@ -307,6 +371,16 @@ function YearPracticeContent() {
               </div>
             </div>
 
+            {/* 多选题提示 */}
+            {currentQuestion.questionType === 'multiple' && !isSubmitted && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center text-sm text-blue-700">
+                  <CheckCircle2 className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span className="font-medium">多项选择题：可以选择多个答案</span>
+                </div>
+              </div>
+            )}
+
             {/* 选项 */}
             <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
               {currentQuestion.options.map((option, optionIndex) => {
@@ -346,9 +420,22 @@ function YearPracticeContent() {
                     )} ${isSubmitted ? "cursor-default" : "cursor-pointer"}`}
                   >
                     <div className="flex items-start">
-                      <span className="font-semibold text-gray-700 mr-2 md:mr-3 mt-0.5 flex-shrink-0 text-sm md:text-base">
-                        {option.key}.
-                      </span>
+                      {/* 多选题显示复选框，单选题显示字母 */}
+                      {currentQuestion.questionType === 'multiple' && !isSubmitted ? (
+                        <div className={`w-5 h-5 rounded border-2 mr-2 md:mr-3 mt-1 flex-shrink-0 flex items-center justify-center ${
+                          selectedMultipleAnswers.has(option.key) 
+                            ? 'bg-primary-500 border-primary-500' 
+                            : 'border-gray-300'
+                        }`}>
+                          {selectedMultipleAnswers.has(option.key) && (
+                            <CheckCircle2 className="w-4 h-4 text-white" />
+                          )}
+                        </div>
+                      ) : (
+                        <span className="font-semibold text-gray-700 mr-2 md:mr-3 mt-0.5 flex-shrink-0 text-sm md:text-base">
+                          {option.key}.
+                        </span>
+                      )}
                       <div className="flex-1">
                         {/* 显示选项图片 */}
                         {optionImage && (
@@ -375,10 +462,17 @@ function YearPracticeContent() {
                           </span>
                         )}
                       </div>
-                      {isSubmitted && option.key === currentQuestion.correctAnswer && (
+                      {isSubmitted && currentQuestion.correctAnswer.split('').includes(option.key) && (
                         <CheckCircle2 className="w-5 h-5 text-green-500 ml-2 flex-shrink-0" />
                       )}
                       {isSubmitted &&
+                        currentQuestion.questionType === 'multiple' &&
+                        selectedMultipleAnswers.has(option.key) &&
+                        !currentQuestion.correctAnswer.split('').includes(option.key) && (
+                          <XCircle className="w-5 h-5 text-red-500 ml-2 flex-shrink-0" />
+                        )}
+                      {isSubmitted &&
+                        currentQuestion.questionType !== 'multiple' &&
                         selectedAnswer === option.key &&
                         option.key !== currentQuestion.correctAnswer && (
                           <XCircle className="w-5 h-5 text-red-500 ml-2 flex-shrink-0" />
