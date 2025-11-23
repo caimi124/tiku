@@ -300,68 +300,93 @@ function YearPracticeContent() {
                   {currentIndex + 1}.
                 </span>
                 <div className="flex-1">
-                  <p className="text-base md:text-lg text-gray-900 leading-relaxed mb-4">
+                  <p className="text-base md:text-lg text-gray-900 leading-relaxed">
                     {currentQuestion.content.replace('\n\n【题目包含图片】', '')}
                   </p>
-                  {/* 显示题目图片 */}
-                  {currentQuestion.aiExplanation && (() => {
-                    try {
-                      const data = JSON.parse(currentQuestion.aiExplanation);
-                      if (data.images && data.images.length > 0) {
-                        return (
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                            {data.images.map((imgUrl: string, idx: number) => (
-                              <div key={idx} className="border rounded-lg overflow-hidden bg-gray-50">
-                                <img
-                                  src={imgUrl}
-                                  alt={`题目图片 ${idx + 1}`}
-                                  className="w-full h-auto object-contain"
-                                  onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.style.display = 'none';
-                                  }}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        );
-                      }
-                    } catch (e) {
-                      // 解析失败，不显示图片
-                    }
-                    return null;
-                  })()}
                 </div>
               </div>
             </div>
 
             {/* 选项 */}
             <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
-              {currentQuestion.options.map((option) => (
-                <button
-                  key={option.key}
-                  onClick={() => handleAnswerSelect(option.key)}
-                  disabled={isSubmitted}
-                  className={`w-full text-left p-3 md:p-4 rounded-lg border-2 transition active:scale-[0.98] ${getAnswerClass(
-                    option.key
-                  )} ${isSubmitted ? "cursor-default" : "cursor-pointer"}`}
-                >
-                  <div className="flex items-start">
-                    <span className="font-semibold text-gray-700 mr-2 md:mr-3 mt-0.5 flex-shrink-0 text-sm md:text-base">
-                      {option.key}.
-                    </span>
-                    <span className="flex-1 text-gray-700 text-sm md:text-base leading-relaxed">{option.value}</span>
-                    {isSubmitted && option.key === currentQuestion.correctAnswer && (
-                      <CheckCircle2 className="w-5 h-5 text-green-500 ml-2 flex-shrink-0" />
-                    )}
-                    {isSubmitted &&
-                      selectedAnswer === option.key &&
-                      option.key !== currentQuestion.correctAnswer && (
-                        <XCircle className="w-5 h-5 text-red-500 ml-2 flex-shrink-0" />
+              {currentQuestion.options.map((option, optionIndex) => {
+                // 解析图片数据
+                let optionImage: string | null = null;
+                if (currentQuestion.aiExplanation) {
+                  try {
+                    const data = JSON.parse(currentQuestion.aiExplanation);
+                    console.log('🖼️ 图片数据解析:', {
+                      questionIndex: currentIndex + 1,
+                      optionIndex,
+                      optionKey: option.key,
+                      hasImages: !!data.images,
+                      imageCount: data.images?.length || 0,
+                      imageUrl: data.images?.[optionIndex]
+                    });
+                    if (data.images && data.images.length > optionIndex) {
+                      optionImage = data.images[optionIndex];
+                      console.log('✅ 图片已设置:', optionImage);
+                    }
+                  } catch (e) {
+                    console.error('❌ 图片数据解析失败:', e);
+                  }
+                } else {
+                  if (optionIndex === 0) {
+                    console.log('⚠️ 无aiExplanation数据，题目:', currentIndex + 1);
+                  }
+                }
+
+                return (
+                  <button
+                    key={option.key}
+                    onClick={() => handleAnswerSelect(option.key)}
+                    disabled={isSubmitted}
+                    className={`w-full text-left p-3 md:p-4 rounded-lg border-2 transition active:scale-[0.98] ${getAnswerClass(
+                      option.key
+                    )} ${isSubmitted ? "cursor-default" : "cursor-pointer"}`}
+                  >
+                    <div className="flex items-start">
+                      <span className="font-semibold text-gray-700 mr-2 md:mr-3 mt-0.5 flex-shrink-0 text-sm md:text-base">
+                        {option.key}.
+                      </span>
+                      <div className="flex-1">
+                        {/* 显示选项图片 */}
+                        {optionImage && (
+                          <div className="mb-2 border rounded-lg overflow-hidden bg-gray-50">
+                            <img
+                              src={optionImage}
+                              alt={`选项 ${option.key}`}
+                              className="w-full h-auto object-contain max-h-48"
+                              onLoad={() => {
+                                console.log('🎉 图片加载成功:', optionImage);
+                              }}
+                              onError={(e) => {
+                                console.error('❌ 图片加载失败:', optionImage);
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                              }}
+                            />
+                          </div>
+                        )}
+                        {/* 显示选项文字（如果有） */}
+                        {option.value && (
+                          <span className="text-gray-700 text-sm md:text-base leading-relaxed">
+                            {option.value}
+                          </span>
+                        )}
+                      </div>
+                      {isSubmitted && option.key === currentQuestion.correctAnswer && (
+                        <CheckCircle2 className="w-5 h-5 text-green-500 ml-2 flex-shrink-0" />
                       )}
-                  </div>
-                </button>
-              ))}
+                      {isSubmitted &&
+                        selectedAnswer === option.key &&
+                        option.key !== currentQuestion.correctAnswer && (
+                          <XCircle className="w-5 h-5 text-red-500 ml-2 flex-shrink-0" />
+                        )}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
             {/* 答案解析 */}

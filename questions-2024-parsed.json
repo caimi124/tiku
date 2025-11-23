@@ -1,0 +1,2994 @@
+[
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "保存后告诉我，我会自动转换并导入\n\n【题目格式示例】\n一、最佳选择题\n1. 题目内容...",
+    "options": [
+      {
+        "key": "A",
+        "value": "选项A"
+      },
+      {
+        "key": "B",
+        "value": "选项B"
+      },
+      {
+        "key": "C",
+        "value": "选项C"
+      },
+      {
+        "key": "D",
+        "value": "选项D"
+      },
+      {
+        "key": "E",
+        "value": "选项E\n答案：C\n解析：解析内容...\n\n========================================\n请在下方粘贴您的完整120道题目：\n========================================\n\n（请在此处粘贴所有题目）\n\n \n一、最佳选择题\n.属于“阳脉之海”的是\n1"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "督脉为“阳脉之海”。任脉为“阴脉之海”。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "痹证辨治",
+    "question_type": "single",
+    "content": "某女，40 岁，肢体肌肉酸楚、重着，疼痛，肿胀，活动不利，口中黏腻，舌苔白腻，脉濡\n缓。治疗宜的基础方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "薏苡仁汤"
+      },
+      {
+        "key": "B",
+        "value": "独活寄生汤"
+      },
+      {
+        "key": "C",
+        "value": "乌头汤"
+      },
+      {
+        "key": "D",
+        "value": "桃红饮"
+      },
+      {
+        "key": "E",
+        "value": "防风汤"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "依据关键词重着，舌苔白腻，辨证有湿邪痹症，故选用薏苡仁汤。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证",
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "中药注射剂",
+    "question_type": "single",
+    "content": "关于中药注射剂使用原则的说法，错误的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "中药注射剂和其他药品一起混合滴注"
+      },
+      {
+        "key": "B",
+        "value": "应密切观察用药反应，特别是用药后 30 分钟内"
+      },
+      {
+        "key": "C",
+        "value": "按照药品说明书推荐的剂量给药速度和疗程使用"
+      },
+      {
+        "key": "D",
+        "value": "临床使用中药注射剂应辨证用药"
+      },
+      {
+        "key": "E",
+        "value": "选用中药注射剂应合理选择给药途径"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "中药注射剂应该单独滴注，故 A 说法错误。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "用药指导",
+    "question_type": "single",
+    "content": "下列治疗感冒的用药方案合理的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "症状较重者，加倍服用感冒清片"
+      },
+      {
+        "key": "B",
+        "value": "哺乳期患者使服用重感冒灵片"
+      },
+      {
+        "key": "C",
+        "value": "严重性肾功能不全者服用复方感冒灵片"
+      },
+      {
+        "key": "D",
+        "value": "风热感冒患者服用强力感冒片"
+      },
+      {
+        "key": "E",
+        "value": "司机驾驶期间服用速感宁胶囊"
+      }
+    ],
+    "correct_answer": "D",
+    "explanation": "强力感冒片，辛凉解表，清热解毒，解热镇痛，可用于风热感冒，故 D 用药方\n案合理。。感冒清片需要按照规定的药物剂量区服。用，而不能加倍服用，故 A 不合理。重\n感冒灵片含有安乃近，哺乳期不适宜服用，故 B 不合理。复方感冒灵片，严重性肾功能不全\n者禁用，故 C 不合理。速感宁胶囊含有马来酸氯苯那敏，有嗜睡的不良反应，司机驾驶期间\n不适宜服用，故 E 不合理。",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "用药指导",
+    "question_type": "single",
+    "content": "关于中药饮片处方用药适宜性的说法，错误的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "应用玉屏风散固表止汗，宜选用生黄芪"
+      },
+      {
+        "key": "B",
+        "value": "应用泻心汤泻火解毒，宜选用生黄连"
+      },
+      {
+        "key": "C",
+        "value": "应用桃红四物汤活血行瘀，宜选用酒当归"
+      },
+      {
+        "key": "D",
+        "value": "应用白虎汤清热泻火，宜选用生知母"
+      },
+      {
+        "key": "E",
+        "value": "应用大黄䗪虫丸丸破瘀消疡，宜选用生大黄"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "大黄䗪虫丸丸破瘀消疡，宜选用熟大黄，故 E 说法错误。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "single",
+    "content": "某女，48 岁，月经紊乱，腰脊冷痛，肢软无力，神疲体倦。浮肿便溏，舌淡嫩苔白润，脉\n细弱，治疗宜选用的基础方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "一贯煎合逍遥散"
+      },
+      {
+        "key": "B",
+        "value": "左归丸合二至丸"
+      },
+      {
+        "key": "C",
+        "value": "保阴煎合圣愈汤"
+      },
+      {
+        "key": "D",
+        "value": "右归丸合四君子汤"
+      },
+      {
+        "key": "E",
+        "value": "举元煎合安仲汤"
+      }
+    ],
+    "correct_answer": "D",
+    "explanation": "腰脊冷痛定位到肾，浮肿便溏定位到脾，再结合舌脉，辨证为脾肾阳虚，选用右\n归丸。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证",
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "病例分析",
+    "question_type": "single",
+    "content": "某女，28 岁。乳房肿痛，皮肤红灼热，继之肿块变软，有应指感，伴身热口渴，溲赤便秘，\n舌红苔黄腻，脉洪数。辨析其证候是",
+    "options": [
+      {
+        "key": "A",
+        "value": "肝胆湿热"
+      },
+      {
+        "key": "B",
+        "value": "气滞热壅"
+      },
+      {
+        "key": "C",
+        "value": "阴虚内热"
+      },
+      {
+        "key": "D",
+        "value": "热毒炽盛"
+      },
+      {
+        "key": "E",
+        "value": "肝郁痰凝"
+      }
+    ],
+    "correct_answer": "D",
+    "explanation": "身热口渴，溲赤便秘，舌红苔黄腻，脉洪数，为热毒炽盛。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "不属于实证的临床表现是",
+    "options": [
+      {
+        "key": "A",
+        "value": "神昏谵语"
+      },
+      {
+        "key": "B",
+        "value": "痰涎壅盛"
+      },
+      {
+        "key": "C",
+        "value": "腹痛喜按"
+      },
+      {
+        "key": "D",
+        "value": "呼吸气粗"
+      },
+      {
+        "key": "E",
+        "value": "舌苔厚腻"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "腹痛喜按为虚证。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "中医基础理论",
+    "question_type": "single",
+    "content": "寒极生热，热极生寒的体现的阴阳关系是",
+    "options": [
+      {
+        "key": "A",
+        "value": "转化"
+      },
+      {
+        "key": "B",
+        "value": "消长"
+      },
+      {
+        "key": "C",
+        "value": "互藏"
+      },
+      {
+        "key": "D",
+        "value": "互损"
+      },
+      {
+        "key": "E",
+        "value": "互根"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "寒极生热，热极生寒体现阴阳的转化。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "single",
+    "content": "某女，52 岁，咳嗽日久，少痰咳甚。五心烦热，颧红，耳鸣，神疲消瘦，舌红少苔，脉\n细数。治疗易选用的基础方剂",
+    "options": [
+      {
+        "key": "A",
+        "value": "二陈平胃散"
+      },
+      {
+        "key": "B",
+        "value": "沙参麦冬汤"
+      },
+      {
+        "key": "C",
+        "value": "清金化痰汤"
+      },
+      {
+        "key": "D",
+        "value": "三子养心汤"
+      },
+      {
+        "key": "E",
+        "value": "麻杏石甘汤"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "依据五心烦热，颧红，舌红少苔，脉细数，辨证为阴虚，选用沙参麦冬汤。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证",
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "藏药以五元学说和味、性、效理论为导，形成独具特色的理论体系。其中功效为轻、糙、\n凉、锐、浮、可用于医治赤巴病、麻风、晕眩、瘟疫等疾病的药味是",
+    "options": [
+      {
+        "key": "A",
+        "value": "酸味"
+      },
+      {
+        "key": "B",
+        "value": "涩味"
+      },
+      {
+        "key": "C",
+        "value": "咸味"
+      },
+      {
+        "key": "D",
+        "value": "苦味"
+      },
+      {
+        "key": "E",
+        "value": "辛味"
+      }
+    ],
+    "correct_answer": "D",
+    "explanation": "苦味功效为轻、糙、凉、锐、浮、可用于医治赤巴病、麻风、晕眩、瘟疫等疾病。",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "“壮水之主，以制阳光”的治法适用于",
+    "options": [
+      {
+        "key": "A",
+        "value": "虚寒证"
+      },
+      {
+        "key": "B",
+        "value": "虚热证"
+      },
+      {
+        "key": "C",
+        "value": "阴阳两虚证"
+      },
+      {
+        "key": "D",
+        "value": "实热证"
+      },
+      {
+        "key": "E",
+        "value": "实寒证"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "“壮水之主，以制阳光”的治法适用于虚热证。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "治法"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "下列正别名错误的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "重楼别名蚤休"
+      },
+      {
+        "key": "B",
+        "value": "补骨脂别名破故纸"
+      },
+      {
+        "key": "C",
+        "value": "鸡血藤别名红藤"
+      },
+      {
+        "key": "D",
+        "value": "牵牛子别名黑丑"
+      },
+      {
+        "key": "E",
+        "value": "海螵蛸别名乌贼骨"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "大血藤别名红藤。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "五色主病理论中，热证对应的颜色是",
+    "options": [
+      {
+        "key": "A",
+        "value": "青色"
+      },
+      {
+        "key": "B",
+        "value": "赤色"
+      },
+      {
+        "key": "C",
+        "value": "黄色"
+      },
+      {
+        "key": "D",
+        "value": "白色"
+      },
+      {
+        "key": "E",
+        "value": "黑色"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "五色主病理论中，热证对应的颜色是赤色。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "根据中药斗谱编排要求，不能摆放在一起的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "陈皮和青皮"
+      },
+      {
+        "key": "B",
+        "value": "三棱和莪术"
+      },
+      {
+        "key": "C",
+        "value": "知母和浙贝母"
+      },
+      {
+        "key": "D",
+        "value": "黄精和熟地黄"
+      },
+      {
+        "key": "E",
+        "value": "杜仲和续断"
+      }
+    ],
+    "correct_answer": "D",
+    "explanation": "黄精和熟地黄外观形状相似，但功效不同，不适宜排列在一起。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "下列中西药联用，起到协同作用的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "维 C 银翘片+解热镇痛药"
+      },
+      {
+        "key": "B",
+        "value": "芍药甘草汤+解痉药"
+      },
+      {
+        "key": "C",
+        "value": "槐角丸+磺胺类药物"
+      },
+      {
+        "key": "D",
+        "value": "人参鹿茸丸+磺酰脲类药物"
+      },
+      {
+        "key": "E",
+        "value": "桂枝汤+糖皮质激素"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "芍药甘草汤与西药解痉药联用，可提高疗效，起到协同作用。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "single",
+    "content": "某男，68 岁，眩晕日久不愈，精神萎靡，目涩耳鸣，视物模糊，腰膝酸软，五心烦热，\n舌红少苔，脉细数。治疗宜选用的基础方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "半夏白术天麻汤"
+      },
+      {
+        "key": "B",
+        "value": "左归丸"
+      },
+      {
+        "key": "C",
+        "value": "二陈汤"
+      },
+      {
+        "key": "D",
+        "value": "归脾汤"
+      },
+      {
+        "key": "E",
+        "value": "天麻钩藤饮"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "辨证肾精不足，选用左归丸。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证",
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "痹证辨治",
+    "question_type": "single",
+    "content": "某女，71 岁。胸痹心痛 8 年，加重 3 天。心胸疼痛，痛如针刺而有定处，入夜为甚，伴\n胸闷、心悸；舌紫暗，脉弦涩。治疗宜选用的中成药是",
+    "options": [
+      {
+        "key": "A",
+        "value": "芪参益气滴丸"
+      },
+      {
+        "key": "B",
+        "value": "芪苈强心胶囊"
+      },
+      {
+        "key": "C",
+        "value": "宽胸气雾剂"
+      },
+      {
+        "key": "D",
+        "value": "血府逐瘀口服液."
+      },
+      {
+        "key": "E",
+        "value": "天王补心丸"
+      }
+    ],
+    "correct_answer": "D",
+    "explanation": "辨证有瘀血，选用血府逐瘀口服液.。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证",
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "single",
+    "content": "口疮心脾积热证常以凉膈散为基础方剂加减治疗，关于该方用药指导的访法，错误的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "方中薄荷宜选用薄荷叶，清头目，利咽喉"
+      },
+      {
+        "key": "B",
+        "value": "方中芒硝一般不入煎剂，待汤剂煎得后，溶入汤液中服用"
+      },
+      {
+        "key": "C",
+        "value": "方中黄芩宜选用酒黄芩，善清上焦热"
+      },
+      {
+        "key": "D",
+        "value": "方中大黄峻烈攻下，脾虚体弱者宜减少用量"
+      },
+      {
+        "key": "E",
+        "value": "方中甘草宜选用炙甘草，取其补益之功"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "选用生甘草，取其清热解毒之效",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "病例分析",
+    "question_type": "single",
+    "content": "某男，28 岁、因发热、恶寒，咽痛、咳嗽，血常规检查显示:白细胞计数 12.2x109/L，中\n性粒细胞计数 9.5x109/L，白细胞和中性拉细胞均增多，其临床意义是",
+    "options": [
+      {
+        "key": "A",
+        "value": "放射损伤"
+      },
+      {
+        "key": "B",
+        "value": "免疫缺陷"
+      },
+      {
+        "key": "C",
+        "value": "细菌感染"
+      },
+      {
+        "key": "D",
+        "value": "变态反应\nE 病毒感染"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "白细胞和中性拉细胞均增多，提示细菌感染。",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "病例分析",
+    "question_type": "single",
+    "content": "某女，68 岁，大便秘结，脘腹痞满，不思饮食，口唇干燥，面无华，舌红少苔，脉细涩。\n宜采用的治法",
+    "options": [
+      {
+        "key": "A",
+        "value": "消食导滞法"
+      },
+      {
+        "key": "B",
+        "value": "消痞散积法"
+      },
+      {
+        "key": "C",
+        "value": "攻补兼施法"
+      },
+      {
+        "key": "D",
+        "value": "调和肠胃法"
+      },
+      {
+        "key": "E",
+        "value": "润燥缓下法"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "辨证为血虚津枯，肠燥便秘，选用的治法是润燥缓下法。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证",
+      "选用",
+      "治法"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "病例分析",
+    "question_type": "single",
+    "content": "某女，23 岁。周身皮肤多发风团，色鲜红，灼热剧痒，遇热则剧，得冷则减，伴发热，\n咽喉肿痛，舌苔黄，脉浮数。诊断为瘾疹，其证候是",
+    "options": [
+      {
+        "key": "A",
+        "value": "血虚风燥"
+      },
+      {
+        "key": "B",
+        "value": "胃肠湿热"
+      },
+      {
+        "key": "C",
+        "value": "风热犯表"
+      },
+      {
+        "key": "D",
+        "value": "湿浊瘀滞"
+      },
+      {
+        "key": "E",
+        "value": "风寒束表"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "脉浮数，辨证为风热犯表。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "具有调畅排精行经生理功能的脏是",
+    "options": [
+      {
+        "key": "A",
+        "value": "肺"
+      },
+      {
+        "key": "B",
+        "value": "肝"
+      },
+      {
+        "key": "C",
+        "value": "脾"
+      },
+      {
+        "key": "D",
+        "value": "肾"
+      },
+      {
+        "key": "E",
+        "value": "心"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "肝具有调畅排精行经生理功能。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "single",
+    "content": "某男，3 岁，不思进食，食少饮多，皮肤失润，大便偏干，手足心热。苔花剥，脉细数，\n治疗宜选用的基础方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "健脾丸"
+      },
+      {
+        "key": "B",
+        "value": "保和丸"
+      },
+      {
+        "key": "C",
+        "value": "养胃增液汤"
+      },
+      {
+        "key": "D",
+        "value": "不换金正气散"
+      },
+      {
+        "key": "E",
+        "value": "参苓白术散"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "辨证为胃阴亏虚，选用养胃增液汤。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证",
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "single",
+    "content": "宜热服的方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "奔豚汤"
+      },
+      {
+        "key": "B",
+        "value": "桂枝汤"
+      },
+      {
+        "key": "C",
+        "value": "半夏汤"
+      },
+      {
+        "key": "D",
+        "value": "麦门冬汤"
+      },
+      {
+        "key": "E",
+        "value": "玉女煎"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "桂枝汤宜热服。玉女煎清胃滋阴，适宜冷服。奔豚汤和麦门冬汤日三夜一服用。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "病例分析",
+    "question_type": "single",
+    "content": "某男，31 岁，鼻塞，流涕黄浊黏稠，味臭，头痛头昏，口苦咽千，耳鸣，舌红台黄，脉\n弦数。诊鼻渊、证属胆经郁热。治疗用的中成药是",
+    "options": [
+      {
+        "key": "A",
+        "value": "鼻渊片"
+      },
+      {
+        "key": "B",
+        "value": "鼻渊通窍颗粒"
+      },
+      {
+        "key": "C",
+        "value": "鼻渊舒胶囊"
+      },
+      {
+        "key": "D",
+        "value": "鼻舒适片"
+      },
+      {
+        "key": "E",
+        "value": "利鼻片"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "胆经郁热，选用鼻渊舒胶囊。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "中医基础理论",
+    "question_type": "single",
+    "content": "某女，25 岁，经量少，经期后，气乏力，头晕；舌淡、脉虚弱。诊断为月经过少，证属\n气血亏虚。治疗选用的中成药是",
+    "options": [
+      {
+        "key": "A",
+        "value": "益母丸"
+      },
+      {
+        "key": "B",
+        "value": "复方益母草膏"
+      },
+      {
+        "key": "C",
+        "value": "妇宁康片"
+      },
+      {
+        "key": "D",
+        "value": "调经活血片"
+      },
+      {
+        "key": "E",
+        "value": "十二乌鸡白凤丸"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "气血亏虚选用十二乌鸡白凤丸。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "根据《中国药典》收载的毒性药材和饮片内容，含毒性饮片的中成药是",
+    "options": [
+      {
+        "key": "A",
+        "value": "胃肠安丸"
+      },
+      {
+        "key": "B",
+        "value": "胃疡灵颗粒"
+      },
+      {
+        "key": "C",
+        "value": "养胃颗粒"
+      },
+      {
+        "key": "D",
+        "value": "胃安胶囊"
+      },
+      {
+        "key": "E",
+        "value": "舒肝和胃丸"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "胃肠安丸含有毒性中药巴豆霜。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "肝阳上亢头痛的特点是",
+    "options": [
+      {
+        "key": "A",
+        "value": "隐痛"
+      },
+      {
+        "key": "B",
+        "value": "刺痛"
+      },
+      {
+        "key": "C",
+        "value": "重痛"
+      },
+      {
+        "key": "D",
+        "value": "冷痛"
+      },
+      {
+        "key": "E",
+        "value": "胀痛"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "肝阳上亢头痛的特点是胀痛。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "下列中成药联用，不存在相同毒性成分叠加风险的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "安宫牛黄丸与内消瘰疬丸"
+      },
+      {
+        "key": "B",
+        "value": "朱砂安神丸与天王补心丸"
+      },
+      {
+        "key": "C",
+        "value": "血栓心脉宁片与麝香保心丸"
+      },
+      {
+        "key": "D",
+        "value": "大活络丸与天麻丸"
+      },
+      {
+        "key": "E",
+        "value": "附子理中丸与温胃舒胶囊"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "安宫牛黄丸含有朱砂，含有汞离子，内消瘰疬丸含有溴碘离子，二者容易形成溴\n化汞或者碘化汞，而不是相同毒性成分叠加风险，故正确答案 A.。朱砂安神丸与天王补心\n丸都含有汞，毒性叠加。大活络丸与天麻丸都含有附子，毒性叠加。血栓心脉宁片与麝香保\n心丸都含有蟾酥，毒性叠加。附子理中丸与温胃舒胶囊都含有附子，毒性叠加。",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "根据中药七情配伍，相畏的药组是",
+    "options": [
+      {
+        "key": "A",
+        "value": "黄连，黄芩"
+      },
+      {
+        "key": "B",
+        "value": "黄芩，生姜"
+      },
+      {
+        "key": "C",
+        "value": "半夏， 生姜"
+      },
+      {
+        "key": "D",
+        "value": "连翘，金银花"
+      },
+      {
+        "key": "E",
+        "value": "甘草，海藻"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "半夏畏生姜。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "病例分析",
+    "question_type": "single",
+    "content": "某男，34 岁，外感发热，微恶风寒，鼻塞，流黄浊涕，无汗，头痛，口干，咳嗽，咽喉\n疼痛；舌红苔薄黄，脉浮数。宜选用的中成药是",
+    "options": [
+      {
+        "key": "A",
+        "value": "败毒散"
+      },
+      {
+        "key": "B",
+        "value": "银翘解毒丸"
+      },
+      {
+        "key": "C",
+        "value": "通宣理肺丸"
+      },
+      {
+        "key": "D",
+        "value": "感冒软胶囊"
+      },
+      {
+        "key": "E",
+        "value": "参苏丸"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "辨证风热感冒，选用银翘解毒丸。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证",
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "马钱子中毒表现不包括",
+    "options": [
+      {
+        "key": "A",
+        "value": "烦躁不安、面部肌肉紧张、吞咽困难"
+      },
+      {
+        "key": "B",
+        "value": "惊厥、痉挛"
+      },
+      {
+        "key": "C",
+        "value": "角弓反张"
+      },
+      {
+        "key": "D",
+        "value": "呼吸肌痉挛窒息"
+      },
+      {
+        "key": "E",
+        "value": "心电图显示房室传导阻滞等"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "心电图显示房室传导阻滞是蟾酥中毒的表现。故答案 E",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "用药指导",
+    "question_type": "single",
+    "content": "根据《中国药典》规定特殊调剂，用法，煎法错误的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "珍珠母用时捣碎，先煎 1 小时以上"
+      },
+      {
+        "key": "B",
+        "value": "水牛角洗净镑片，先煎 3 小时以上"
+      },
+      {
+        "key": "C",
+        "value": "两面针不可过量服用，忌与酸性食物同服"
+      },
+      {
+        "key": "D",
+        "value": "洋金花宜入丸散，也可卷烟分次燃吸"
+      },
+      {
+        "key": "E",
+        "value": "轻粉可入丸剂或装胶囊服，服后漱口"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "珍珠母质地坚硬，有效成分不易煎出，应打碎先煎 15 分钟，故 A 说法错误。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "用药指导",
+    "question_type": "single",
+    "content": "与中药合理用药基本原则不符的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "风寒湿痹患者用适量黄酒送服大活络丸"
+      },
+      {
+        "key": "B",
+        "value": "湿热泄泻患者同时服用肠康片、泻痢消胶囊和香连片"
+      },
+      {
+        "key": "C",
+        "value": "乳汁不通患者处方中用王不留行替代穿山甲"
+      },
+      {
+        "key": "D",
+        "value": "久病体虚患者空腹服用滋补类中药"
+      },
+      {
+        "key": "E",
+        "value": "服用含黄药子的制剂的患者定期监测肝功能"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "湿热泄泻患者同时服用肠康片、泻痢消胶囊和香连片，属于重复用药。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "病例分析",
+    "question_type": "single",
+    "content": "患者肌肤不仁，手足麻木，突然发生口眼歪斜语言不利，口角流涎，舌强语謇，半身不\n遂，证属风痰入络，应选用",
+    "options": [
+      {
+        "key": "A",
+        "value": "再造丸"
+      },
+      {
+        "key": "B",
+        "value": "全天麻胶囊"
+      },
+      {
+        "key": "C",
+        "value": "脑安颗粒"
+      },
+      {
+        "key": "D",
+        "value": "复方地龙胶囊"
+      },
+      {
+        "key": "E",
+        "value": "越婢加术汤"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "风痰入络选用再造丸。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "single",
+    "content": "因治疗需要，医师会应用不同术语，中药饮片的产地、炮制、质量等特殊要求在处方以\n注明。下列说法正确的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "为标明药材颜色，处方金毛狗脊"
+      },
+      {
+        "key": "B",
+        "value": "为标明药材采收季节，处方紫丹参"
+      },
+      {
+        "key": "C",
+        "value": "为标明药材产地，处方绵茵陈"
+      },
+      {
+        "key": "D",
+        "value": "为标明药材品质，广藿香"
+      },
+      {
+        "key": "E",
+        "value": "为标明药材修治，处方山萸肉"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "A 金毛狗脊，属于药材品质类；B 紫丹参，为药材颜色；C 绵茵陈，为药材采收\n季节；D 广藿香，为药材产地；E 山萸肉，为药材药材修治，即山茱萸去核后为山萸肉。故\n正确答案 E",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "病例分析",
+    "question_type": "single",
+    "content": "某女，56 岁。患高血脂，服用辛伐他汀。又因颈椎、腰椎疼痛服用仙灵骨葆胶囊，每日\n2\n次，每次 3 粒，一段时间后出现眼黄、尿黄、乏力、纳差。查肝生化指标:总胆红素\n(STB)63umol/L，谷氨酸氨基转移酶(ALT)832U/L、门冬氨酸氨基转移酶(AST)744U/L；查肝炎\n病毒学、自身免疫性肝炎指标，均呈阴性。该不良反应与仙灵骨葆胶囊的关联性评价为",
+    "options": [
+      {
+        "key": "A",
+        "value": "肯定"
+      },
+      {
+        "key": "B",
+        "value": "很可能"
+      },
+      {
+        "key": "C",
+        "value": "可能"
+      },
+      {
+        "key": "D",
+        "value": "无法评价"
+      },
+      {
+        "key": "E",
+        "value": "待评价"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "用药与不良反应发生关系密切，但是引发不良反应的药品不止一种，所以关联性\n评价是可能。\n二、配伍选择题\n\n\n \n【41-43】\nA.番泻叶\nB.瓦楞子\nC.僵蚕\nD.补骨脂\nE.蜈蚣",
+    "difficulty": 3,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "match",
+    "content": "处方直接写药名，需调配煅制的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "吲哚美辛"
+      },
+      {
+        "key": "B",
+        "value": "马来酸氯苯那敏"
+      },
+      {
+        "key": "C",
+        "value": "水杨酸甲酯"
+      },
+      {
+        "key": "D",
+        "value": "盐酸麻黄碱"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "处方直接写药名，需调配麸炒的是僵蚕；处方直接写药名，需调配盐炙的是补骨\n脂；处方直接写药名，需调配煅制的是瓦楞子。\n【44-46】\nA.吲哚美辛\nB.马来酸氯苯那敏\nC.水杨酸甲酯\nD.盐酸麻黄碱\nE.格列本脲",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "match",
+    "content": "新癀片中的西药成分是",
+    "options": [
+      {
+        "key": "A",
+        "value": "淡白舌"
+      },
+      {
+        "key": "B",
+        "value": "淡红舌"
+      },
+      {
+        "key": "C",
+        "value": "红舌"
+      },
+      {
+        "key": "D",
+        "value": "绛舌"
+      },
+      {
+        "key": "E",
+        "value": "紫舌\n4\n4\n4"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "咳特灵片中的西药成分是马来酸氯苯那敏；消渴丸中的西药成分是格列本脲；新\n癀片中的西药成分是吲哚美辛。\n【47-49】\nA.淡白舌\nB.淡红舌\nC.红舌\nD.绛舌\nE.紫舌\n4\n4\n4",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "match",
+    "content": "月经过少血瘀证，宜选用的基础方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "鱼腥草"
+      },
+      {
+        "key": "B",
+        "value": "苦杏仁"
+      },
+      {
+        "key": "C",
+        "value": "石膏"
+      },
+      {
+        "key": "D",
+        "value": "旋覆花"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "月经过多气虚证，宜选用的基础方剂是举元煎；月经先期肝郁血热证，宜选用的\n基础方剂是丹栀逍遥丸；月经过少血瘀证，宜选用的基础方剂是桃红四物汤。\n【53-55】\nA.鱼腥草\nB.苦杏仁\nC.石膏\nD.旋覆花\nE.车前子",
+    "difficulty": 2,
+    "knowledge_points": [
+      "选用",
+      "方剂"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "match",
+    "content": "有效成分是黏液质，需要包煎的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "气郁发热"
+      },
+      {
+        "key": "B",
+        "value": "气虚发热"
+      },
+      {
+        "key": "C",
+        "value": "湿温潮热"
+      },
+      {
+        "key": "D",
+        "value": "血瘀发热"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "含挥发油成分校多，要后下的是鱼腥草；有效成分不易煎出，要先煎的是石膏；\n有效成分是黏液质，需要包煎的是车前子。\n【56-57】\nA.气郁发热\nB.气虚发热\nC.湿温潮热\nD.血瘀发热\nE.阳明潮热",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "match",
+    "content": "午后热甚，身热不扬，困倦乏力，其临床意义是",
+    "options": [
+      {
+        "key": "A",
+        "value": "和络舒肝胶囊"
+      },
+      {
+        "key": "B",
+        "value": "复方益肝灵片"
+      },
+      {
+        "key": "C",
+        "value": "元胡止痛片"
+      },
+      {
+        "key": "D",
+        "value": "利胆片"
+      },
+      {
+        "key": "E",
+        "value": "舒肝止痛丸\n5"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "长期低热，乏力懒言，劳倦则甚，其临床意义是气虚发热；午后热甚，:身热不\n扬，困倦乏力，其临床意义是湿温潮热。\n【58-59】\nA.和络舒肝胶囊\nB.复方益肝灵片\nC.元胡止痛片\nD.利胆片\nE.舒肝止痛丸\n5",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "match",
+    "content": "肝功能不全者慎用的中药是",
+    "options": [
+      {
+        "key": "A",
+        "value": "气虚"
+      },
+      {
+        "key": "B",
+        "value": "阴虚"
+      },
+      {
+        "key": "C",
+        "value": "津亏"
+      },
+      {
+        "key": "D",
+        "value": "血瘀"
+      }
+    ],
+    "correct_answer": "D",
+    "explanation": "肾功能不全者慎用的中药是天仙藤。肝功能不全者慎用的中药是千里光。\n【62-63】\nA.气虚\nB.阴虚\nC.津亏\nD.血瘀\nE.血虚",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "病例分析",
+    "question_type": "match",
+    "content": "面色不华，爪甲色淡，头目眩晕，心悸怔忡神疲乏力，舌淡，脉细。其病机是",
+    "options": [
+      {
+        "key": "A",
+        "value": "四神丸"
+      },
+      {
+        "key": "B",
+        "value": "痛泻要方"
+      },
+      {
+        "key": "C",
+        "value": "藿香正气散"
+      },
+      {
+        "key": "D",
+        "value": "芍药汤"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "其一，五心烦热，骨蒸潮热，红少苔，脉细数，辨证为阴虚。其二，面色不华，\n爪甲色淡，辨证为血虚。\n【64-65】\nA.四神丸\nB.痛泻要方\nC.藿香正气散\nD.芍药汤\nE.葛根芩连汤",
+    "difficulty": 2,
+    "knowledge_points": [
+      "辨证"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "match",
+    "content": "治疗泄泻肾阳虚衰证，宜选用的基础方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "生姜"
+      },
+      {
+        "key": "B",
+        "value": "生姜皮"
+      },
+      {
+        "key": "C",
+        "value": "干姜"
+      },
+      {
+        "key": "D",
+        "value": "干姜炭"
+      },
+      {
+        "key": "E",
+        "value": "炮姜\n\n\n \n6\n6\n6"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "治疗泄泻寒湿内盛证，宜选用的基础方剂是藿香正气散。治疗泄泻肾阳虚衰证，\n宜选用的基础方剂是四神丸。\n【66-68】\nA.生姜\nB.生姜皮\nC.干姜\nD.干姜炭\nE.炮姜\n\n\n \n6\n6\n6",
+    "difficulty": 2,
+    "knowledge_points": [
+      "选用",
+      "方剂"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "match",
+    "content": "湿热壅盛对应的症状是",
+    "options": [
+      {
+        "key": "A",
+        "value": "第一级"
+      },
+      {
+        "key": "B",
+        "value": "第二级"
+      },
+      {
+        "key": "C",
+        "value": "第三级"
+      },
+      {
+        "key": "D",
+        "value": "第四级"
+      },
+      {
+        "key": "E",
+        "value": "第五级\n根据美国安全用药研究所(ISPM)6 个层级实施用药错误防范策略，其有效性由强到弱。\n7"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "风水相搏对应的症状是眼睑浮肿，伴恶寒发热，肢节酸楚；湿热壅盛对应的症状\n是遍体浮肿，皮肤绷急光亮，小便短赤。\n【71-73】\nA.第一级\nB.第二级\nC.第三级\nD.第四级\nE.第五级\n根据美国安全用药研究所(ISPM)6 个层级实施用药错误防范策略，其有效性由强到弱。\n7",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "用药指导",
+    "question_type": "match",
+    "content": "具有生殖毒性，过量服用导致男性精子产生和成熟发生障碍，抑制卵巢功能的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "面"
+      },
+      {
+        "key": "B",
+        "value": "爪"
+      },
+      {
+        "key": "C",
+        "value": "毛"
+      },
+      {
+        "key": "D",
+        "value": "发"
+      },
+      {
+        "key": "E",
+        "value": "唇\n7\n8\n8"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "蓖麻子过量服用导致四肢麻木，步态不稳，手舞足蹈，烦躁不安，精神错乱。胆\n矾过量服用导致恶心呕吐，腹痛，腹泻，粪便蓝绿色，有特殊金属味。雷公藤具有生殖毒性，\n过量服用导致男性精子产生和成熟发生障碍，抑制卵巢功能。\n【79-81】\nA.面\nB.爪\nC.毛\nD.发\nE.唇\n7\n8\n8",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "match",
+    "content": "喘证风寒闭肺证的临床特点是",
+    "options": [
+      {
+        "key": "A",
+        "value": "疏风清热汤"
+      },
+      {
+        "key": "B",
+        "value": "清咽利膈汤"
+      },
+      {
+        "key": "C",
+        "value": "养阴清肺汤"
+      },
+      {
+        "key": "D",
+        "value": "益气聪明汤"
+      },
+      {
+        "key": "E",
+        "value": "龙胆泻肝汤\n8"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "喘证痰浊阻肺证的临床特点是喘满胸闷，痰多白黏，呕恶口黏。喘证风寒闭肺证\n\n\n \n的临床特点是喘咳气逆，痰白稀薄，恶寒无汗。\n【84-85】\nA.疏风清热汤\nB.清咽利膈汤\nC.养阴清肺汤\nD.益气聪明汤\nE.龙胆泻肝汤\n8",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "中医基础理论",
+    "question_type": "match",
+    "content": "体现阴阳“消长\"关系的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "扶正祛邪"
+      },
+      {
+        "key": "B",
+        "value": "标本缓急"
+      },
+      {
+        "key": "C",
+        "value": "调整阴阳"
+      },
+      {
+        "key": "D",
+        "value": "调和脏腑"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "气能生血，血能生气体现阴阳“互用”关系。阴盛则阳病，阳盛则阴病体现阴阳\n“消长\"关系。\n【88-90】\nA.扶正祛邪\nB.标本缓急\nC.调整阴阳\nD.调和脏腑\nE.三因制宜",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "四诊合参，辨析其证候是",
+    "options": [
+      {
+        "key": "A",
+        "value": "胃肠湿热证"
+      },
+      {
+        "key": "B",
+        "value": "风伤肠络证"
+      },
+      {
+        "key": "C",
+        "value": "脾虚气陷证"
+      },
+      {
+        "key": "D",
+        "value": "湿热下注证"
+      },
+      {
+        "key": "E",
+        "value": "气滞血瘀证"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "纳少便溏定位到脾，少气懒言，脉弱，属于气虚，辨证为脾虚气陷证。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "comprehensive",
+    "content": "宜选用的基础方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "凉血地黄汤"
+      },
+      {
+        "key": "B",
+        "value": "止痛如神汤"
+      },
+      {
+        "key": "C",
+        "value": "补中益气汤"
+      },
+      {
+        "key": "D",
+        "value": "脏连丸"
+      },
+      {
+        "key": "E",
+        "value": "银翘散"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "脾虚气陷证选用补中益气汤。\n案例：（二）某女，49 岁。腹部积块明显，质地较硬，固定不移，隐痛，形体消瘦，纳谷减\n少。舌质紫，脉细涩。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "四诊合参，辨析其证候是",
+    "options": [
+      {
+        "key": "A",
+        "value": "正虚邪结证"
+      },
+      {
+        "key": "B",
+        "value": "瘀血内结证"
+      },
+      {
+        "key": "C",
+        "value": "气滞血阻证"
+      },
+      {
+        "key": "D",
+        "value": "肝气郁结证"
+      },
+      {
+        "key": "E",
+        "value": "肝胆湿热证"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "积块固定不移，舌质紫，脉细涩，辨证为瘀血内结证。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "宜选用的治法是",
+    "options": [
+      {
+        "key": "A",
+        "value": "疏肝解郁，行气散结"
+      },
+      {
+        "key": "B",
+        "value": "理气消积，活血散瘀"
+      },
+      {
+        "key": "C",
+        "value": "祛瘀软坚，扶正健脾"
+      },
+      {
+        "key": "D",
+        "value": "补益气血，活血化瘀"
+      },
+      {
+        "key": "E",
+        "value": "清热除湿，散瘀止痛"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "瘀血兼有纳谷减少，宜选用的治法是，祛瘀软坚，扶正健脾。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用",
+      "治法"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "comprehensive",
+    "content": "宜选用的基础方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "逍遥散合木香顺气散加减"
+      },
+      {
+        "key": "B",
+        "value": "龙胆泻肝汤加减"
+      },
+      {
+        "key": "C",
+        "value": "柴胡疏肝散合失笑散加减"
+      },
+      {
+        "key": "D",
+        "value": "膈下逐瘀汤合六君子汤加减"
+      },
+      {
+        "key": "E",
+        "value": "八珍汤合化积丸加减"
+      }
+    ],
+    "correct_answer": "D",
+    "explanation": "瘀血宜选用的基础方剂是膈下逐瘀汤合六君子汤加减。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用",
+      "方剂"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "宜选用的中成药是",
+    "options": [
+      {
+        "key": "A",
+        "value": "龙胆泻肝丸"
+      },
+      {
+        "key": "B",
+        "value": "肝脾康胶囊"
+      },
+      {
+        "key": "C",
+        "value": "慢肝养阴胶囊"
+      },
+      {
+        "key": "D",
+        "value": "和络舒肝胶囊"
+      },
+      {
+        "key": "E",
+        "value": "化癥回生片"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "瘀血宜选用的中成药是化癥回生片。\n案例：（三）某男，65 岁，因咳嗽、气喘多年，加重 10 天就诊，症见咳嗽，喘急，口渴，\n尿赤，大便干结:苔黄腻，脉滑数。诊断为肺胀。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "四诊合参，辨析其证候是",
+    "options": [
+      {
+        "key": "A",
+        "value": "痰热郁肺"
+      },
+      {
+        "key": "B",
+        "value": "肺肾气虚"
+      },
+      {
+        "key": "C",
+        "value": "痰浊阻肺"
+      },
+      {
+        "key": "D",
+        "value": "风寒袭肺"
+      },
+      {
+        "key": "E",
+        "value": "风热犯肺"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "苔黄腻，脉滑数，辨证为痰热郁肺。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "宜选用的治法是",
+    "options": [
+      {
+        "key": "A",
+        "value": "疏风散寒，宣肺理气"
+      },
+      {
+        "key": "B",
+        "value": "疏风清热，宣肺理气"
+      },
+      {
+        "key": "C",
+        "value": "清肺化痰，降逆平喘"
+      },
+      {
+        "key": "D",
+        "value": "补肺摄纳，降气平喘"
+      },
+      {
+        "key": "E",
+        "value": "化痰降气，健脾益肺"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "痰热郁肺宜选用的治法是清肺化痰，降逆平喘。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用",
+      "治法"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "comprehensive",
+    "content": "宜选用的基础方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "平喘固本汤"
+      },
+      {
+        "key": "B",
+        "value": "苏子降气汤"
+      },
+      {
+        "key": "C",
+        "value": "越婢加半夏汤"
+      },
+      {
+        "key": "D",
+        "value": "桑菊饮"
+      },
+      {
+        "key": "E",
+        "value": "麻黄汤"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "痰热郁肺宜选用的基础方剂是越婢加半夏汤 。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用",
+      "方剂"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "宜选用的中成药是",
+    "options": [
+      {
+        "key": "A",
+        "value": "理气定喘丸"
+      },
+      {
+        "key": "B",
+        "value": "小青龙胶囊"
+      },
+      {
+        "key": "C",
+        "value": "桂龙咳喘宁胶囊"
+      },
+      {
+        "key": "D",
+        "value": "百令胶囊"
+      },
+      {
+        "key": "E",
+        "value": "清肺消炎丸，"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "痰热郁肺宜宜选用的中成药是清肺消炎丸，。\n案例：（四）某男，63 岁，小便点滴不爽，排出无力，尿量减少。舌淡胖苔白，脉沉细，中\n医诊断癃闭，症属肾阳衰惫。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "为明确西医诊断，应选择的检验指标是",
+    "options": [
+      {
+        "key": "A",
+        "value": "血清肌钙蛋白 1"
+      },
+      {
+        "key": "B",
+        "value": "血清高密度脂蛋白胆固醇"
+      },
+      {
+        "key": "C",
+        "value": "血肌酐"
+      },
+      {
+        "key": "D",
+        "value": "血淀粉酶"
+      },
+      {
+        "key": "E",
+        "value": "血清碱性磷酸酶"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "癃闭对应西医学的尿潴留，无尿症等，需要检查肾的功能，因此应选择的检验指\n标血肌酐。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "comprehensive",
+    "content": "根据辨证结果，宜选用的基础方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "代抵当汤"
+      },
+      {
+        "key": "B",
+        "value": "八正散"
+      },
+      {
+        "key": "C",
+        "value": "济生肾气丸"
+      },
+      {
+        "key": "D",
+        "value": "疏凿饮子"
+      },
+      {
+        "key": "E",
+        "value": "越婢加术汤"
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "肾阳衰惫选用济生肾气丸。\n案例：（五）某男，57 岁，患痹证 6 年余，四肢麻痹，活动艰难，遇寒加重，恶风畏寒，舌\n暗淡苔白，脉紧。近日一直服用舒筋丸。昨日不慎跌倒，腿部软组织损伤，伤处青红紫斑，\n肿胀疼痛。患者拟加服九分散。",
+    "difficulty": 2,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "comprehensive",
+    "content": "执业药师指出，舒筋丸与九分散含有相同毒性中药饮片不宜联用。该饮片是",
+    "options": [
+      {
+        "key": "A",
+        "value": "草乌"
+      },
+      {
+        "key": "B",
+        "value": "雪上一枝蒿"
+      },
+      {
+        "key": "C",
+        "value": "草乌"
+      },
+      {
+        "key": "D",
+        "value": "雄黄"
+      },
+      {
+        "key": "E",
+        "value": "马钱子粉"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "舒筋丸与九分散都含有毒性中药马钱子。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "患者属于",
+    "options": [
+      {
+        "key": "A",
+        "value": "瘀血头痛"
+      },
+      {
+        "key": "B",
+        "value": "血虚头痛"
+      },
+      {
+        "key": "C",
+        "value": "肝阳头痛"
+      },
+      {
+        "key": "D",
+        "value": "风寒头痛"
+      },
+      {
+        "key": "E",
+        "value": "风热头痛"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "头部外伤史，痛处固定不移，舌紫暗，有瘀斑，辨证属于瘀血头痛。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "应选用的治法为",
+    "options": [
+      {
+        "key": "A",
+        "value": "养血滋阴，和络止痛"
+      },
+      {
+        "key": "B",
+        "value": "活血化瘀，通窍止痛"
+      },
+      {
+        "key": "C",
+        "value": "平肝潜阳"
+      },
+      {
+        "key": "D",
+        "value": "疏风清热和络"
+      },
+      {
+        "key": "E",
+        "value": "疏风散寒止痛"
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "瘀血头痛应选用的治法为活血化瘀，通窍止痛。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用",
+      "治法"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "方剂应用",
+    "question_type": "comprehensive",
+    "content": "宜选用的基础方剂是",
+    "options": [
+      {
+        "key": "A",
+        "value": "芎芷石膏汤"
+      },
+      {
+        "key": "B",
+        "value": "川芎茶调散"
+      },
+      {
+        "key": "C",
+        "value": "加味四物汤"
+      },
+      {
+        "key": "D",
+        "value": "天麻钩藤饮"
+      },
+      {
+        "key": "E",
+        "value": "通窍活血汤"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "瘀血头痛宜选用的基础方剂是通窍活血汤。\n案例：（七）某女，55 岁，平素手足麻木，肌肤不仁，日前突发口眼歪斜，口角流涎，舌强\n语謇，半身不遂，手足拘挛、关节酸痛:舌苔薄白，脉浮数。血液生化指标检验结果显示:肌\n酸激酶活性 300U/L，肌酸激酶同工酶 CK-BB 活性升高。诊断为中风，证属风痰入络。处方\n\n\n \n如下:法半夏 9g、制白附子 6g、天南星 9g、天麻 9g、制川乌 3g、全蝎 6g、木香 6g、枳壳\n9g7 剂、水煎服，每日 1 剂，早晚分服。",
+    "difficulty": 3,
+    "knowledge_points": [
+      "选用",
+      "方剂"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "关于执业药师调剂时的操作，错误的是",
+    "options": [
+      {
+        "key": "A",
+        "value": "全蝎超量，提醒医师再次确认"
+      },
+      {
+        "key": "B",
+        "value": "制川乌应单包先煎"
+      },
+      {
+        "key": "C",
+        "value": "枳壳应付麸炒枳壳"
+      },
+      {
+        "key": "D",
+        "value": "法半夏与制川乌存在“十八反”禁忌应再次确认"
+      },
+      {
+        "key": "E",
+        "value": "天南星应付制天南星"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "全蝎用量 3-6g，没有超量。故 A 说法错误。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "肌酸激酶同工酶 CK-BB 活性升高的临床意义",
+    "options": [
+      {
+        "key": "A",
+        "value": "肾病综合征"
+      },
+      {
+        "key": "B",
+        "value": "代谢综合征"
+      },
+      {
+        "key": "C",
+        "value": "胰腺炎"
+      },
+      {
+        "key": "D",
+        "value": "细菌感染"
+      },
+      {
+        "key": "E",
+        "value": "急性脑血管疾病"
+      }
+    ],
+    "correct_answer": "E",
+    "explanation": "肌酸激酶同工酶 CK-BB 活性升高，代表神经系统疾病，如脑血管意外，急性颅脑\n损伤等。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "comprehensive",
+    "content": "经治疗后中风症状缓解，欲改服中成药继续治疗，根据中医辨证，宜选用的中成药是",
+    "options": [
+      {
+        "key": "A",
+        "value": "再造丸"
+      },
+      {
+        "key": "B",
+        "value": "全天麻胶囊"
+      },
+      {
+        "key": "C",
+        "value": "消栓胶囊"
+      },
+      {
+        "key": "D",
+        "value": "复方地龙胶囊"
+      },
+      {
+        "key": "E",
+        "value": "心脑静片"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "风痰入络选用再造丸。\n四、多项选择题",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "中医基础理论",
+    "question_type": "multiple",
+    "content": "关于五行与情志的关系，正确的有（多选）",
+    "options": [
+      {
+        "key": "A",
+        "value": "脾在志为思"
+      },
+      {
+        "key": "B",
+        "value": "肝在志为恐"
+      },
+      {
+        "key": "C",
+        "value": "肺在志为悲"
+      },
+      {
+        "key": "D",
+        "value": "心在志为喜"
+      },
+      {
+        "key": "E",
+        "value": "肾在志为怒"
+      }
+    ],
+    "correct_answer": "ACD",
+    "explanation": "肝在志为怒；肾在志为恐，BE 说法错误。正确答案选择 ACD.",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "用药指导",
+    "question_type": "multiple",
+    "content": ".执业药师对患者用药指导时，关于服药时间的说法，正确的有（多选）",
+    "options": [
+      {
+        "key": "A",
+        "value": "补益药宜饭前服用"
+      },
+      {
+        "key": "B",
+        "value": "制酸药宜饭后服用"
+      },
+      {
+        "key": "C",
+        "value": "峻下逐水药宜空腹服用"
+      },
+      {
+        "key": "D",
+        "value": "健胃消食药宜饭后服用"
+      },
+      {
+        "key": "E",
+        "value": "活血化瘀药宜空腹服用"
+      }
+    ],
+    "correct_answer": "ACDE",
+    "explanation": "制酸药宜饭前服用，所以 B 的说法错误。正确答案 ACDE",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "multiple",
+    "content": "治疗粉刺胃肠湿热证，宜选用的中成药有（多选）",
+    "options": [
+      {
+        "key": "A",
+        "value": "防风通圣丸"
+      },
+      {
+        "key": "B",
+        "value": "当归苦参丸"
+      },
+      {
+        "key": "C",
+        "value": "消痤丸"
+      },
+      {
+        "key": "D",
+        "value": "金花消痤丸"
+      },
+      {
+        "key": "E",
+        "value": "清热暗疮片"
+      }
+    ],
+    "correct_answer": "CDE",
+    "explanation": "治疗粉刺胃肠湿热证，宜选用的中成药有消痤丸，金花消痤丸，清热暗疮片。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "multiple",
+    "content": "下列中成药的联用应用，合理的有（多选）",
+    "options": [
+      {
+        "key": "A",
+        "value": "附子理中丸与黄连上清丸联用治疗脾胃虚寒所致的胃脘疼痛"
+      },
+      {
+        "key": "B",
+        "value": "二陈丸与平胃散联用治疗联用治疗湿痰咳"
+      },
+      {
+        "key": "C",
+        "value": "乌鸡白凤丸与香砂六君丸联用治疗妇女气血不足、月经失调"
+      },
+      {
+        "key": "D",
+        "value": "脑立清胶囊与六味地黄丸联用治疗肝肾阴虚风阳上扰所致的高血压"
+      },
+      {
+        "key": "E",
+        "value": "六神丸内服与冰硼散吹喉联用治疗咽喉肿痛"
+      }
+    ],
+    "correct_answer": "BCDE",
+    "explanation": "A 附子理中丸温热助阳，黄连上清丸清热，两者属于证候禁忌，不适宜联用。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "证候"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "痹证辨治",
+    "question_type": "multiple",
+    "content": "某女，30 岁。恶寒重，发热轻，无汗头痛肢体酸痛，咽痒，咳嗽。舌苔薄白，脉浮紧。\n治疗宜选用的中成药有（多选）",
+    "options": [
+      {
+        "key": "A",
+        "value": "荆防颗粒"
+      },
+      {
+        "key": "B",
+        "value": "葛根汤颗粒"
+      },
+      {
+        "key": "C",
+        "value": "参苏丸"
+      },
+      {
+        "key": "D",
+        "value": "连花清瘟胶囊"
+      },
+      {
+        "key": "E",
+        "value": "银翘解毒丸"
+      }
+    ],
+    "correct_answer": "AB",
+    "explanation": "辨证为风寒感冒，选用荆防颗粒，葛根汤颗粒。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "辨证",
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "中医基础理论",
+    "question_type": "multiple",
+    "content": "补法，又称“补益法”，是用补益药物补养人体气血阴阳不足、改善衰弱状态，治疗各\n种虚证的治法。关于补法临床应用说法正确的有（多选）",
+    "options": [
+      {
+        "key": "A",
+        "value": "补法必须因人因地、因时、因病、因证而异"
+      },
+      {
+        "key": "B",
+        "value": "邪气有余而正气不虚者，不可妄补"
+      },
+      {
+        "key": "C",
+        "value": "邪实正虚而以邪气偏盛者，应慎用补法，以免“闭门留寇'"
+      },
+      {
+        "key": "D",
+        "value": "虚实夹杂的病证，往往使用补法与祛邪各法配合使用"
+      },
+      {
+        "key": "E",
+        "value": "“大实有羸状”的真实假虚证，不宜使用补法"
+      }
+    ],
+    "correct_answer": "ABCDE",
+    "explanation": "补法必须因人因地、因时、因病、因证而异。邪气有余而正气不虚者，不可妄补。\n邪实正虚而以邪气偏盛者，应慎用补法，以免“闭门留寇'。虚实夹杂的病证，往往使用补\n法与祛邪各法配合使用，“大实有羸状”的真实假虚证，不宜使用补法。",
+    "difficulty": 2,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "病例分析",
+    "question_type": "multiple",
+    "content": "某男，55 岁。小便浑浊如米泔水，诊为淋证，证属膏淋，治疗宜选用的中成药有（多选）",
+    "options": [
+      {
+        "key": "A",
+        "value": "萆薢分清丸"
+      },
+      {
+        "key": "B",
+        "value": "前列泰片"
+      },
+      {
+        "key": "C",
+        "value": "八正胶囊"
+      },
+      {
+        "key": "D",
+        "value": "复方金钱草颗粒"
+      },
+      {
+        "key": "E",
+        "value": "复肾宁片"
+      }
+    ],
+    "correct_answer": "AB",
+    "explanation": "膏淋选用萆薢分清丸，前列泰片。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "用药指导",
+    "question_type": "multiple",
+    "content": "执业药师提供以患者为中心，以合理用药为核心的中药药学服务时，应具备的基本技能\n有（多选）",
+    "options": [
+      {
+        "key": "A",
+        "value": "提供药学服务"
+      },
+      {
+        "key": "B",
+        "value": "阅读医疗文书"
+      },
+      {
+        "key": "C",
+        "value": "提供健康宣教"
+      },
+      {
+        "key": "D",
+        "value": "设计用药方案"
+      },
+      {
+        "key": "E",
+        "value": "中药处方审核"
+      }
+    ],
+    "correct_answer": "ABCDE",
+    "explanation": "执业药师应具备的基本技能有提供药学服务，阅读医疗文书，提供健康宣教，设\n计用药方案，中药处方审核等。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "multiple",
+    "content": "《中国药典》收载的毒性药材和饮片中，标注为大毒的有（多选）",
+    "options": [
+      {
+        "key": "A",
+        "value": "罂粟壳"
+      },
+      {
+        "key": "B",
+        "value": "闹羊花"
+      },
+      {
+        "key": "C",
+        "value": "巴豆霜"
+      },
+      {
+        "key": "D",
+        "value": "天仙子"
+      },
+      {
+        "key": "E",
+        "value": "洋金花"
+      }
+    ],
+    "correct_answer": "BCD",
+    "explanation": "闹羊花，巴豆霜，天仙子有大毒。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "综合知识"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  },
+  {
+    "exam_type": "执业药师",
+    "subject": "中药学综合知识与技能",
+    "chapter": "综合知识",
+    "question_type": "multiple",
+    "content": "治疗带下过多湿热下注证，宜选用的中成药有（多选）",
+    "options": [
+      {
+        "key": "A",
+        "value": "金樱子膏"
+      },
+      {
+        "key": "B",
+        "value": "宫炎平片"
+      },
+      {
+        "key": "C",
+        "value": "妇炎康片"
+      },
+      {
+        "key": "D",
+        "value": "妇炎净胶囊"
+      },
+      {
+        "key": "E",
+        "value": "盆炎净颗粒"
+      }
+    ],
+    "correct_answer": "BCDE",
+    "explanation": "治疗带下过多湿热下注证，宜选用的中成药有宫炎平片，妇炎康片， 妇炎净胶\n囊，盆炎净颗粒。",
+    "difficulty": 1,
+    "knowledge_points": [
+      "选用"
+    ],
+    "source_type": "历年真题",
+    "source_year": 2024,
+    "is_published": true
+  }
+]
