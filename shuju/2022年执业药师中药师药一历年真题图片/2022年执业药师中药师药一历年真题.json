@@ -1,0 +1,1701 @@
+[
+  {
+    "number": 1,
+    "question": "《本草经集注》在各论首创按药物自然属性分类法，将所载 730 种药物分为玉石、草木、虫兽、果、菜、米食及有名未用 7 类。该书的作者及成书年代是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 唐慎微，宋代",
+      "B. 李时珍，明代",
+      "C. 张仲景，汉代",
+      "D. 陶弘景，魏晋南北朝",
+      "E. 赵学敏，清代"
+    ],
+    "answer": "D",
+    "analysis": "《本草经集注》为陶弘景所著，成书于魏晋南北朝时期。"
+  },
+  {
+    "number": 2,
+    "question": "依据中药五味学说，通常具有软坚散结、泻下通便作用的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 甘味药",
+      "B. 苦味药",
+      "C. 咸味药",
+      "D. 辛味药",
+      "E. 酸味药"
+    ],
+    "answer": "C",
+    "analysis": "咸味药能软、能下，有软坚散结、泻下通便作用。"
+  },
+  {
+    "number": 3,
+    "question": "钩藤一般宜生用，不加热炮制的主要原因是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 所含黄酮易被水解",
+      "B. 所含生物碱易被破坏",
+      "C. 所含挥发油易被氧化",
+      "D. 所含胶质易被氧化",
+      "E. 所含有机酸易被破坏"
+    ],
+    "answer": "B",
+    "analysis": "钩藤主要有效成分为生物碱，加热易被破坏。"
+  },
+  {
+    "number": 4,
+    "question": "关于剂药物剂型与疗效关系的说法，错误的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 剂型改变可能会提高生物利用度，但不会改变药物作用性质",
+      "B. 中药剂型的选择不仅要考虑中药药性，还要考虑活性成分的溶解性",
+      "C. 不同给药途径的药物制剂，其药物体内过程及特征也不尽相同",
+      "D. 吸入给药的起效速度通常快于肌内注射给药",
+      "E. 静脉注射给药的安全性风险通常高于肌内注射给药"
+    ],
+    "answer": "A",
+    "analysis": "剂型改变可能改变药物作用性质，如外用与内服作用不同。"
+  },
+  {
+    "number": 5,
+    "question": "药材横断面维管束与较窄的射线相间排列成细密的放射状纹理，传统术语称",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 车轮纹",
+      "B. 菊花心",
+      "C. 筋脉点",
+      "D. 罗盘纹",
+      "E. 云锦状花纹"
+    ],
+    "answer": "B",
+    "analysis": "菊花心指药材横断面维管束与射线相间排列形成的放射状纹理。"
+  },
+  {
+    "number": 6,
+    "question": "《中国药典》规定，二氧化硫残留量不得过10mg/kg的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 天花粉",
+      "B. 天麻",
+      "C. 白及",
+      "D. 白芍",
+      "E. 山药片"
+    ],
+    "answer": "E",
+    "analysis": "《中国药典》规定山药片二氧化硫残留量不得超过10mg/kg。"
+  },
+  {
+    "number": 7,
+    "question": "根据《中国药典》，除另有规定外，中药饮片药屑杂质通常不得过",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 1%",
+      "B. 3%",
+      "C. 5%",
+      "D. 7%",
+      "E. 10%"
+    ],
+    "answer": "B",
+    "analysis": "《中国药典》规定中药饮片药屑杂质通常不超过3%。"
+  },
+  {
+    "number": 8,
+    "question": "取火柴杆浸于药材水浸液中，使轻微着色，待干燥后，再浸入盐酸中立即取出，置火焰附近烘烤，杆上即显深红色，该药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 血竭",
+      "B. 青黛",
+      "C. 儿茶",
+      "D. 沉香",
+      "E. 苏木"
+    ],
+    "answer": "C",
+    "analysis": "儿茶水浸液与盐酸反应后烘烤显深红色，为其鉴别特征。"
+  },
+  {
+    "number": 9,
+    "question": "完整叶片展平后呈椭圆状披针形或卵圆状披针形，淡绿色或灰绿色，先端钝，有小芒尖，基部钝圆或楔形，边缘细细锯齿，常反卷，两面无毛的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 侧柏叶",
+      "B. 大青叶",
+      "C. 艾叶",
+      "D. 罗布麻叶",
+      "E. 番泻叶"
+    ],
+    "answer": "D",
+    "analysis": "罗布麻叶的形态特征如题干所述。"
+  },
+  {
+    "number": 10,
+    "question": "片按照厚度可分为极薄片、薄片、厚片。因质地坚实，宜切薄片的中药是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 当归、甘草",
+      "B. 槟榔、白芍",
+      "C. 黄芪、三棱",
+      "D. 山药、茯苓",
+      "E. 乌药、南沙参"
+    ],
+    "answer": "B",
+    "analysis": "槟榔、白芍质地坚实，宜切薄片。"
+  },
+  {
+    "number": 11,
+    "question": "具有凉血化瘀止血作用，用于血热有瘀之出血的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 当归炭",
+      "B. 生地炭",
+      "C. 黄柏炭",
+      "D. 熟地炭",
+      "E. 大黄炭"
+    ],
+    "answer": "E",
+    "analysis": "大黄炭具有凉血化瘀止血作用。"
+  },
+  {
+    "number": 12,
+    "question": "用于鉴别香豆素内酯环的显色反应是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 三氯化锑反应",
+      "B. 异羟肟酸铁反应",
+      "C. 盐酸-锌粉反应",
+      "D. 四氢硼钠反应",
+      "E. 三氯化铁反应"
+    ],
+    "answer": "B",
+    "analysis": "异羟肟酸铁反应是鉴别香豆素内酯环的常用反应。"
+  },
+  {
+    "number": 13,
+    "question": "乌头碱是川乌的主要化学成分之一，其结构类型是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 吡啶类生物碱",
+      "B. 苯基烷类生物碱",
+      "C. 吲哚类生物碱",
+      "D. 异喹啉类生物碱",
+      "E. 二萜类生物碱"
+    ],
+    "answer": "E",
+    "analysis": "乌头碱属于二萜类生物碱。"
+  },
+  {
+    "number": 14,
+    "question": "碘甘油处方：碘1.0g、碘化钾1.0g、纯化水1ml、甘油加至100ml。关于碘甘油处方成分作用和临床应用的说法，错误的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 碘化钾在处方中用作助溶剂，可增加碘的溶解度",
+      "B. 碘化钾在处方中可提高碘的稳定性",
+      "C. 甘油可缓和碘对黏膜的刺激性",
+      "D. 本品临床应用时可加水稀释以降低刺激性",
+      "E. 甘油可使药物滞留皮肤或黏膜而延长疗效"
+    ],
+    "answer": "D",
+    "analysis": "碘甘油不宜用水稀释，以免降低疗效。"
+  },
+  {
+    "number": 15,
+    "question": "当入肝经、活血散止痛的药物制备水丸时，常选用的赋形剂是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 水",
+      "B. 黄酒",
+      "C. 蜜水",
+      "D. 米醋",
+      "E. 药汁"
+    ],
+    "answer": "D",
+    "analysis": "米醋能引药入肝，增强活血散瘀作用。"
+  },
+  {
+    "number": 16,
+    "question": "呈简状或半简状，外表面灰褐色或黄褐色，栓皮脱落处粉红色。内表面淡灰黄色或浅棕色，常见发亮的结晶。断面较平坦，淡粉红色，粉性，气芳香，味微苦而涩的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 桑白皮",
+      "B. 厚朴",
+      "C. 牡丹皮",
+      "D. 肉桂",
+      "E. 杜仲"
+    ],
+    "answer": "C",
+    "analysis": "牡丹皮的性状特征如题干所述。"
+  },
+  {
+    "number": 17,
+    "question": "水解后生成苷元和葡萄糖醛酸的苷是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 甘草酸",
+      "B. 人参皂苷 Rg₁",
+      "C. 三七皂苷 R₁",
+      "D. 黄芪甲苷",
+      "E. 柴胡皂苷 a"
+    ],
+    "answer": "A",
+    "analysis": "甘草酸为三萜皂苷，水解后生成甘草次酸和葡萄糖醛酸。"
+  },
+  {
+    "number": 18,
+    "question": "关于散剂质量要求的说法，错误的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 除另有规定外，内服散剂应为细粉",
+      "B. 除另有规定外，中药散剂水分不得过 9.0%",
+      "C. 制备含有毒性药的散剂，应采用配研法混匀并过筛",
+      "D. 除另有规定外，服用散剂应为最细粉",
+      "E. 用于烧伤治疗的散剂如为非无菌制剂，应在标签上标明“非无菌制剂”"
+    ],
+    "answer": "D",
+    "analysis": "服用散剂应为极细粉，不是最细粉。"
+  },
+  {
+    "number": 19,
+    "question": "《中国药典》规定，以东莨菪碱和莨菪碱为含量指标成分的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 防己",
+      "B. 天仙子",
+      "C. 马钱子",
+      "D. 千里光",
+      "E. 延胡索"
+    ],
+    "answer": "B",
+    "analysis": "天仙子的指标成分为东莨菪碱和莨菪碱。"
+  },
+  {
+    "number": 20,
+    "question": "丹皮酚软膏的组成有丹皮酚 50g、丁香油 7ml、硬脂酸 110g、单硬脂酸甘油酯 25g、碳酸钾 9g、三乙醇胺 3ml、甘油 100g、蒸馏水 720ml。该制剂的基质属于",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 油脂类基质",
+      "B. O/W 型基质",
+      "C. 类脂类基质",
+      "D. W/O 型基质",
+      "E. 水溶性基质"
+    ],
+    "answer": "B",
+    "analysis": "该软膏为O/W型乳剂基质。"
+  },
+  {
+    "number": 21,
+    "question": "《中国药典》规定，含量测定指标成分完全相同的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 麻黄与黄连",
+      "B. 苦参与山豆根",
+      "C. 延胡索与防己",
+      "D. 大黄与芦荟",
+      "E. 虎杖与何首乌"
+    ],
+    "answer": "B",
+    "analysis": "苦参和山豆根的指标成分均为苦参碱和氧化苦参碱。"
+  },
+  {
+    "number": 22,
+    "question": "除另有规定外，普通中药酊剂每100ml相当于原饮片",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 5g",
+      "B. 10g",
+      "C. 15g",
+      "D. 20g",
+      "E. 25g"
+    ],
+    "answer": "D",
+    "analysis": "普通中药酊剂每100ml相当于原饮片20g。"
+  },
+  {
+    "number": 23,
+    "question": "某药材断面皮部红棕色，有数处向内嵌入木部，木部黄白色，有多数细孔状导管，射线呈放射状排列。该药材的原植物属于",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 桑寄生科",
+      "B. 木通科",
+      "C. 豆科",
+      "D. 五加科",
+      "E. 茜草科"
+    ],
+    "answer": "B",
+    "analysis": "该描述为大血藤的性状特征，来源于木通科。"
+  },
+  {
+    "number": 24,
+    "question": "苦杏仁苷的结构类型是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 硫苷",
+      "B. 氨苷",
+      "C. 碳苷",
+      "D. 醋苷",
+      "E. 氧苷"
+    ],
+    "answer": "E",
+    "analysis": "苦杏仁苷为氧苷。"
+  },
+  {
+    "number": 25,
+    "question": "可延长滴眼剂中药物与角膜作用时间，有利于药物吸收的附加剂是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 渗透压调节剂",
+      "B. 助溶剂",
+      "C. 抑菌剂",
+      "D. 黏度调节剂",
+      "E. 增溶剂"
+    ],
+    "answer": "D",
+    "analysis": "黏度调节剂可延长药物在眼部的滞留时间。"
+  },
+  {
+    "number": 26,
+    "question": "外表皮黄色或灰褐色，切面淡黄色至棕黄色，可见多数黄色点状异型维管束排列成数轮同心环，气微，味甜的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 川牛膝",
+      "B. 何首乌",
+      "C. 威灵仙",
+      "D. 银柴胡",
+      "E. 板蓝根"
+    ],
+    "answer": "A",
+    "analysis": "川牛膝的切面有点状维管束排列成同心环。"
+  },
+  {
+    "number": 27,
+    "question": "产地加工需蒸至杀死虫卵或蚜虫的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 天麻",
+      "B. 红参",
+      "C. 五倍子",
+      "D. 连翘",
+      "E. 女贞子"
+    ],
+    "answer": "C",
+    "analysis": "五倍子需蒸至杀死虫卵。"
+  },
+  {
+    "number": 28,
+    "question": "关于九味羌活颗粒特点和质量要求的说法，错误的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 处方中羌活、防风、苍术、细辛、川芎均采用双提法提取",
+      "C. 本品挥发油可采用喷雾法加入",
+      "D. 应进行溶化性检查，并不得有焦屑",
+      "E. 应控制制剂的水分不得过8.0%"
+    ],
+    "answer": "A",
+    "analysis": "颗粒剂粒度要求不能通过一号筛与能通过五号筛的总和不得过15%。"
+  },
+  {
+    "number": 29,
+    "question": "呈类球形、椭圆形或卵圆形，表面淡黄色至淡黄棕色，有不规则的横向环状浅狗纹和多数细小突起的须根痕。质坚实，断面黄白色，粉性，有多数细孔的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 泽泻",
+      "B. 三棱",
+      "C. 莪术",
+      "D. 郁金",
+      "E. 姜黄"
+    ],
+    "answer": "A",
+    "analysis": "泽泻的性状特征如题干所述。"
+  },
+  {
+    "number": 30,
+    "question": "胶囊剂系指原料药物与适宜辅料填充于空心胶囊或密封于软质囊材中制成的固体制剂。关于胶囊剂特点与分类的说法，错误的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 胶囊剂可外用于直肠、阴道等部位",
+      "C. 软胶囊可用压制法制备",
+      "D. 硬胶囊的填充物可以是液体药物",
+      "E. 缓释胶囊是指可以缓慢地恒速释放药物的胶囊剂"
+    ],
+    "answer": "E",
+    "analysis": "缓释胶囊是缓慢非恒速释放，控释胶囊才是恒速释放。"
+  },
+  {
+    "number": 31,
+    "question": "呈长卵形至卵形，稍扁，表面有不规则纵皱纹及多数突起的小斑点，两面各有1条明显的纵沟，顶端锐尖的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 蛇床子",
+      "B. 女贞子",
+      "C. 连翘",
+      "D. 马钱子",
+      "E. 小茴香"
+    ],
+    "answer": "C",
+    "analysis": "连翘的性状特征如题干所述。"
+  },
+  {
+    "number": 32,
+    "question": "注射剂药效迅速，作用可靠。但注射剂使用不便，注射时疼痛。其质量要求高，制备过程复杂，需要特定的条件与设备，成本较高。一旦注入机体，其生理作用难以逆转，若使用不当极易发生危险等。关于注射剂质量要求和临床应用注意事项的说法，错误的是",
+    "type": "single",
+    "source": "self",
+    "options": [],
+    "answer": "A",
+    "analysis": "乳状液型注射液可用于静脉注射，如脂肪乳。"
+  },
+  {
+    "number": 33,
+    "question": "《中国药典》规定，以大黄酚为指标成分之一进行含量测定的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 紫草",
+      "B. 丹参",
+      "C. 厚朴",
+      "D. 细辛",
+      "E. 决明子"
+    ],
+    "answer": "E",
+    "analysis": "决明子以大黄酚为指标成分。"
+  },
+  {
+    "number": 34,
+    "question": "关于片剂包衣目的的说法，错误的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 隔绝空气，提高药物稳定性",
+      "C. 掩盖药物的不良气味",
+      "D. 改变药物释放速度",
+      "E. 改善外观，提高辨识度"
+    ],
+    "answer": "B",
+    "analysis": "包衣一般会延缓崩解，不是加速。"
+  },
+  {
+    "number": 35,
+    "question": "呈粗纺锤形，中部直径1~3cm，具3~7节。表面光滑，金黄色，有明显凸起的棱。质轻而松脆，断面海绵状，气微，味淡，嚼之有黏性的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 鼓槌石",
+      "B. 金银石",
+      "C. 流苏石",
+      "D. 霍山石",
+      "E. 铁皮石"
+    ],
+    "answer": "A",
+    "analysis": "鼓槌石斛的性状特征如题干所述。"
+  },
+  {
+    "number": 36,
+    "question": "天南星炮制成胆南星后，其功效变化是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 由温化寒痰转为消化热痰",
+      "B. 由祛风止痉转为燥湿化痰",
+      "C. 由燥湿化痰转为息风定惊",
+      "D. 由温化寒痰转为燥湿化痰",
+      "E. 由消化热痰转为燥湿化痰"
+    ],
+    "answer": "A",
+    "analysis": "胆南星性味转为凉润，功能清热化痰、息风定惊。"
+  },
+  {
+    "number": 37,
+    "question": "图示药材为桔梗的是",
+    "type": "single",
+    "source": "image",
+    "options": [
+      "A.",
+      "B.",
+      "C.",
+      "D.",
+      "E."
+    ],
+    "answer": "B",
+    "analysis": "根据图示判断为桔梗。"
+  },
+  {
+    "number": 38,
+    "question": "图示饮片为桑白皮的是",
+    "type": "single",
+    "source": "image",
+    "options": [
+      "A.",
+      "B.",
+      "C.",
+      "D.",
+      "E."
+    ],
+    "answer": "E",
+    "analysis": "根据图示判断为桑白皮。"
+  },
+  {
+    "number": 39,
+    "question": "图示药材为补骨脂的是",
+    "type": "single",
+    "source": "image",
+    "options": [
+      "A.",
+      "B.",
+      "C.",
+      "D.",
+      "E."
+    ],
+    "answer": "C",
+    "analysis": "根据图示判断为补骨脂。"
+  },
+  {
+    "number": 40,
+    "question": "图示药材由果实渗出的树脂经加工制成的是",
+    "type": "single",
+    "source": "image",
+    "options": [
+      "A.",
+      "B.",
+      "C.",
+      "D.",
+      "E."
+    ],
+    "answer": "D",
+    "analysis": "根据图示判断为没药，为树脂类药材。"
+  },
+  {
+    "number": 41,
+    "question": "《中国药典》规定，中药槐花含量测定指标成分之一是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 毛蕊异黄酮葡萄糖苷",
+      "C. 芦丁",
+      "D. 东莨菪内酯",
+      "E. 异噻唑啶"
+    ],
+    "answer": "C",
+    "analysis": "槐花指标成分为芦丁。"
+  },
+  {
+    "number": 42,
+    "question": "《中国药典》规定，中药黄芪含量测定指标成分之一是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 毛蕊异黄酮葡萄糖苷",
+      "C. 芦丁",
+      "D. 东莨菪内酯",
+      "E. 异噻唑啶"
+    ],
+    "answer": "B",
+    "analysis": "黄芪指标成分为毛蕊异黄酮葡萄糖苷。"
+  },
+  {
+    "number": 43,
+    "question": "《中国药典》规定，中药肿节风含量测定指标成分之一是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 毛蕊异黄酮葡萄糖苷",
+      "C. 芦丁",
+      "D. 东莨菪内酯",
+      "E. 异噻唑啶"
+    ],
+    "answer": "E",
+    "analysis": "肿节风指标成分为异噻唑啶。"
+  },
+  {
+    "number": 44,
+    "question": "呈类圆形的厚片，有的可见根头部有多数症状突起的茎痕和芽。切面皮部淡棕黄色至黄棕色，末部淡黄色至黄色，有裂隙或放射状纹理。有特殊香气，味微甜的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 川木香",
+      "C. 玄参",
+      "D. 当归",
+      "E. 党参"
+    ],
+    "answer": "E",
+    "analysis": "描述为党参的性状特征。"
+  },
+  {
+    "number": 45,
+    "question": "呈类圆形或椭圆形薄片，外表皮灰黄色或灰褐色，切面黑色，微有光泽，有的具裂隙。气特异似焦糖，味甘，微苦的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 川木香",
+      "C. 玄参",
+      "D. 当归",
+      "E. 党参"
+    ],
+    "answer": "C",
+    "analysis": "描述为玄参的性状特征。"
+  },
+  {
+    "number": 46,
+    "question": "大量的原料药物固体粉末（一般25%以上）均匀地分散在适宜基质中所组成的半固体外用制剂是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 糊剂",
+      "C. 涂剂",
+      "D. 凝胶剂",
+      "E. 涂膜剂"
+    ],
+    "answer": "B",
+    "analysis": "糊剂的定义。"
+  },
+  {
+    "number": 47,
+    "question": "原料药物与适宜的亲水性基质混匀后涂布于背衬材料上制成的剂型是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 糊剂",
+      "C. 涂剂",
+      "D. 凝胶剂",
+      "E. 涂膜剂"
+    ],
+    "answer": "A",
+    "analysis": "凝胶贴膏的定义。"
+  },
+  {
+    "number": 48,
+    "question": "鱼肝油乳剂中，阿拉伯胶用作",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 润湿剂",
+      "C. 稳定剂",
+      "D. 乳化剂",
+      "E. 抑菌剂"
+    ],
+    "answer": "D",
+    "analysis": "阿拉伯胶为乳化剂。"
+  },
+  {
+    "number": 49,
+    "question": "鱼肝油乳剂中，西黄蓍胶用作",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 润湿剂",
+      "C. 稳定剂",
+      "D. 乳化剂",
+      "E. 抑菌剂"
+    ],
+    "answer": "C",
+    "analysis": "西黄蓍胶为稳定剂。"
+  },
+  {
+    "number": 50,
+    "question": "炉甘石洗剂中，甘油用作",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 润湿剂",
+      "C. 稳定剂",
+      "D. 乳化剂",
+      "E. 抑菌剂"
+    ],
+    "answer": "B",
+    "analysis": "甘油为润湿剂。"
+  },
+  {
+    "number": 51,
+    "question": "酸枣仁主归心经，其作用特点是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 清心安神",
+      "C. 开窍醒神",
+      "D. 养心安神",
+      "E. 补血安神"
+    ],
+    "answer": "D",
+    "analysis": "酸枣仁养心安神。"
+  },
+  {
+    "number": 52,
+    "question": "麝香归心经，其作用特点是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 清心安神",
+      "C. 开窍醒神",
+      "D. 养心安神",
+      "E. 补血安神"
+    ],
+    "answer": "C",
+    "analysis": "麝香开窍醒神。"
+  },
+  {
+    "number": 53,
+    "question": "《中国药典》规定，崩解时限为60秒的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 口崩片",
+      "C. 分散片",
+      "D. 舌下片",
+      "E. 口腔贴片"
+    ],
+    "answer": "B",
+    "analysis": "口崩片崩解时限为60秒。"
+  },
+  {
+    "number": 54,
+    "question": "《中国药典》规定，崩解时限为5分钟的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 口崩片",
+      "C. 分散片",
+      "D. 舌下片",
+      "E. 口腔贴片"
+    ],
+    "answer": "D",
+    "analysis": "舌下片崩解时限为5分钟。"
+  },
+  {
+    "number": 55,
+    "question": "《中国药典》规定，崩解时限为3分钟的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 口崩片",
+      "C. 分散片",
+      "D. 舌下片",
+      "E. 口腔贴片"
+    ],
+    "answer": "C",
+    "analysis": "分散片崩解时限为3分钟。"
+  },
+  {
+    "number": 56,
+    "question": "表面亮淡黄色，条痕绿黑色或棕红色，有金属光泽，主要含二硫化铁的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 自然铜",
+      "C. 炉甘石",
+      "D. 雄黄",
+      "E. 石膏"
+    ],
+    "answer": "B",
+    "analysis": "自然铜的主要成分为二硫化铁。"
+  },
+  {
+    "number": 57,
+    "question": "表面白色、灰白色或淡黄色，纵断面具绢丝样光泽，主要含含水硫酸钙的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 自然铜",
+      "C. 炉甘石",
+      "D. 雄黄",
+      "E. 石膏"
+    ],
+    "answer": "E",
+    "analysis": "石膏的主要成分为含水硫酸钙。"
+  },
+  {
+    "number": 58,
+    "question": "表面鲜红色或暗红色，条痕红色至褐红色，具光泽，主要含硫化汞的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 自然铜",
+      "C. 炉甘石",
+      "D. 雄黄",
+      "E. 石膏"
+    ],
+    "answer": "A",
+    "analysis": "朱砂的主要成分为硫化汞。"
+  },
+  {
+    "number": 59,
+    "question": "穿心莲所含的穿心莲内酯具有抗菌、消炎作用，其所属的结构类型是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 香豆素类化合物",
+      "C. 二萜类化合物",
+      "D. 三萜类化合物",
+      "E. 倍半萜类化合物"
+    ],
+    "answer": "C",
+    "analysis": "穿心莲内酯为二萜类。"
+  },
+  {
+    "number": 60,
+    "question": "丹参所含的丹参素具有扩张冠状血管、增加冠脉流量、促进侧支循环的作用，其所属的结构类型是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 香豆素类化合物",
+      "C. 二萜类化合物",
+      "D. 三萜类化合物",
+      "E. 倍半萜类化合物"
+    ],
+    "answer": "A",
+    "analysis": "丹参素为有机酸类。"
+  },
+  {
+    "number": 61,
+    "question": "青蒿所含的青蒿素具有抗疟作用，其所属的结构类型是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 香豆素类化合物",
+      "C. 二萜类化合物",
+      "D. 三萜类化合物",
+      "E. 倍半萜类化合物"
+    ],
+    "answer": "E",
+    "analysis": "青蒿素为倍半萜类。"
+  },
+  {
+    "number": 62,
+    "question": "呈不规则的段，茎呈方柱形，外表面淡黄绿色至淡紫红色，被短柔毛，切面类白色。叶多已脱落，穗状轮伞花序；气芳香，味微涩而辛凉的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 白花蛇舌草",
+      "C. 香藕",
+      "D. 半枝莲",
+      "E. 荆芥"
+    ],
+    "answer": "E",
+    "analysis": "描述为荆芥的性状特征。"
+  },
+  {
+    "number": 63,
+    "question": "呈不规则的段，叶灰绿色，边缘具钝锯齿，两面有毛，叶柄细。蘸果椭圆形或3裂，种子多数，淡棕色。气微，味微苦而稍黏的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 白花蛇舌草",
+      "C. 香藕",
+      "D. 半枝莲",
+      "E. 荆芥"
+    ],
+    "answer": "A",
+    "analysis": "描述为紫花地丁的性状特征。"
+  },
+  {
+    "number": 64,
+    "question": "呈不规则的段，灰绿色或灰棕色，茎细而卷曲。叶对生，多破碎，花单生或对生于叶腋，多具梗。蘸果扁球形，顶端具4枚宿存的萼齿。气微，味淡的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 白花蛇舌草",
+      "C. 香藕",
+      "D. 半枝莲",
+      "E. 荆芥"
+    ],
+    "answer": "B",
+    "analysis": "描述为白花蛇舌草的性状特征。"
+  },
+  {
+    "number": 65,
+    "question": "呈小方块或丝状，外表面浅棕色或灰褐色，有明显的皱纹。断面有细密、银白色、富弹性的橡胶丝相连。气微，味稍苦的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 杜仲",
+      "C. 白鲜皮",
+      "D. 厚朴",
+      "E. 合欢皮"
+    ],
+    "answer": "B",
+    "analysis": "描述为杜仲的性状特征。"
+  },
+  {
+    "number": 66,
+    "question": "呈弯曲的丝或块片状，外表面灰棕色至灰褐色，密生明显的椭圆形横向皮孔，切片呈纤维性片状。气微香，味淡、微涩、稍刺舌，而后喉头有不适感的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 杜仲",
+      "C. 白鲜皮",
+      "D. 厚朴",
+      "E. 合欢皮"
+    ],
+    "answer": "E",
+    "analysis": "描述为合欢皮的性状特征。"
+  },
+  {
+    "number": 67,
+    "question": "《中国药典》规定，不检查水分的丸剂是",
+    "type": "single",
+    "source": "self",
+    "options": [],
+    "answer": "C",
+    "analysis": "蜡丸不检查水分。"
+  },
+  {
+    "number": 68,
+    "question": "《中国药典》规定，应在2小时内全部溶散的丸剂是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 糊丸",
+      "C. 蜡丸",
+      "D. 滴丸",
+      "E. 小蜜丸"
+    ],
+    "answer": "B",
+    "analysis": "糊丸溶散时限为2小时。"
+  },
+  {
+    "number": 69,
+    "question": "《中国药典》规定，应在30分钟内全部溶散的丸剂是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 糊丸",
+      "C. 蜡丸",
+      "D. 滴丸",
+      "E. 小蜜丸"
+    ],
+    "answer": "D",
+    "analysis": "滴丸溶散时限为30分钟。"
+  },
+  {
+    "number": 70,
+    "question": "主要化学成分为四环三萜类化合物的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 蟾酥",
+      "C. 人参",
+      "D. 知母",
+      "E. 香加皮"
+    ],
+    "answer": "C",
+    "analysis": "人参含四环三萜类皂苷。"
+  },
+  {
+    "number": 71,
+    "question": ".主要化学成分为乙型强心苷类化合物的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 蟾酥",
+      "C. 人参",
+      "D. 知母",
+      "E. 香加皮"
+    ],
+    "answer": "B",
+    "analysis": "蟾酥含乙型强心苷。"
+  },
+  {
+    "number": 72,
+    "question": ".主要化学成分为五环三萜类化合物的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 蟾酥",
+      "C. 人参",
+      "D. 知母",
+      "E. 香加皮"
+    ],
+    "answer": "A",
+    "analysis": "商陆含五环三萜类皂苷。"
+  },
+  {
+    "number": 73,
+    "question": "多皱缩成条状，花萼呈筒状，灰绿色或灰黄色，先端5裂。花冠呈喇叭状，淡黄色或黄棕色，顶端5浅裂的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 山银花",
+      "C. 西红花",
+      "D. 菊花",
+      "E. 红花"
+    ],
+    "answer": "A",
+    "analysis": "描述为洋金花的性状特征。"
+  },
+  {
+    "number": 74,
+    "question": "呈棒状而稍弯曲，表面黄色或黄绿色，总花梗集结成簇。开放者花冠裂片不及全长之半，手捏之稍有弹性的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 山银花",
+      "C. 西红花",
+      "D. 菊花",
+      "E. 红花"
+    ],
+    "answer": "B",
+    "analysis": "描述为山银花的性状特征。"
+  },
+  {
+    "number": 75,
+    "question": "呈线形，三分枝，暗红色，上部较宽而略扁平，顶端边缘显不整齐的齿状，内侧有一短裂隙的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 山银花",
+      "C. 西红花",
+      "D. 菊花",
+      "E. 红花"
+    ],
+    "answer": "C",
+    "analysis": "描述为西红花的性状特征。"
+  },
+  {
+    "number": 76,
+    "question": "除另有规定外，应进行溶出度检查的颗粒剂是",
+    "type": "single",
+    "source": "self",
+    "options": [],
+    "answer": "D",
+    "analysis": "混悬颗粒应检查溶出度。"
+  },
+  {
+    "number": 77,
+    "question": "除另有规定外，应进行释放度检查的颗粒剂是",
+    "type": "single",
+    "source": "self",
+    "options": [],
+    "answer": "B",
+    "analysis": "肠溶颗粒应检查释放度。"
+  },
+  {
+    "number": 78,
+    "question": "属于有机酸的化合物是",
+    "type": "single",
+    "source": "self",
+    "options": [],
+    "answer": "C",
+    "analysis": "根据结构判断为有机酸。"
+  },
+  {
+    "number": 79,
+    "question": "属于生物碱的化合物是",
+    "type": "single",
+    "source": "self",
+    "options": [],
+    "answer": "E",
+    "analysis": "根据结构判断为生物碱。"
+  },
+  {
+    "number": 80,
+    "question": "呈长圆形，头及口器向下垂，有较大的的复眼及触角各1对。背部具革质鞘翅1对，黑色，有3条黄色或棕黄色的横纹，胸部有足3对的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 斑蝥",
+      "C. 全蝎",
+      "D. 蜈蚣",
+      "E. 土鳖虫"
+    ],
+    "answer": "B",
+    "analysis": "描述为斑蝥的性状特征。"
+  },
+  {
+    "number": 81,
+    "question": "头胸部与前腹部呈扁平长椭圆形，后腹部呈尾状，皱缩弯曲。头胸部呈绿褐色，前面有1对短小的整肢及1对较长大的钳状脚须，形似蟹螯。后腹部棕黄色，末节有锐钩状毒刺的药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 斑蝥",
+      "C. 全蝎",
+      "D. 蜈蚣",
+      "E. 土鳖虫"
+    ],
+    "answer": "C",
+    "analysis": "描述为全蝎的性状特征。"
+  },
+  {
+    "number": 82,
+    "question": "结构类型为异黄酮类的化合物是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 杜鹃素",
+      "C. 汉黄芩素",
+      "D. 大豆素",
+      "E. 糖皮素"
+    ],
+    "answer": "D",
+    "analysis": "大豆素为异黄酮类。"
+  },
+  {
+    "number": 83,
+    "question": "结构类型为黄酮类的化合物是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 杜鹃素",
+      "C. 汉黄芩素",
+      "D. 大豆素",
+      "E. 糖皮素"
+    ],
+    "answer": "C",
+    "analysis": "汉黄芩素为黄酮类。"
+  },
+  {
+    "number": 84,
+    "question": "结构类型为二氢黄酮类的化合物是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 杜鹃素",
+      "C. 汉黄芩素",
+      "D. 大豆素",
+      "E. 糖皮素"
+    ],
+    "answer": "B",
+    "analysis": "杜鹃素为二氢黄酮类。"
+  },
+  {
+    "number": 85,
+    "question": "猪苓的药用部位是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 干燥菌核",
+      "C. 干燥藻体",
+      "D. 干燥子座",
+      "E. 干燥菌丝体"
+    ],
+    "answer": "B",
+    "analysis": "猪苓为菌核。"
+  },
+  {
+    "number": 86,
+    "question": "灵芝的药用部位是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 干燥菌核",
+      "C. 干燥藻体",
+      "D. 干燥子座",
+      "E. 干燥菌丝体"
+    ],
+    "answer": "A",
+    "analysis": "灵芝为子实体。"
+  },
+  {
+    "number": 87,
+    "question": "为缓和对胃的刺激性，增强逐寒止痛作用，艾叶宜选用的炮制方法是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 酒淬",
+      "C. 醋蒸",
+      "D. 酒炙",
+      "E. 醋炙"
+    ],
+    "answer": "E",
+    "analysis": "艾叶醋炙可缓和对胃的刺激，增强逐寒止痛作用。"
+  },
+  {
+    "number": 88,
+    "question": "为缓和寒凉之性，增强活血祛瘀、调经止痛作用，丹参宜选用的炮制方法是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 酒淬",
+      "C. 醋蒸",
+      "D. 酒炙",
+      "E. 醋炙"
+    ],
+    "answer": "D",
+    "analysis": "丹参酒炙可增强活血祛瘀作用。"
+  },
+  {
+    "number": 89,
+    "question": "为增强散瘀止痛作用，自然铜在煅烧后宜选用的炮制方法是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 酒淬",
+      "C. 醋蒸",
+      "D. 酒炙",
+      "E. 醋炙"
+    ],
+    "answer": "A",
+    "analysis": "自然铜煅后醋淬可增强散瘀止痛作用。"
+  },
+  {
+    "number": 90,
+    "question": "通过滑石粉炒达到降低毒性目的的中药是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 五灵脂",
+      "C. 肺蛇",
+      "D. 水蛭",
+      "E. 蛤蚧"
+    ],
+    "answer": "D",
+    "analysis": "水蛭滑石粉炒可降低毒性。"
+  },
+  {
+    "number": 91,
+    "question": "酒炙后增强祛风、通络、止痉作用，并可矫味的中药是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 五灵脂",
+      "C. 肺蛇",
+      "D. 水蛭",
+      "E. 蛤蚧"
+    ],
+    "answer": "C",
+    "analysis": "蕲蛇酒炙后可增强祛风通络作用。"
+  },
+  {
+    "number": 92,
+    "question": "既可以醋炙又可以酒炙的中药是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 五灵脂",
+      "C. 肺蛇",
+      "D. 水蛭",
+      "E. 蛤蚧"
+    ],
+    "answer": "B",
+    "analysis": "五灵脂可醋炙或酒炙。"
+  },
+  {
+    "number": 93,
+    "question": "主入胃经，以和中止呕为主的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 炮姜",
+      "C. 姜炭",
+      "D. 生姜",
+      "E. 干姜"
+    ],
+    "answer": "A",
+    "analysis": "姜半夏主和中止呕。"
+  },
+  {
+    "number": 94,
+    "question": "主归脾、胃、心经，长于暖脾胃，回阳救逆的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 炮姜",
+      "C. 姜炭",
+      "D. 生姜",
+      "E. 干姜"
+    ],
+    "answer": "E",
+    "analysis": "干姜长于温中回阳。"
+  },
+  {
+    "number": 95,
+    "question": "主产地为广东，属于“广药”的道地药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 龙胆",
+      "C. 天麻",
+      "D. 白术",
+      "E. 巴戟天"
+    ],
+    "answer": "E",
+    "analysis": "巴戟天为广药。"
+  },
+  {
+    "number": 96,
+    "question": "主产地为贵州，属于“贵药”的道地药材是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 龙胆",
+      "C. 天麻",
+      "D. 白术",
+      "E. 巴戟天"
+    ],
+    "answer": "C",
+    "analysis": "天麻为贵药。"
+  },
+  {
+    "number": 97,
+    "question": "图示药材为细辛的是",
+    "type": "single",
+    "source": "image",
+    "options": [
+      "A.",
+      "B.",
+      "C.",
+      "D.",
+      "E."
+    ],
+    "answer": "B",
+    "analysis": "根据图示判断为细辛。"
+  },
+  {
+    "number": 98,
+    "question": "图示药材为白前的是",
+    "type": "single",
+    "source": "image",
+    "options": [
+      "A.",
+      "B.",
+      "C.",
+      "D.",
+      "E."
+    ],
+    "answer": "C",
+    "analysis": "根据图示判断为白前。"
+  },
+  {
+    "number": 99,
+    "question": "图示药材为栀子的是",
+    "type": "single",
+    "source": "image",
+    "options": [
+      "A.",
+      "B.",
+      "C.",
+      "D.",
+      "E."
+    ],
+    "answer": "D",
+    "analysis": "根据图示判断为栀子。"
+  },
+  {
+    "number": 100,
+    "question": "图示药材为金樱子的是",
+    "type": "single",
+    "source": "image",
+    "options": [
+      "A.",
+      "B.",
+      "C.",
+      "D.",
+      "E."
+    ],
+    "answer": "E",
+    "analysis": "根据图示判断为金樱子。\n\n三、综合分析题"
+  },
+  {
+    "number": 101,
+    "question": "处方中碳酸钙在片剂中可用作",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 助流剂",
+      "B. 填充剂",
+      "C. 黏合剂",
+      "D. 崩解剂",
+      "E. 润滑剂"
+    ],
+    "answer": "B",
+    "analysis": "碳酸钙为填充剂。"
+  },
+  {
+    "number": 102,
+    "question": "取本品制片，置显微镜下观察，处方中当归的鉴别特征是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 草酸钙针晶细小，不规则地充塞于薄壁细胞中",
+      "B. 纤维成束，周围薄壁细胞含草酸钙方晶，形成晶纤维",
+      "C. 切皮薄壁细胞纺锤形，壁略厚，表面有极微细的斜向交错纹理",
+      "D. 薄壁组织灰棕色至黑棕色，细胞多皱缩，内含棕色核状物",
+      "E. 草酸钙簇晶存在于薄壁细胞中，常排列成行或一个细胞中含数个簇晶"
+    ],
+    "answer": "C",
+    "analysis": "当归的显微特征为纺锤形切皮薄壁细胞。"
+  },
+  {
+    "number": 103,
+    "question": "关于处方中醋香附炮制方法和作用的说法，错误的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 香附醋前后味苦、涩，性温，多用于治妇女崩漏不止",
+      "B. 香附醋前后专入肝经，疏肝止痛作用增强",
+      "E. 香附醋时，可用净香附加定量米醋和水，煮至醋液基本吸尽，再蒸5小时，闷片刻，取出微晾，切薄片，干燥"
+    ],
+    "answer": "A",
+    "analysis": "醋香附味微苦、微酸，性微温，疏肝止痛力增强，非专治崩漏。"
+  },
+  {
+    "number": 104,
+    "question": "处方中醋延胡索所含延胡索乙素的化学结构类型是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 双酚哌啶类生物碱",
+      "B. 异喹啉类生物碱",
+      "C. 吡啶类生物碱",
+      "D. 明引咪类生物碱",
+      "E. 吗啡烷类生物碱"
+    ],
+    "answer": "B",
+    "analysis": "延胡索乙素为异喹啉类生物碱。"
+  },
+  {
+    "number": 105,
+    "question": "龟鹿补肾丸可制成水蜜丸或大蜜丸，关于水蜜丸和大蜜丸的特点和质量要求的说法，错误的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "B. 大蜜丸富含蜂蜜，具有作用缓和和持久的特点",
+      "D. 除另有规定外，蜜丸中所含水分不得过15.0%",
+      "E. 除另有规定外，水蜜丸中所含水分不得过12.0%"
+    ],
+    "answer": "C",
+    "analysis": "大蜜丸不检查装量差异。"
+  },
+  {
+    "number": 106,
+    "question": "关于处方中炙甘草炮制方法和作用的说法，错误的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 甘草味甘性平，生品偏凉，蜜炙后偏温",
+      "B. 甘草蜜炙后补脾和胃，益气复脉力胜",
+      "C. 甘草蜜炙后止痛作用增强",
+      "D. 蜜炙甘草时，每100kg甘草片用熟蜜20kg",
+      "E. 蜜炙甘草时，在净甘草片中加入适量开水稀释的熟蜜，拌匀，闷润，文火炒至黄色至深黄色，不粘手时，取出晾凉"
+    ],
+    "answer": "D",
+    "analysis": "蜜炙甘草每100kg用熟蜜25kg。"
+  },
+  {
+    "number": 107,
+    "question": "关于处方中制何首乌化学成分和炮制作用的说法，错误的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 何首乌炮制后增强补肝肾、益精血的作用",
+      "B. 何首乌炮制后味苦甘厚，性转温",
+      "C. 何首乌炮制后二苯乙烯苷含量降低",
+      "D. 何首乌炮制后结合感醒类成分含量增加",
+      "E. 何首乌炮制后消除生品滑肠致泻的副作用"
+    ],
+    "answer": "D",
+    "analysis": "制何首乌结合感醒类含量降低。"
+  },
+  {
+    "number": 108,
+    "question": "关于该制剂水分、溶散时限的要求，正确的是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 水分不超过5.0%，在15分钟内全部溶散",
+      "B. 水分不超过9.0%，在2小时内全部溶散",
+      "C. 水分不超过12.0%，在1小时内全部溶散",
+      "D. 水分不超过15.0%，在1.5小时内全部溶散",
+      "E. 水分不超过8.0%，在30分钟内全部溶散"
+    ],
+    "answer": "B",
+    "analysis": "浓缩丸水分不超过9.0%，溶散时限2小时。"
+  },
+  {
+    "number": 109,
+    "question": "为缓解苦燥之性，同时消除刺喉感，方中制远志宜采用煮法炮制，使用的辅料是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 黑豆汁",
+      "B. 黄酒",
+      "C. 姜汁",
+      "D. 米醋",
+      "E. 甘草汁"
+    ],
+    "answer": "E",
+    "analysis": "远志用甘草水煮可缓和燥性，消除刺喉感。"
+  },
+  {
+    "number": 110,
+    "question": "取本品制片，置显微镜下观察，可见纤维成束或散离，壁厚，表面有纵裂纹，两端断裂成状或较平截。处方中具有该特征的饮片是",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 党参",
+      "B. 炙黄芪",
+      "C. 当归",
+      "D. 炙甘草",
+      "E. 炒白术"
+    ],
+    "answer": "B",
+    "analysis": "黄芪纤维特征如题干所述。"
+  },
+  {
+    "number": 111,
+    "question": "宜用朱砂拌衣炮制增强安神作用的中药有",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 茯神",
+      "B. 人参",
+      "C. 远志",
+      "D. 灯心草",
+      "E. 竹茹"
+    ],
+    "answer": "ACD",
+    "analysis": "朱砂拌衣常用于安神类药物。"
+  },
+  {
+    "number": 112,
+    "question": "宜在夏季采收的根及根茎类药材有",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 明党参",
+      "B. 浙贝母",
+      "C. 延胡索",
+      "D. 石菖蒲",
+      "E. 太子参"
+    ],
+    "answer": "BCE",
+    "analysis": "浙贝母、延胡索、太子参宜夏季采。"
+  },
+  {
+    "number": 113,
+    "question": "《中国药典》（一部）收载的内容包括",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 药材",
+      "B. 饮片",
+      "C. 植物油脂和提取物",
+      "D. 单味制剂",
+      "E. 成方制剂"
+    ],
+    "answer": "ABCDE",
+    "analysis": "一部收载中药材、饮片、提取物、单味及成方制剂。"
+  },
+  {
+    "number": 114,
+    "question": "常用于中药化学成分分离纯化的方法有",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 硅胶柱色谱法",
+      "B. 聚酰胺色谱法",
+      "C. 大孔吸附树脂法",
+      "D. 凝胶色谱法",
+      "E. 液-液萃取法"
+    ],
+    "answer": "ABCDE",
+    "analysis": "均为常用分离纯化方法。"
+  },
+  {
+    "number": 115,
+    "question": "关于浸出制剂使用抑菌剂的说法，正确的有",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 合剂中山梨酸的用量不得过0.3%",
+      "B. 合剂中羟基酯类的用量不得过0.05%",
+      "C. 作为糖浆剂的抑菌剂，山梨酸的最高pH为4.4-4.8",
+      "E. 糖浆剂中苯甲酸的用量不得过0.25%"
+    ],
+    "answer": "ABCD",
+    "analysis": "糖浆剂中苯甲酸用量不得过0.3%，故E错误。"
+  },
+  {
+    "number": 116,
+    "question": "关于中药饮片切面特征的说法，正确的有",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 人参片切面淡黄色或白色，皮部有黄棕色点状油室及放射状裂隙",
+      "B. 黄连片切面鲜黄色或红黄色，具有放射状纹理",
+      "C. 防己切面灰白色，有稀疏的放射状纹理",
+      "D. 天花粉切面白色或淡黄色，可见黄色小孔，略呈放射状排列",
+      "E. 土茯苓切面黄色或红棕色，可见点状维管束及多数小亮点"
+    ],
+    "answer": "BCDE",
+    "analysis": "人参片无油室，A错误。"
+  },
+  {
+    "number": 117,
+    "question": "关于气雾剂和喷雾剂质量要求的说法，正确的有",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 喷雾剂应避免密封贮存",
+      "B. 气雾剂应置凉暗处保存",
+      "C. 喷雾剂应进行喷射速率检查",
+      "D. 气雾剂应进行泄漏检查",
+      "E. 定量气雾剂喷出的雾滴（粒）应均匀"
+    ],
+    "answer": "ABDE",
+    "analysis": "喷雾剂不检查喷射速率，C错误。"
+  },
+  {
+    "number": 118,
+    "question": "常用动物类中药的药用部位有动物的干燥整体、除去内脏的干燥体、动物体的某一部分、动物的生理产物、动物的病理产物、动物体某一部分的加工品等。其中，药用部位为动物生理产物的药材有",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 牛黄",
+      "B. 僵蚕",
+      "C. 珍珠",
+      "D. 麝香",
+      "E. 蜂酥"
+    ],
+    "answer": "DE",
+    "analysis": "麝香、蟾酥为生理产物。"
+  },
+  {
+    "number": 119,
+    "question": "盐酸-镁粉反应是鉴定黄酮类化合物最常用的颜色反应。盐酸-镁粉反应呈阳性的黄酮类化合物类型有",
+    "type": "single",
+    "source": "self",
+    "options": [
+      "A. 黄酮",
+      "B. 查尔酮",
+      "C. 黄酮醇",
+      "D. 橙酮",
+      "E. 二氢黄酮"
+    ],
+    "answer": "ACE",
+    "analysis": "查尔酮、橙酮反应为阴性。"
+  },
+  {
+    "number": 120,
+    "question": "《中国药典》规定，应检查不溶性微粒的注射剂",
+    "type": "single",
+    "source": "self",
+    "options": [],
+    "answer": "ABCE",
+    "analysis": "肌内注射不检查不溶性微粒。"
+  }
+]

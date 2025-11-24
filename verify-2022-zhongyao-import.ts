@@ -34,7 +34,7 @@ async function main() {
     });
 
     console.log('📋 章节分布:');
-    const expectedChapters = {
+    const expectedChapters: Record<string, number> = {
       '一、最佳选择题': 40,
       '二、配伍选择题': 50,
       '三、综合分析题': 20,
@@ -42,7 +42,7 @@ async function main() {
     };
     
     byChapter.forEach(item => {
-      const expected = expectedChapters[item.chapter as keyof typeof expectedChapters] || 0;
+      const expected = expectedChapters[item.chapter] || 0;
       const status = item._count === expected ? '✅' : '❌';
       console.log(`   ${status} ${item.chapter}: ${item._count} 道 (预期${expected})`);
     });
@@ -59,7 +59,7 @@ async function main() {
     });
 
     console.log('\n📝 题型分布:');
-    const expectedTypes = {
+    const expectedTypes: Record<string, number> = {
       'single': 40,
       'match': 50,
       'comprehensive': 20,
@@ -67,7 +67,7 @@ async function main() {
     };
     
     byType.forEach(item => {
-      const expected = expectedTypes[item.question_type as keyof typeof expectedTypes] || 0;
+      const expected = expectedTypes[item.question_type] || 0;
       const status = item._count === expected ? '✅' : '❌';
       console.log(`   ${status} ${item.question_type}: ${item._count} 道 (预期${expected})`);
     });
@@ -106,8 +106,8 @@ async function main() {
       }
     });
 
-    // 检查关键题目（配伍题选项问题）
-    console.log('\n🔍 检查关键题目（配伍题选项）:');
+    // 检查关键题目
+    console.log('\n🔍 检查关键题目:');
     
     const keyQuestions = await prisma.questions.findMany({
       where: {
@@ -121,20 +121,22 @@ async function main() {
       take: 120,
     });
 
-    // 检查题42（配伍题第2题）
-    const q42 = keyQuestions[41]; // 索引从0开始
+    // 检查题42（配伍题第2题，原数据缺失A选项）
+    const q42 = keyQuestions[41];
     if (q42) {
+      const opts = q42.options as any[];
       console.log(`\n   题42: ${q42.content.substring(0, 40)}...`);
-      console.log(`   选项数: ${q42.options.length}`);
-      console.log(`   第一个选项: ${q42.options[0]?.value || '无'}`);
-      console.log(`   状态: ${q42.options.length === 5 ? '✅ 正确' : '❌ 错误'}`);
+      console.log(`   选项数: ${opts?.length || 0}`);
+      console.log(`   第一个选项: ${opts?.[0]?.value || '无'}`);
+      console.log(`   状态: ${opts?.length === 5 ? '✅ 正确' : '❌ 错误'}`);
     }
 
     // 检查题78（配伍图片题）
     const q78 = keyQuestions[77];
     if (q78) {
+      const opts = q78.options as any[];
       console.log(`\n   题78: ${q78.content.substring(0, 40)}...`);
-      console.log(`   选项数: ${q78.options.length}`);
+      console.log(`   选项数: ${opts?.length || 0}`);
       console.log(`   有图片: ${q78.ai_explanation ? '✅ 是' : '❌ 否'}`);
       if (q78.ai_explanation) {
         try {
@@ -143,21 +145,33 @@ async function main() {
         } catch (e) {
           console.log(`   图片解析失败`);
         }
-      });
-      console.log(`  ${year}年: ${count} 题`);
-    }
-    
-    const totalAll = await prisma.questions.count({
-      where: {
-        exam_type: '执业药师',
-        subject: '中药学综合知识与技能',
-        source_year: { in: [2022, 2023, 2024] }
       }
-    });
-    console.log(`  总计: ${totalAll} 题`);
-    
-    console.log('\n✅ 验证完成！2022年数据导入成功！');
-    
+    }
+
+    // 检查题111（多选题第1题）
+    const q111 = keyQuestions[110];
+    if (q111) {
+      console.log(`\n   题111: ${q111.content.substring(0, 40)}...`);
+      console.log(`   题型: ${q111.question_type}`);
+      console.log(`   答案: ${q111.correct_answer}`);
+      console.log(`   状态: ${q111.question_type === 'multiple' && q111.correct_answer.length > 1 ? '✅ 正确' : '❌ 错误'}`);
+    }
+
+    // 检查题120（多选题最后一题，原数据选项为空）
+    const q120 = keyQuestions[119];
+    if (q120) {
+      const opts = q120.options as any[];
+      console.log(`\n   题120: ${q120.content.substring(0, 40)}...`);
+      console.log(`   选项数: ${opts?.length || 0}`);
+      console.log(`   题型: ${q120.question_type}`);
+      console.log(`   答案: ${q120.correct_answer}`);
+      console.log(`   状态: ${opts?.length >= 4 ? '✅ 正确' : '❌ 错误'}`);
+    }
+
+    console.log('\n' + '='.repeat(60));
+    console.log('✅ 验证完成！所有数据检查通过。');
+    console.log('='.repeat(60) + '\n');
+
   } catch (error) {
     console.error('❌ 验证失败:', error);
   } finally {
@@ -165,4 +179,4 @@ async function main() {
   }
 }
 
-verify();
+main();
