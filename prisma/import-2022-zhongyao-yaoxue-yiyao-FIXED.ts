@@ -184,7 +184,61 @@ function getSmartOptions(
   
   // 🔑 优先级3：综合分析题选项处理
   if (number >= 91 && number <= 110) {
-    // 如果有选项，检查是否合理
+    // 🔑 特殊处理：题91-96缺少A选项，需要补全（和配伍题一样的问题）
+    if (number >= 91 && number <= 96) {
+      // 先检查自带选项
+      if (options && options.length >= 4) {
+        const firstOption = options[0];
+        
+        // 黑名单过滤
+        const invalidKeywords = [
+          '聚乙烯醇', '亚硫酸钠', '苯乙醇', '卵磷脂',
+          '散剂', '颗粒剂', '蜜丸', '舌下片', '口服液',
+          '乳膏剂', '凝胶剂', '喷雾剂', '贴膏剂', '栓剂'
+        ];
+        
+        const isInvalid = invalidKeywords.some(keyword => firstOption.includes(keyword));
+        
+        if (!isInvalid) {
+          // 补全缺失的A选项
+          if (options.length === 4 && options[0].startsWith('B.')) {
+            const bOptionContent = options[0].substring(3); // 去掉"B. "
+            const completeOptions = [
+              'A. ' + bOptionContent,
+              ...options
+            ];
+            console.log(`  ✓ 题${number}补全A选项后使用自带选项（综合分析题）`);
+            return completeOptions;
+          } else if (options.length === 5) {
+            console.log(`  ✓ 题${number}使用自带选项（综合分析题）`);
+            return options;
+          }
+        }
+      }
+      
+      // 向前查找有效选项（在题101开始查找完整选项）
+      for (let j = 100; j < allQuestions.length && allQuestions[j].number <= 110; j++) {
+        const laterQ = allQuestions[j];
+        if (laterQ.options && laterQ.options.length === 5) {
+          const firstOption = laterQ.options[0];
+          if (firstOption.startsWith('A.')) {
+            console.log(`  ✓ 题${number}继承题${laterQ.number}的选项（向后查找）`);
+            return laterQ.options;
+          }
+        }
+      }
+      
+      console.log(`  ℹ️  题${number}生成A-E空选项（综合分析题91-96未找到有效选项）`);
+      return ['A.', 'B.', 'C.', 'D.', 'E.'];
+    }
+    
+    // 🔑 题97-100：图片题，强制空选项
+    if (number >= 97 && number <= 100) {
+      console.log(`  ✓ 题${number}生成A-E空选项（图片题）`);
+      return ['A.', 'B.', 'C.', 'D.', 'E.'];
+    }
+    
+    // 🔑 题101-110：正常综合分析题
     if (options && options.length === 5) {
       const firstOption = options[0];
       // 排除明显的错误选项
@@ -196,16 +250,16 @@ function getSmartOptions(
         return ['A.', 'B.', 'C.', 'D.', 'E.'];
       }
       
-      console.log(`  ✓ 题${number}使用自带选项`);
+      console.log(`  ✓ 题${number}使用自带选项（综合分析题）`);
       return options;
     }
     
-    // 向前查找同组题目的选项（综合分析题通常3-4题共用一组选项）
+    // 向前查找同组题目的选项
     for (let i = currentIndex - 1; i >= 0 && i >= currentIndex - 4; i--) {
       const prevQ = allQuestions[i];
-      if (prevQ.number >= 91 && prevQ.number <= 110) {
+      if (prevQ.number >= 101 && prevQ.number <= 110) {
         if (prevQ.options && prevQ.options.length === 5) {
-          console.log(`  ✓ 题${number}继承题${prevQ.number}的选项`);
+          console.log(`  ✓ 题${number}继承题${prevQ.number}的选项（综合分析题）`);
           return prevQ.options;
         }
       }
