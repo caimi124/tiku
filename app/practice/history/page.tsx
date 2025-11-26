@@ -44,6 +44,7 @@ function HistoryExamContent() {
       const subjects = [
         "中药学综合知识与技能",
         "中药学专业知识（一）",
+        "中药学专业知识（二）",
         "药学专业知识（一）"
       ];
       
