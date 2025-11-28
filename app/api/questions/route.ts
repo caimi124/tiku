@@ -1,14 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// 转换选项格式：对象 -> 数组
+// 转换选项格式：字符串数组/对象 -> 对象数组
 function formatOptions(options: any) {
   if (!options) return [];
   
-  // 如果已经是数组格式，直接返回
-  if (Array.isArray(options)) return options;
+  // 🔑 如果是字符串数组格式（如 ['A.xxx', 'B.xxx']），需要拆分为对象数组
+  if (Array.isArray(options)) {
+    // 检查第一个元素是否是字符串格式
+    if (options.length > 0 && typeof options[0] === 'string') {
+      // 拆分 "A.内容" 为 {key: 'A', value: '内容'}
+      return options.map((opt: string) => {
+        const dotIndex = opt.indexOf('.');
+        if (dotIndex > 0) {
+          return {
+            key: opt.substring(0, dotIndex).trim(),
+            value: opt.substring(dotIndex + 1).trim()
+          };
+        }
+        // 如果没有点号，返回空值
+        return { key: '', value: opt };
+      });
+    }
+    // 如果已经是对象数组格式，直接返回
+    return options;
+  }
   
-  // 如果是对象格式，转换为数组
+  // 如果是对象格式（旧格式），转换为数组
   if (typeof options === 'object') {
     return Object.entries(options).map(([key, value]) => ({
       key,
@@ -32,6 +50,8 @@ function formatQuestion(question: any) {
     knowledgePoints: question.knowledge_points || [],
     isPublished: question.is_published,
     aiExplanation: question.ai_explanation,  // 添加图片数据字段映射
+    explanation: question.ai_explanation,  // 🔑 添加解析字段映射（前端使用explanation）
+    chapter: question.chapter,  // 添加章节字段映射
   };
 }
 
