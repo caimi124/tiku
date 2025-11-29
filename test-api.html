@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API测试</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>2022年中药学专业知识（二）API测试</h1>
+    <div id="results"></div>
+
+    <script>
+        async function testApi() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>正在测试...</p>';
+            
+            try {
+                // 测试API调用
+                const year = 2022;
+                const subject = '中药学专业知识（二）';
+                const url = `/api/questions?sourceYear=${year}&subject=${encodeURIComponent(subject)}&limit=5`;
+                
+                console.log('请求URL:', url);
+                results.innerHTML += `<p><strong>请求URL:</strong> ${url}</p>`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                console.log('响应数据:', data);
+                results.innerHTML += `<p><strong>响应状态:</strong> ${response.status}</p>`;
+                results.innerHTML += `<p><strong>成功:</strong> ${data.success}</p>`;
+                
+                if (data.success) {
+                    results.innerHTML += `<p><strong>题目总数:</strong> ${data.data.total}</p>`;
+                    results.innerHTML += `<p><strong>返回题目数:</strong> ${data.data.questions.length}</p>`;
+                    
+                    if (data.data.questions.length > 0) {
+                        results.innerHTML += '<h3>前3题示例:</h3>';
+                        data.data.questions.slice(0, 3).forEach((q, idx) => {
+                            results.innerHTML += `
+                                <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+                                    <p><strong>题${idx + 1}:</strong> ${q.content.substring(0, 100)}...</p>
+                                    <p><strong>科目:</strong> ${q.subject}</p>
+                                    <p><strong>年份:</strong> ${q.sourceYear}</p>
+                                    <p><strong>题型:</strong> ${q.questionType}</p>
+                                    <p><strong>选项数:</strong> ${q.options.length}</p>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        results.innerHTML += '<p style="color: red;">❌ 没有找到题目数据</p>';
+                    }
+                } else {
+                    results.innerHTML += `<p style="color: red;"><strong>错误:</strong> ${data.error}</p>`;
+                }
+                
+            } catch (error) {
+                console.error('测试失败:', error);
+                results.innerHTML += `<p style="color: red;"><strong>测试失败:</strong> ${error.message}</p>`;
+            }
+        }
+        
+        // 页面加载后自动测试
+        window.onload = testApi;
+    </script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试页面索引 - 历年真题问题诊断</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .status-bar {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-left: 5px solid #28a745;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .status-icon {
+            width: 40px;
+            height: 40px;
+            background: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .status-text {
+            flex: 1;
+        }
+        
+        .status-text h3 {
+            color: #28a745;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .status-text p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .main-content {
+            background: white;
+            padding: 30px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+        }
+        
+        .test-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title .emoji {
+            font-size: 24px;
+        }
+        
+        .test-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .test-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .test-card h3 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .test-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .test-card .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-tag {
+            background: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #667eea;
+            border: 1px solid #667eea;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-api {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-api:hover {
+            background: #218838;
+        }
+        
+        .footer {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .tips {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .tips h4 {
+            color: #856404;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .tips ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .tips li {
+            color: #856404;
+            font-size: 13px;
+            line-height: 1.8;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .tips li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>🔍 历年真题问题诊断中心</h1>
+            <p>API数据正常，前端不显示？这里有3个测试页面帮你找出问题！</p>
+        </div>
+        
+        <!-- API状态 -->
+        <div class="status-bar">
+            <div class="status-icon">✓</div>
+            <div class="status-text">
+                <h3>API完全正常</h3>
+                <p>后端已返回1440道题的完整数据 (2024/2023/2022年，每年480题)</p>
+            </div>
+        </div>
+        
+        <!-- 主要内容 -->
+        <div class="main-content">
+            <!-- 第一部分：API测试 -->
+            <div class="test-section">
+                <div class="section-title">
+                    <span class="emoji">📡</span>
+                    <span>第一步：验证API</span>
+                </div>
+                
+                <div class="test-card">
+                    <h3>API端点直接测试</h3>
+                    <p>在浏览器中打开API端点，直接查看返回的JSON数据</p>
+                    <div class="features">
+                        <span class="feature-tag">原始数据</span>
+                        <span class="feature-tag">JSON格式</span>
+                        <span class="feature-tag">即时验证</span>
+                    </div>
+                    <div class="btn-group">
+                        <a href="http://localhost:3000/api/history-stats?exam=pharmacist" target="_blank" class="btn btn-api">
+                            🌐 打开API端点
+                        </a>
+                        <a href="file:///E:/tiku/test-api-direct.html" target="_blank" class="btn btn-secondary">
+                            📄 API测试页面
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 第二部分：调试页面 -->
+            <div class="test-section">
+                <div class="section-title">
+                    <span class="emoji">🔧</span>
+                    <span>第二步：测试调试页面</span>
+                </div>
+                
+                <div class="test-card">
+                    <h3>完整调试版本</h3>
+                    <p>显示所有内部状态、数据流、实时日志。如果这个页面正常显示，说明API绝对没问题！</p>
+                    <div class="features">
+                        <span class="feature-tag">内部状态</span>
+                        <span class="feature-tag">实时日志</span>
+                        <span class="feature-tag">API响应</span>
+                        <span class="feature-tag">缓存检查</span>
+                    </div>
+                    <div class="btn-group">
+                        <a href="http://localhost:3000/practice/history/debug" target="_blank" class="btn btn-primary">
+                            🔍 打开调试页面
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="test-card">
+                    <h3>简化测试版本</h3>
+                    <p>移除了Suspense和缓存逻辑，纯粹测试API调用和数据显示</p>
+                    <div class="features">
+                        <span class="feature-tag">无Suspense</span>
+                        <span class="feature-tag">无缓存</span>
+                        <span class="feature-tag">纯净环境</span>
+                    </div>
+                    <div class="btn-group">
+                        <a href="http://localhost:3000/practice/history-simple" target="_blank" class="btn btn-primary">
+                            📋 打开简化页面
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 第三部分：原始页面 -->
+            <div class="test-section">
+                <div class="section-title">
+                    <span class="emoji">🎯</span>
+                    <span>第三步：测试原始页面</span>
+                </div>
+                
+                <div class="test-card">
+                    <h3>原始页面（有问题的版本）</h3>
+                    <p>这是报告不显示数据的原始页面。在测试前，请先清除缓存！</p>
+                    <div class="features">
+                        <span class="feature-tag">生产版本</span>
+                        <span class="feature-tag">完整功能</span>
+                        <span class="feature-tag">需清除缓存</span>
+                    </div>
+                    <div class="btn-group">
+                        <a href="http://localhost:3000/practice/history?exam=pharmacist" target="_blank" class="btn btn-secondary">
+                            📱 打开原始页面
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部提示 -->
+        <div class="footer">
+            <div class="tips">
+                <h4>💡 测试流程建议</h4>
+                <ul>
+                    <li>先打开 <strong>API端点</strong>，确认返回1440题的JSON数据</li>
+                    <li>然后打开 <strong>调试页面</strong>，观察是否正常显示（如果正常，说明API绝对没问题）</li>
+                    <li>最后打开 <strong>原始页面</strong>，按F12查看Console和Network标签</li>
+                    <li>如果调试页面正常但原始页面不正常，问题在React代码或浏览器缓存</li>
+                    <li>解决方法：在Console执行 <code>localStorage.clear(); location.reload();</code></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 在新标签打开所有链接
+        document.querySelectorAll('a[target="_blank"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                console.log('🔗 打开:', this.href);
+            });
+        });
+    </script>
+</body>
+</html>

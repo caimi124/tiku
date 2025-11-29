@@ -12,6 +12,7 @@ import {
   ArrowLeft,
   CheckCircle2,
   Target,
+  Zap,
 } from "lucide-react";
 
 interface YearData {
@@ -130,15 +131,80 @@ function HistoryExamContent() {
       </nav>
 
       <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
+        {/* 面包屑导航 */}
+        <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
+          <Link href="/" className="hover:text-orange-500 transition">首页</Link>
+          <span>/</span>
+          <Link href="/practice" className="hover:text-orange-500 transition">在线练习</Link>
+          <span>/</span>
+          <span className="text-gray-900 font-medium">历年真题</span>
+        </nav>
+
         {/* 页面标题 */}
-        <div className="mb-4 md:mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 flex items-center">
-            <FileText className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-3 text-orange-500" />
-            历年真题
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3 flex items-center">
+            <FileText className="w-7 h-7 md:w-10 md:h-10 mr-2 md:mr-3 text-orange-500" />
+            执业药师历年真题库
           </h1>
-          <p className="text-sm text-gray-600">
-            通过历年真题练习，把握考试方向和命题规律
+          <p className="text-base md:text-lg text-gray-600 mb-4">
+            🎯 精选 2022-2024 年真题，按年份/科目分类练习，把握考试趨势和命题规律
           </p>
+          <div className="flex flex-wrap gap-2">
+            <span className="inline-flex items-center px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-medium">
+              <CheckCircle2 className="w-4 h-4 mr-1" />
+              真题收录全
+            </span>
+            <span className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+              <Target className="w-4 h-4 mr-1" />
+              科目分类清
+            </span>
+            <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+              <TrendingUp className="w-4 h-4 mr-1" />
+              解析详细
+            </span>
+          </div>
+        </div>
+
+        {/* 快速入口 - 移动端优先 */}
+        <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-4 md:p-6 mb-6 border-2 border-orange-200">
+          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3 flex items-center">
+            <Zap className="w-5 h-5 mr-2 text-orange-500" />
+            快速开始
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+            <Link
+              href="/practice/history/2024?exam=pharmacist"
+              className="flex flex-col items-center justify-center p-3 md:p-4 bg-white rounded-lg hover:shadow-md transition active:scale-95"
+            >
+              <Calendar className="w-6 h-6 md:w-8 md:h-8 text-orange-500 mb-2" />
+              <span className="text-sm md:text-base font-medium text-gray-900">2024年</span>
+              <span className="text-xs text-gray-500">最新真题</span>
+            </Link>
+            <Link
+              href="/practice/history/2023?exam=pharmacist"
+              className="flex flex-col items-center justify-center p-3 md:p-4 bg-white rounded-lg hover:shadow-md transition active:scale-95"
+            >
+              <Calendar className="w-6 h-6 md:w-8 md:h-8 text-blue-500 mb-2" />
+              <span className="text-sm md:text-base font-medium text-gray-900">2023年</span>
+              <span className="text-xs text-gray-500">热门真题</span>
+            </Link>
+            <Link
+              href="/practice/history/2022?exam=pharmacist"
+              className="flex flex-col items-center justify-center p-3 md:p-4 bg-white rounded-lg hover:shadow-md transition active:scale-95"
+            >
+              <Calendar className="w-6 h-6 md:w-8 md:h-8 text-green-500 mb-2" />
+              <span className="text-sm md:text-base font-medium text-gray-900">2022年</span>
+              <span className="text-xs text-gray-500">经典真题</span>
+            </Link>
+            <Link
+              href="/practice/history/2024/mock?exam=pharmacist"
+              className="flex flex-col items-center justify-center p-3 md:p-4 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-lg hover:shadow-md transition active:scale-95"
+            >
+              <Clock className="w-6 h-6 md:w-8 md:h-8 mb-2" />
+              <span className="text-sm md:text-base font-medium">模拟考试</span>
+              <span className="text-xs opacity-90">限时练习</span>
+            </Link>
+          </div>
         </div>
 
         {/* 统计卡片 */}

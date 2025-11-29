@@ -46,6 +46,13 @@ export default function HomePage() {
                 <span>AI推荐</span>
               </Link>
               <Link
+                href="/practice/history?exam=pharmacist"
+                className="flex items-center space-x-1 text-orange-500 hover:text-orange-600 transition font-medium"
+              >
+                <FileText className="w-4 h-4" />
+                <span>历年真题</span>
+              </Link>
+              <Link
                 href="/institutions"
                 className="text-gray-600 hover:text-blue-500 transition"
               >
@@ -113,6 +120,14 @@ export default function HomePage() {
                 >
                   <Sparkles className="w-5 h-5" />
                   <span>AI推荐</span>
+                </Link>
+                <Link
+                  href="/practice/history?exam=pharmacist"
+                  className="flex items-center space-x-2 px-4 py-2 text-orange-500 hover:bg-orange-50 rounded-lg font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <FileText className="w-5 h-5" />
+                  <span>🔥 历年真题</span>
                 </Link>
                 <Link
                   href="/institutions"
@@ -247,6 +262,48 @@ export default function HomePage() {
               <span>免费获取AI推荐</span>
               <ArrowRight className="w-5 h-5" />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 历年真题精选 - 新增核心功能入口 */}
+      <section className="container mx-auto px-4 py-12 md:py-16">
+        <div className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-8 md:p-12 text-white mb-12 md:mb-16">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium mb-4">
+              <FileText className="w-4 h-4" />
+              <span>核心备考资源</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              📚 执业药师历年真题库
+            </h2>
+            <p className="text-lg md:text-xl text-orange-100 mb-6">
+              2022-2024年真题全收录 · 1440+道精选真题 · 按年份/科目分类练习
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/practice/history?exam=pharmacist"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-white text-orange-500 rounded-lg font-bold text-lg hover:shadow-2xl transition transform hover:scale-105 space-x-2"
+              >
+                <FileText className="w-6 h-6" />
+                <span>开始真题练习</span>
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <div className="flex items-center space-x-6 text-white/90">
+                <div className="text-center">
+                  <div className="text-2xl font-bold">1440+</div>
+                  <div className="text-sm">道真题</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">3年</div>
+                  <div className="text-sm">真题覆盖</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">4科</div>
+                  <div className="text-sm">专业分类</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

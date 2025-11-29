@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>完整诊断和修复工具</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🔍 2022年中药药学专业知识（二）完整诊断工具</h1>
+    
+    <div class="section">
+        <h2>步骤1: API基础测试</h2>
+        <button onclick="testBasicApi()">测试API连接</button>
+        <div id="api-test-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>步骤2: 数据查询测试</h2>
+        <button onclick="testDataQuery()">查询2022年数据</button>
+        <div id="data-query-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>步骤3: 字段映射验证</h2>
+        <button onclick="testFieldMapping()">验证字段映射</button>
+        <div id="field-mapping-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>步骤4: 前端分组模拟</h2>
+        <button onclick="testFrontendGrouping()">模拟前端分组</button>
+        <div id="frontend-grouping-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>步骤5: 完整流程测试</h2>
+        <button onclick="runFullTest()">运行完整测试</button>
+        <div id="full-test-result"></div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:3003';
+        const YEAR = 2022;
+        const SUBJECT = '中药学专业知识（二）';
+
+        // 步骤1: 测试API连接
+        async function testBasicApi() {
+            const resultDiv = document.getElementById('api-test-result');
+            resultDiv.innerHTML = '<p>正在测试...</p>';
+            
+            try {
+                const response = await fetch(`${BASE_URL}/api/questions?limit=1`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `<p class="success">✅ API连接正常</p>`;
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ API返回失败: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ API连接失败: ${error.message}</p>`;
+            }
+        }
+
+        // 步骤2: 查询2022年数据
+        async function testDataQuery() {
+            const resultDiv = document.getElementById('data-query-result');
+            resultDiv.innerHTML = '<p>正在查询...</p>';
+            
+            try {
+                const url = `${BASE_URL}/api/questions?sourceYear=${YEAR}&subject=${encodeURIComponent(SUBJECT)}&limit=5`;
+                console.log('查询URL:', url);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                console.log('查询结果:', data);
+                
+                let html = `<p><strong>请求URL:</strong> ${url}</p>`;
+                html += `<p><strong>响应状态:</strong> ${response.status}</p>`;
+                html += `<p><strong>成功:</strong> ${data.success}</p>`;
+                
+                if (data.success) {
+                    html += `<p class="success"><strong>✅ 题目总数:</strong> ${data.data.total}</p>`;
+                    html += `<p><strong>返回题目数:</strong> ${data.data.questions.length}</p>`;
+                    
+                    if (data.data.total === 0) {
+                        html += `<p class="error">❌ 问题：数据库中没有数据！</p>`;
+                    } else if (data.data.questions.length === 0) {
+                        html += `<p class="error">❌ 问题：查询到总数但没有返回题目！</p>`;
+                    } else {
+                        html += `<p class="success">✅ 数据查询正常</p>`;
+                    }
+                } else {
+                    html += `<p class="error">❌ 查询失败: ${data.error}</p>`;
+                }
+                
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ 查询失败: ${error.message}</p>`;
+            }
+        }
+
+        // 步骤3: 验证字段映射
+        async function testFieldMapping() {
+            const resultDiv = document.getElementById('field-mapping-result');
+            resultDiv.innerHTML = '<p>正在验证...</p>';
+            
+            try {
+                const url = `${BASE_URL}/api/questions?sourceYear=${YEAR}&subject=${encodeURIComponent(SUBJECT)}&limit=3`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (!data.success || data.data.questions.length === 0) {
+                    resultDiv.innerHTML = `<p class="error">❌ 无法获取数据进行验证</p>`;
+                    return;
+                }
+                
+                const sampleQuestion = data.data.questions[0];
+                const requiredFields = ['id', 'content', 'options', 'correctAnswer', 'chapter', 'subject', 'sourceYear', 'questionType'];
+                
+                let html = '<h3>字段验证结果：</h3><ul>';
+                let allFieldsPresent = true;
+                
+                requiredFields.forEach(field => {
+                    const hasField = sampleQuestion.hasOwnProperty(field);
+                    if (hasField) {
+                        html += `<li class="success">✅ ${field}: ${typeof sampleQuestion[field] === 'string' ? sampleQuestion[field].substring(0, 50) : typeof sampleQuestion[field]}</li>`;
+                    } else {
+                        html += `<li class="error">❌ ${field}: 缺失！</li>`;
+                        allFieldsPresent = false;
+                    }
+                });
+                
+                html += '</ul>';
+                
+                if (allFieldsPresent) {
+                    html += '<p class="success">✅ 所有必需字段都存在</p>';
+                } else {
+                    html += '<p class="error">❌ 存在缺失字段，需要修复API映射</p>';
+                }
+                
+                html += '<h3>完整题目数据：</h3>';
+                html += `<pre>${JSON.stringify(sampleQuestion, null, 2)}</pre>`;
+                
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ 验证失败: ${error.message}</p>`;
+            }
+        }
+
+        // 步骤4: 模拟前端分组
+        async function testFrontendGrouping() {
+            const resultDiv = document.getElementById('frontend-grouping-result');
+            resultDiv.innerHTML = '<p>正在测试...</p>';
+            
+            try {
+                const url = `${BASE_URL}/api/questions?sourceYear=${YEAR}&subject=${encodeURIComponent(SUBJECT)}&limit=200`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (!data.success || data.data.questions.length === 0) {
+                    resultDiv.innerHTML = `<p class="error">❌ 无法获取数据进行测试</p>`;
+                    return;
+                }
+                
+                // 模拟前端分组逻辑
+                const grouped = {
+                    '一、最佳选择题': [],
+                    '二、配伍选择题': [],
+                    '三、综合分析题': [],
+                    '四、多项选择题': [],
+                };
+                
+                data.data.questions.forEach(q => {
+                    const chapter = q.chapter;
+                    if (grouped[chapter]) {
+                        grouped[chapter].push(q);
+                    } else {
+                        console.warn('未匹配的章节:', chapter);
+                    }
+                });
+                
+                let html = '<h3>分组结果：</h3><ul>';
+                let totalGrouped = 0;
+                
+                Object.entries(grouped).forEach(([chapter, questions]) => {
+                    const count = questions.length;
+                    totalGrouped += count;
+                    if (count > 0) {
+                        html += `<li class="success">✅ ${chapter}: ${count}题</li>`;
+                    } else {
+                        html += `<li class="warning">⚠️ ${chapter}: 0题</li>`;
+                    }
+                });
+                
+                html += '</ul>';
+                html += `<p><strong>总计:</strong> ${totalGrouped} / ${data.data.total} 题被正确分组</p>`;
+                
+                if (totalGrouped === data.data.total) {
+                    html += '<p class="success">✅ 所有题目都被正确分组</p>';
+                } else {
+                    html += `<p class="error">❌ 有 ${data.data.total - totalGrouped} 题未被分组</p>`;
+                }
+                
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ 测试失败: ${error.message}</p>`;
+            }
+        }
+
+        // 步骤5: 运行完整测试
+        async function runFullTest() {
+            const resultDiv = document.getElementById('full-test-result');
+            resultDiv.innerHTML = '<h3>正在运行完整测试...</h3>';
+            
+            const tests = [
+                { name: 'API连接测试', func: testBasicApi },
+                { name: '数据查询测试', func: testDataQuery },
+                { name: '字段映射验证', func: testFieldMapping },
+                { name: '前端分组测试', func: testFrontendGrouping }
+            ];
+            
+            for (const test of tests) {
+                resultDiv.innerHTML += `<p>正在执行: ${test.name}...</p>`;
+                await test.func();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            
+            resultDiv.innerHTML += '<h3 class="success">✅ 所有测试完成！请查看各个测试结果。</h3>';
+            resultDiv.innerHTML += `<p><a href="${BASE_URL}/practice/history/${YEAR}?subject=${encodeURIComponent(SUBJECT)}" target="_blank">👉 点击这里访问实际页面</a></p>`;
+        }
+    </script>
+</body>
+</html>

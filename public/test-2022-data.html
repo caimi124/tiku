@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>2022年数据实时诊断</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 3px solid #4CAF50; padding-bottom: 10px; }
+        h2 { color: #555; margin-top: 30px; }
+        .test-section { margin: 20px 0; padding: 20px; background: #f9f9f9; border-left: 4px solid #2196F3; }
+        .success { color: #4CAF50; font-weight: bold; }
+        .error { color: #f44336; font-weight: bold; }
+        .warning { color: #ff9800; font-weight: bold; }
+        .info { color: #2196F3; }
+        pre { background: #263238; color: #aed581; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+        button { 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover { background: #45a049; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; }
+        .stat-value { font-size: 36px; font-weight: bold; }
+        .stat-label { font-size: 14px; opacity: 0.9; }
+        .log { max-height: 400px; overflow-y: auto; background: #fff; border: 1px solid #ddd; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 12px; }
+        .log-entry { padding: 5px; border-bottom: 1px solid #eee; }
+        .log-entry.error { background: #ffebee; }
+        .log-entry.success { background: #e8f5e9; }
+        .log-entry.info { background: #e3f2fd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 2022年中药药学专业知识（二）实时诊断系统</h1>
+        
+        <div class="stats" id="stats"></div>
+        
+        <div class="test-section">
+            <h2>📡 实时诊断</h2>
+            <button onclick="runDiagnosis()" id="diagnosisBtn">开始完整诊断</button>
+            <button onclick="clearLog()">清空日志</button>
+            <button onclick="openPracticePage()">打开练习页面</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>📋 诊断日志</h2>
+            <div id="log" class="log"></div>
+        </div>
+        
+        <div class="test-section" id="results"></div>
+    </div>
+
+    <script>
+        const YEAR = 2022;
+        const SUBJECT = '中药学专业知识（二）';
+        let logEntries = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logEntries.push({ timestamp, message, type });
+            updateLogDisplay();
+            console.log(`[${type}] ${message}`);
+        }
+
+        function updateLogDisplay() {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML = logEntries.map(entry => 
+                `<div class="log-entry ${entry.type}">[${entry.timestamp}] ${entry.message}</div>`
+            ).join('');
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            logEntries = [];
+            updateLogDisplay();
+        }
+
+        function updateStats(stats) {
+            const statsDiv = document.getElementById('stats');
+            statsDiv.innerHTML = Object.entries(stats).map(([label, value]) => `
+                <div class="stat-card">
+                    <div class="stat-value">${value}</div>
+                    <div class="stat-label">${label}</div>
+                </div>
+            `).join('');
+        }
+
+        function openPracticePage() {
+            window.open(`/practice/history/${YEAR}?subject=${encodeURIComponent(SUBJECT)}`, '_blank');
+        }
+
+        async function runDiagnosis() {
+            const btn = document.getElementById('diagnosisBtn');
+            btn.disabled = true;
+            btn.textContent = '诊断中...';
+            
+            clearLog();
+            log('🚀 开始完整诊断流程', 'info');
+            
+            try {
+                // 测试1: API基础测试
+                log('=== 测试1: API基础连接 ===', 'info');
+                const basicTest = await fetch('/api/questions?limit=1');
+                const basicData = await basicTest.json();
+                if (basicData.success) {
+                    log('✅ API基础连接正常', 'success');
+                } else {
+                    log('❌ API基础连接失败', 'error');
+                }
+
+                // 测试2: 查询2022年数据
+                log('=== 测试2: 查询2022年数据 ===', 'info');
+                const url = `/api/questions?sourceYear=${YEAR}&subject=${encodeURIComponent(SUBJECT)}&limit=200`;
+                log(`请求URL: ${url}`, 'info');
+                
+                const response = await fetch(url);
+                log(`响应状态码: ${response.status}`, 'info');
+                
+                const data = await response.json();
+                log(`响应success: ${data.success}`, 'info');
+                
+                if (!data.success) {
+                    log(`❌ API返回失败: ${data.error || '未知错误'}`, 'error');
+                    throw new Error(data.error || 'API调用失败');
+                }
+
+                const total = data.data.total;
+                const questionsCount = data.data.questions.length;
+                
+                log(`数据库总数: ${total}`, 'info');
+                log(`返回题目数: ${questionsCount}`, 'info');
+
+                updateStats({
+                    '数据库总数': total,
+                    '返回题目数': questionsCount,
+                    '响应状态': response.status,
+                    'API状态': data.success ? '成功' : '失败'
+                });
+
+                if (total === 0) {
+                    log('❌ 问题确认：数据库中没有2022年中药药学专业知识（二）的数据！', 'error');
+                    log('💡 解决方案：需要重新导入数据', 'warning');
+                    return;
+                }
+
+                if (questionsCount === 0) {
+                    log('❌ 问题确认：数据库有数据但API返回空数组！', 'error');
+                    log('💡 可能原因：查询条件不匹配或API过滤问题', 'warning');
+                    return;
+                }
+
+                log(`✅ 成功获取 ${questionsCount} 道题目`, 'success');
+
+                // 测试3: 验证字段
+                log('=== 测试3: 验证字段映射 ===', 'info');
+                const sampleQ = data.data.questions[0];
+                const requiredFields = ['id', 'content', 'options', 'correctAnswer', 'chapter', 'subject', 'sourceYear', 'questionType'];
+                
+                let missingFields = [];
+                requiredFields.forEach(field => {
+                    if (sampleQ.hasOwnProperty(field)) {
+                        log(`✅ 字段 ${field} 存在`, 'success');
+                    } else {
+                        log(`❌ 字段 ${field} 缺失！`, 'error');
+                        missingFields.push(field);
+                    }
+                });
+
+                if (missingFields.length > 0) {
+                    log(`❌ 缺失字段：${missingFields.join(', ')}`, 'error');
+                    log('💡 解决方案：需要修复API字段映射', 'warning');
+                    return;
+                }
+
+                // 测试4: 验证chapter字段值
+                log('=== 测试4: 验证chapter字段值 ===', 'info');
+                const chapterStats = {};
+                data.data.questions.forEach(q => {
+                    const chapter = q.chapter;
+                    chapterStats[chapter] = (chapterStats[chapter] || 0) + 1;
+                });
+
+                log('章节统计:', 'info');
+                Object.entries(chapterStats).forEach(([chapter, count]) => {
+                    log(`  ${chapter}: ${count}题`, 'info');
+                });
+
+                // 测试5: 模拟前端分组
+                log('=== 测试5: 模拟前端分组逻辑 ===', 'info');
+                const grouped = {
+                    '一、最佳选择题': [],
+                    '二、配伍选择题': [],
+                    '三、综合分析题': [],
+                    '四、多项选择题': [],
+                };
+
+                let ungrouped = 0;
+                data.data.questions.forEach(q => {
+                    const chapter = q.chapter;
+                    if (grouped[chapter]) {
+                        grouped[chapter].push(q);
+                    } else {
+                        ungrouped++;
+                        log(`⚠️  题目未匹配到分组：chapter="${chapter}"`, 'warning');
+                    }
+                });
+
+                log('分组结果:', 'info');
+                let totalGrouped = 0;
+                Object.entries(grouped).forEach(([chapter, questions]) => {
+                    const count = questions.length;
+                    totalGrouped += count;
+                    if (count > 0) {
+                        log(`✅ ${chapter}: ${count}题`, 'success');
+                    } else {
+                        log(`⚠️  ${chapter}: 0题`, 'warning');
+                    }
+                });
+
+                if (ungrouped > 0) {
+                    log(`❌ 有 ${ungrouped} 题未被正确分组`, 'error');
+                    log('💡 解决方案：检查chapter字段值是否匹配前端预期', 'warning');
+                } else {
+                    log(`✅ 所有 ${totalGrouped} 题都被正确分组`, 'success');
+                }
+
+                // 最终总结
+                log('=== 诊断总结 ===', 'info');
+                if (questionsCount > 0 && missingFields.length === 0 && ungrouped === 0) {
+                    log('🎉 所有测试通过！数据应该能正常显示', 'success');
+                    log('💡 如果前端仍然显示"暂无数据"，请尝试：', 'info');
+                    log('   1. 清除浏览器缓存', 'info');
+                    log('   2. 强制刷新页面（Ctrl+Shift+R）', 'info');
+                    log('   3. 检查浏览器控制台是否有JavaScript错误', 'info');
+                } else {
+                    log('⚠️  发现问题，请查看上面的详细日志', 'warning');
+                }
+
+                // 显示示例数据
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = `
+                    <h2>📄 示例题目数据</h2>
+                    <pre>${JSON.stringify(sampleQ, null, 2)}</pre>
+                    <h2>📊 完整响应数据（前3题）</h2>
+                    <pre>${JSON.stringify(data.data.questions.slice(0, 3), null, 2)}</pre>
+                `;
+
+            } catch (error) {
+                log(`💥 诊断过程出错: ${error.message}`, 'error');
+                console.error('详细错误:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '重新诊断';
+            }
+        }
+
+        // 页面加载后自动运行诊断
+        window.onload = () => {
+            log('📱 诊断系统已就绪', 'success');
+            log('👉 点击"开始完整诊断"按钮开始检查', 'info');
+        };
+    </script>
+</body>
+</html>

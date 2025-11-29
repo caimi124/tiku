@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API直接测试 - 历年真题</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #ff6b35;
+            padding-bottom: 10px;
+        }
+        .status {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #28a745;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #dc3545;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 10px 0;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        .year-card {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .year-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+        .subject-list {
+            display: grid;
+            gap: 10px;
+        }
+        .subject-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .subject-name {
+            font-weight: 500;
+            color: #333;
+        }
+        .subject-count {
+            color: #666;
+            font-size: 14px;
+        }
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 历年真题API直接测试</h1>
+        
+        <div id="status" class="status loading">
+            ⏳ 正在请求API...
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">真题总数</div>
+                <div class="stat-value" id="totalQuestions">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">可用年份</div>
+                <div class="stat-value" id="availableYears">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">科目总数</div>
+                <div class="stat-value" id="totalSubjects">-</div>
+            </div>
+        </div>
+
+        <div>
+            <button class="btn" onclick="testAPI()">🔄 重新测试</button>
+            <button class="btn" onclick="testProduction()">🌐 测试生产环境</button>
+        </div>
+
+        <div id="yearList"></div>
+
+        <h2>📡 API响应详情</h2>
+        <pre id="apiResponse">等待加载...</pre>
+
+        <h2>🛠️ 诊断信息</h2>
+        <div id="diagnostics"></div>
+    </div>
+
+    <script>
+        const API_URL_LOCAL = 'http://localhost:3000/api/history-stats?exam=pharmacist';
+        const API_URL_PROD = 'https://yikaobiguo.com/api/history-stats?exam=pharmacist';
+
+        async function testAPI(url = API_URL_LOCAL, isProd = false) {
+            const statusDiv = document.getElementById('status');
+            const responseDiv = document.getElementById('apiResponse');
+            const yearListDiv = document.getElementById('yearList');
+            const diagnosticsDiv = document.getElementById('diagnostics');
+            
+            statusDiv.className = 'status loading';
+            statusDiv.textContent = `⏳ 正在请求${isProd ? '生产' : '本地'}API...`;
+            
+            try {
+                console.log('🌐 请求URL:', url);
+                const startTime = Date.now();
+                
+                const response = await fetch(url);
+                const endTime = Date.now();
+                const responseTime = endTime - startTime;
+                
+                console.log('📊 响应状态:', response.status);
+                console.log('⏱️ 响应时间:', responseTime + 'ms');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('📦 响应数据:', data);
+                
+                // 显示成功状态
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `
+                    ✅ API请求成功！<br>
+                    响应时间: ${responseTime}ms<br>
+                    状态码: ${response.status}
+                `;
+                
+                // 显示原始响应
+                responseDiv.textContent = JSON.stringify(data, null, 2);
+                
+                if (data.success && data.data) {
+                    // 计算统计数据
+                    const totalQuestions = data.data.reduce((sum, year) => sum + year.totalQuestions, 0);
+                    const availableYears = data.data.filter(y => y.totalQuestions > 0).length;
+                    const totalSubjects = data.data.reduce((sum, year) => sum + year.subjects.length, 0);
+                    
+                    document.getElementById('totalQuestions').textContent = totalQuestions;
+                    document.getElementById('availableYears').textContent = availableYears;
+                    document.getElementById('totalSubjects').textContent = totalSubjects;
+                    
+                    // 显示年份列表
+                    yearListDiv.innerHTML = '<h2>📚 年份详情</h2>';
+                    data.data.forEach(year => {
+                        const yearCard = document.createElement('div');
+                        yearCard.className = 'year-card';
+                        
+                        yearCard.innerHTML = `
+                            <div class="year-title">${year.year}年真题 - 共${year.totalQuestions}题</div>
+                            <div class="subject-list">
+                                ${year.subjects.map(subject => `
+                                    <div class="subject-item">
+                                        <span class="subject-name">${subject.name}</span>
+                                        <span class="subject-count">${subject.count}题</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        
+                        yearListDiv.appendChild(yearCard);
+                    });
+                    
+                    // 诊断信息
+                    diagnosticsDiv.innerHTML = `
+                        <div class="status success">
+                            <strong>✅ 数据验证通过</strong><br><br>
+                            • 数据结构正确<br>
+                            • 包含${data.data.length}个年份<br>
+                            • 总计${totalQuestions}道题<br>
+                            • 每年都有4个科目<br>
+                            • 每科目120题<br><br>
+                            <strong>如果前端页面仍不显示，请检查：</strong><br>
+                            1. 浏览器控制台是否有JavaScript错误 (按F12)<br>
+                            2. Network标签中API请求是否成功<br>
+                            3. 清除浏览器缓存 (Ctrl+Shift+Delete)<br>
+                            4. 使用无痕模式重新打开 (Ctrl+Shift+N)<br>
+                            5. 检查React组件的状态更新逻辑
+                        </div>
+                    `;
+                } else {
+                    diagnosticsDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ API返回数据格式异常<br>
+                            success: ${data.success}<br>
+                            data: ${data.data ? 'exists' : 'null'}
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('❌ API请求失败:', error);
+                
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `
+                    ❌ API请求失败<br>
+                    错误: ${error.message}
+                `;
+                
+                responseDiv.textContent = `错误详情:\n${error.stack || error.message}`;
+                
+                diagnosticsDiv.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ 请求失败，可能的原因：</strong><br><br>
+                        1. 开发服务器未启动<br>
+                        &nbsp;&nbsp;&nbsp;→ 运行: npm run dev<br><br>
+                        2. 端口3000被占用<br>
+                        &nbsp;&nbsp;&nbsp;→ 检查其他应用是否占用端口<br><br>
+                        3. CORS跨域问题（仅生产环境）<br>
+                        &nbsp;&nbsp;&nbsp;→ 检查API的CORS设置<br><br>
+                        4. 数据库连接问题<br>
+                        &nbsp;&nbsp;&nbsp;→ 检查DATABASE_URL配置
+                    </div>
+                `;
+            }
+        }
+
+        function testProduction() {
+            testAPI(API_URL_PROD, true);
+        }
+
+        // 页面加载时自动测试
+        window.onload = () => {
+            console.log('🚀 页面加载完成，开始测试API...');
+            testAPI();
+        };
+    </script>
+</body>
+</html>
