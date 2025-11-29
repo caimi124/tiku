@@ -14,6 +14,15 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const examType = searchParams.get("exam") || "pharmacist";
+    
+    // 🔑 映射前端参数到数据库值（支持中英文）
+    const examTypeMap: Record<string, string> = {
+      'pharmacist': '执业药师',
+      'doctor': '执业医师',
+      'nurse': '护士执业',
+    };
+    
+    const dbExamType = examTypeMap[examType] || '执业药师';
 
     // 单次数据库查询，按年份和科目分组统计
     const stats = await prisma.$queryRaw`
@@ -24,7 +33,7 @@ export async function GET(request: NextRequest) {
       FROM questions
       WHERE 
         is_published = true
-        AND exam_type = ${examType}
+        AND exam_type = ${dbExamType}
         AND source_year IS NOT NULL
       GROUP BY source_year, subject
       ORDER BY source_year DESC, subject
