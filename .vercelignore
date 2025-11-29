@@ -16,6 +16,17 @@ generate-*.ts
 auto-*.ts
 quick-*.ts
 final-*.ts
+check-*.ts
+analyze-*.ts
+debug-*.ts
+fix-*.ts
+add-*.ts
+update-*.ts
+list-*.ts
+copy-*.ts
+delete-*.ts
+clean-*.ts
+find-*.ts
 
 # 开发工具和临时文件
 *.bat
