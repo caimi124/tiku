@@ -39,54 +39,57 @@ function HistoryExamContent() {
     try {
       setLoading(true);
       
-      // 从API获取真实的年份统计数据
-      const years = [2024, 2023, 2022, 2021];
-      const subjects = [
-        "中药学综合知识与技能",
-        "中药学专业知识（一）",
-        "中药学专业知识（二）",
-        "药学专业知识（一）"
-      ];
+      // ✅ 优化：使用新API，1次请求替代16次请求
+      const response = await fetch(`/api/history-stats?exam=${examType}`);
       
-      const yearDataPromises = years.map(async (year) => {
-        try {
-          // 查询所有科目
-          const subjectPromises = subjects.map(async (subject) => {
-            const response = await fetch(
-              `/api/questions?sourceYear=${year}&subject=${encodeURIComponent(subject)}&limit=1`
-            );
-            const data = await response.json();
-            const count = data.success ? data.data.total : 0;
-            return count > 0 ? { name: subject, count } : null;
-          });
-          
-          const subjectResults = await Promise.all(subjectPromises);
-          const availableSubjects = subjectResults.filter(s => s !== null) as { name: string; count: number }[];
-          const totalQuestions = availableSubjects.reduce((sum, s) => sum + s.count, 0);
-          
-          return {
-            year,
-            totalQuestions,
-            completedQuestions: 0, // TODO: 从用户答题记录获取
-            correctRate: 0, // TODO: 从用户答题记录计算
-            subjects: availableSubjects,
-          };
-        } catch (error) {
-          console.error(`获取${year}年数据失败:`, error);
-          return {
-            year,
-            totalQuestions: 0,
-            completedQuestions: 0,
-            correctRate: 0,
-            subjects: [],
-          };
-        }
-      });
+      if (!response.ok) {
+        throw new Error(`API请求失败: ${response.status}`);
+      }
       
-      const results = await Promise.all(yearDataPromises);
-      setYearData(results);
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error('API返回错误');
+      }
+      
+      // 添加客户端数据
+      const enhancedData = result.data.map((year: any) => ({
+        ...year,
+        completedQuestions: 0, // TODO: 从用户答题记录获取
+        correctRate: 0, // TODO: 从用户答题记录计算
+      }));
+      
+      setYearData(enhancedData);
+      
+      // 缓存到localStorage
+      try {
+        localStorage.setItem('history-stats-cache', JSON.stringify({
+          data: enhancedData,
+          timestamp: Date.now(),
+          examType,
+        }));
+      } catch (e) {
+        console.warn('缓存失败:', e);
+      }
+      
     } catch (error) {
       console.error("获取年份数据失败:", error);
+      
+      // 尝试使用缓存
+      try {
+        const cached = localStorage.getItem('history-stats-cache');
+        if (cached) {
+          const { data, timestamp, examType: cachedExamType } = JSON.parse(cached);
+          if (Date.now() - timestamp < 3600000 && cachedExamType === examType) {
+            setYearData(data);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('读取缓存失败:', e);
+      }
+      
+      setYearData([]);
     } finally {
       setLoading(false);
     }

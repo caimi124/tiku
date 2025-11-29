@@ -71,18 +71,18 @@ function YearPracticeContent() {
         const allQuestions = data.data.questions;
         setQuestions(allQuestions);
         
-        // 按题型分组统计
+        // 按章节分组统计（使用chapter字段而不是questionType）
         const grouped: Record<string, Question[]> = {
-          最佳选择题: [],
-          配伍选择题: [],
-          综合分析题: [],
-          多项选择题: [],
+          '一、最佳选择题': [],
+          '二、配伍选择题': [],
+          '三、综合分析题': [],
+          '四、多项选择题': [],
         };
 
         allQuestions.forEach((q: Question) => {
-          const type = q.questionType;
-          if (grouped[type]) {
-            grouped[type].push(q);
+          const chapter = q.chapter;
+          if (grouped[chapter]) {
+            grouped[chapter].push(q);
           }
         });
 
@@ -98,15 +98,15 @@ function YearPracticeContent() {
         ];
 
         typeOrder.forEach(({ type, title }) => {
-          if (grouped[type].length > 0) {
+          if (grouped[title] && grouped[title].length > 0) {
             questionSections.push({
               type,
               title,
               startIndex: currentIdx,
-              endIndex: currentIdx + grouped[type].length - 1,
-              count: grouped[type].length,
+              endIndex: currentIdx + grouped[title].length - 1,
+              count: grouped[title].length,
             });
-            currentIdx += grouped[type].length;
+            currentIdx += grouped[title].length;
           }
         });
 
