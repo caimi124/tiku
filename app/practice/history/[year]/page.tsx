@@ -71,31 +71,36 @@ function YearPracticeContent() {
         const allQuestions = data.data.questions;
         setQuestions(allQuestions);
         
-        // 按章节分组统计（使用chapter字段而不是questionType）
-        const grouped: Record<string, Question[]> = {
-          '一、最佳选择题': [],
-          '二、配伍选择题': [],
-          '三、综合分析题': [],
-          '四、多项选择题': [],
-        };
+        // 🔑 动态按章节分组（自动适应不同科目的章节结构）
+        const grouped: Record<string, Question[]> = {};
 
         allQuestions.forEach((q: Question) => {
-          const chapter = q.chapter;
-          if (grouped[chapter]) {
-            grouped[chapter].push(q);
+          const chapter = q.chapter || '未分类';
+          if (!grouped[chapter]) {
+            grouped[chapter] = [];
           }
+          grouped[chapter].push(q);
         });
 
-        // 创建题型分组
+        // 🔑 创建题型分组（按章节标题的顺序）
         const questionSections: QuestionSection[] = [];
         let currentIdx = 0;
 
-        const typeOrder = [
-          { type: '最佳选择题', title: '一、最佳选择题' },
-          { type: '配伍选择题', title: '二、配伍选择题' },
-          { type: '综合分析题', title: '三、综合分析题' },
-          { type: '多项选择题', title: '四、多项选择题' },
+        // 定义可能的章节顺序（支持法规和中药/药学两种结构）
+        const possibleChapters = [
+          '一、最佳选择题',
+          '二、配伍选择题',
+          '三、综合分析题',
+          '三、多项选择题', // 法规真题的第三章
+          '四、多项选择题',
         ];
+
+        const typeOrder = possibleChapters
+          .filter(title => grouped[title] && grouped[title].length > 0)
+          .map(title => ({
+            type: title.split('、')[1] || title,
+            title: title
+          }));
 
         typeOrder.forEach(({ type, title }) => {
           if (grouped[title] && grouped[title].length > 0) {
