@@ -30,7 +30,7 @@ async function main() {
     const hasExplanation = q.ai_explanation && q.ai_explanation.trim() !== '';
     const status = hasExplanation ? '✅' : '❌';
     console.log(`题${questionNum} ${status}: ${hasExplanation ? '有解析' : '无解析'}`);
-    if (hasExplanation) {
+    if (hasExplanation && q.ai_explanation) {
       console.log(`   解析预览: ${q.ai_explanation.substring(0, 50)}...`);
     }
     console.log(`   题目: ${q.content.substring(0, 40)}...`);

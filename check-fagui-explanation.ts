@@ -25,7 +25,7 @@ async function main() {
     console.log(`\n题${index + 1}:`);
     console.log(`内容: ${q.content.substring(0, 30)}...`);
     console.log(`答案: ${q.correct_answer}`);
-    console.log(`ai_explanation字段: ${q.ai_explanation ? q.ai_explanation.substring(0, 50) + '...' : '(空)'}`);
+    console.log(`ai_explanation字段: ${q.ai_explanation && q.ai_explanation.length > 0 ? q.ai_explanation.substring(0, 50) + '...' : '(空)'}`);
     console.log(`explanation字段: ${q.explanation || '(空)'}`);
     console.log('-'.repeat(50));
   });

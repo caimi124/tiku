@@ -26,7 +26,7 @@ async function main() {
     const hasExplanation = q.ai_explanation && q.ai_explanation.trim() !== '';
     const status = hasExplanation ? '✅' : '❌';
     console.log(`题${questionNum} ${status}: ${hasExplanation ? '有解析' : '无解析'}`);
-    if (hasExplanation) {
+    if (hasExplanation && q.ai_explanation) {
       console.log(`   解析: ${q.ai_explanation.substring(0, 60)}...`);
     }
     console.log('');
