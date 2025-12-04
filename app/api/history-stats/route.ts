@@ -14,6 +14,8 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const examType = searchParams.get("exam") || "pharmacist";
+    const year = searchParams.get("year");
+    const subject = searchParams.get("subject");
     
     // 🔑 映射前端参数到数据库值（支持中英文）
     const examTypeMap: Record<string, string> = {
@@ -24,25 +26,66 @@ export async function GET(request: NextRequest) {
     
     const dbExamType = examTypeMap[examType] || '执业药师';
 
-    // 单次数据库查询，按年份和科目分组统计
-    const stats = await prisma.$queryRaw`
-      SELECT 
-        source_year as year,
-        subject,
-        COUNT(*) as count
-      FROM questions
-      WHERE 
-        is_published = true
-        AND exam_type = ${dbExamType}
-        AND source_year IS NOT NULL
-      GROUP BY source_year, subject
-      ORDER BY source_year DESC, subject
-    ` as Array<{ year: number; subject: string; count: bigint }>;
+    // 如果指定了年份和科目，返回该科目该年的统计
+    if (year && subject) {
+      const count = await prisma.questions.count({
+        where: {
+          is_published: true,
+          exam_type: dbExamType,
+          source_year: parseInt(year),
+          subject: subject,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          year: parseInt(year),
+          subject,
+          totalQuestions: count,
+        },
+      });
+    }
+
+    // 构建WHERE条件
+    const where: any = {
+      is_published: true,
+      exam_type: dbExamType,
+      source_year: { not: null },
+    };
+    
+    if (year) {
+      where.source_year = parseInt(year);
+    }
+    
+    if (subject) {
+      where.subject = subject;
+    }
+
+    // 使用Prisma的groupBy进行安全查询
+    const stats = await prisma.questions.groupBy({
+      by: ['source_year', 'subject'],
+      where,
+      _count: {
+        id: true,
+      },
+      orderBy: [
+        { source_year: 'desc' },
+        { subject: 'asc' },
+      ],
+    });
+
+    // 转换数据格式
+    const formattedStats = stats.map(item => ({
+      year: item.source_year!,
+      subject: item.subject,
+      count: item._count.id,
+    }));
 
     // 格式化数据
     const yearMap = new Map<number, any>();
     
-    stats.forEach(item => {
+    formattedStats.forEach(item => {
       const year = item.year;
       if (!yearMap.has(year)) {
         yearMap.set(year, {
@@ -53,7 +96,7 @@ export async function GET(request: NextRequest) {
       }
       
       const yearData = yearMap.get(year);
-      const count = Number(item.count);
+      const count = item.count;
       yearData.totalQuestions += count;
       yearData.subjects.push({
         name: item.subject,
