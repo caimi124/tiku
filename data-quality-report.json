@@ -1,0 +1,647 @@
+{
+  "generatedAt": "2025-12-04T09:13:35.153Z",
+  "summary": {
+    "totalQuestions": 1680,
+    "totalMissingAnswers": 123,
+    "totalMissingExplanations": 765,
+    "totalMissingSubjects": 21,
+    "completeness": "92.68"
+  },
+  "byYear": [
+    {
+      "year": 2024,
+      "subjects": [
+        {
+          "name": "药学专业知识（一）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药学专业知识（二）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药事管理与法规",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 120,
+          "status": "❌ 数据不完整",
+          "completeness": 100
+        },
+        {
+          "name": "药学综合知识与技能",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 120,
+          "status": "❌ 数据不完整",
+          "completeness": 100
+        },
+        {
+          "name": "中药学专业知识（一）",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 32,
+          "missingExplanations": 32,
+          "status": "❌ 数据不完整",
+          "completeness": 73.3
+        },
+        {
+          "name": "中药学专业知识（二）",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "✅ 完整",
+          "completeness": 100
+        },
+        {
+          "name": "中药学综合知识与技能",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 30,
+          "missingExplanations": 35,
+          "status": "❌ 数据不完整",
+          "completeness": 75
+        }
+      ],
+      "totalQuestions": 600,
+      "totalMissingAnswers": 62,
+      "totalMissingExplanations": 307,
+      "missingSubjects": [
+        "药学专业知识（一）",
+        "药学专业知识（二）"
+      ]
+    },
+    {
+      "year": 2023,
+      "subjects": [
+        {
+          "name": "药学专业知识（一）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药学专业知识（二）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药事管理与法规",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 120,
+          "status": "❌ 数据不完整",
+          "completeness": 100
+        },
+        {
+          "name": "药学综合知识与技能",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "中药学专业知识（一）",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 36,
+          "status": "❌ 数据不完整",
+          "completeness": 100
+        },
+        {
+          "name": "中药学专业知识（二）",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "✅ 完整",
+          "completeness": 100
+        },
+        {
+          "name": "中药学综合知识与技能",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 30,
+          "missingExplanations": 31,
+          "status": "❌ 数据不完整",
+          "completeness": 75
+        }
+      ],
+      "totalQuestions": 480,
+      "totalMissingAnswers": 30,
+      "totalMissingExplanations": 187,
+      "missingSubjects": [
+        "药学专业知识（一）",
+        "药学专业知识（二）",
+        "药学综合知识与技能"
+      ]
+    },
+    {
+      "year": 2022,
+      "subjects": [
+        {
+          "name": "药学专业知识（一）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药学专业知识（二）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药事管理与法规",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 120,
+          "status": "❌ 数据不完整",
+          "completeness": 100
+        },
+        {
+          "name": "药学综合知识与技能",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 120,
+          "status": "❌ 数据不完整",
+          "completeness": 100
+        },
+        {
+          "name": "中药学专业知识（一）",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "✅ 完整",
+          "completeness": 100
+        },
+        {
+          "name": "中药学专业知识（二）",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "✅ 完整",
+          "completeness": 100
+        },
+        {
+          "name": "中药学综合知识与技能",
+          "total": 120,
+          "expected": 120,
+          "missingAnswers": 31,
+          "missingExplanations": 31,
+          "status": "❌ 数据不完整",
+          "completeness": 74.2
+        }
+      ],
+      "totalQuestions": 600,
+      "totalMissingAnswers": 31,
+      "totalMissingExplanations": 271,
+      "missingSubjects": [
+        "药学专业知识（一）",
+        "药学专业知识（二）"
+      ]
+    },
+    {
+      "year": 2021,
+      "subjects": [
+        {
+          "name": "药学专业知识（一）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药学专业知识（二）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药事管理与法规",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药学综合知识与技能",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "中药学专业知识（一）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "中药学专业知识（二）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "中药学综合知识与技能",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        }
+      ],
+      "totalQuestions": 0,
+      "totalMissingAnswers": 0,
+      "totalMissingExplanations": 0,
+      "missingSubjects": [
+        "药学专业知识（一）",
+        "药学专业知识（二）",
+        "药事管理与法规",
+        "药学综合知识与技能",
+        "中药学专业知识（一）",
+        "中药学专业知识（二）",
+        "中药学综合知识与技能"
+      ]
+    },
+    {
+      "year": 2020,
+      "subjects": [
+        {
+          "name": "药学专业知识（一）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药学专业知识（二）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药事管理与法规",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "药学综合知识与技能",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "中药学专业知识（一）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "中药学专业知识（二）",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        },
+        {
+          "name": "中药学综合知识与技能",
+          "total": 0,
+          "expected": 120,
+          "missingAnswers": 0,
+          "missingExplanations": 0,
+          "status": "完全缺失",
+          "completeness": 0
+        }
+      ],
+      "totalQuestions": 0,
+      "totalMissingAnswers": 0,
+      "totalMissingExplanations": 0,
+      "missingSubjects": [
+        "药学专业知识（一）",
+        "药学专业知识（二）",
+        "药事管理与法规",
+        "药学综合知识与技能",
+        "中药学专业知识（一）",
+        "中药学专业知识（二）",
+        "中药学综合知识与技能"
+      ]
+    }
+  ],
+  "problemList": [
+    {
+      "year": 2024,
+      "subject": "药学专业知识（一）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2024,
+      "subject": "药学专业知识（二）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2023,
+      "subject": "药学专业知识（一）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2023,
+      "subject": "药学专业知识（二）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2023,
+      "subject": "药学综合知识与技能",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2022,
+      "subject": "药学专业知识（一）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2022,
+      "subject": "药学专业知识（二）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2021,
+      "subject": "药学专业知识（一）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2021,
+      "subject": "药学专业知识（二）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2021,
+      "subject": "药事管理与法规",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2021,
+      "subject": "药学综合知识与技能",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2021,
+      "subject": "中药学专业知识（一）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2021,
+      "subject": "中药学专业知识（二）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2021,
+      "subject": "中药学综合知识与技能",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2020,
+      "subject": "药学专业知识（一）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2020,
+      "subject": "药学专业知识（二）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2020,
+      "subject": "药事管理与法规",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2020,
+      "subject": "药学综合知识与技能",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2020,
+      "subject": "中药学专业知识（一）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2020,
+      "subject": "中药学专业知识（二）",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2020,
+      "subject": "中药学综合知识与技能",
+      "total": 0,
+      "expected": 120,
+      "missingAnswers": 0,
+      "missingExplanations": 0,
+      "completeness": 0
+    },
+    {
+      "year": 2024,
+      "subject": "中药学专业知识（一）",
+      "total": 120,
+      "expected": 120,
+      "missingAnswers": 32,
+      "missingExplanations": 32,
+      "completeness": 73.3
+    },
+    {
+      "year": 2022,
+      "subject": "中药学综合知识与技能",
+      "total": 120,
+      "expected": 120,
+      "missingAnswers": 31,
+      "missingExplanations": 31,
+      "completeness": 74.2
+    },
+    {
+      "year": 2024,
+      "subject": "中药学综合知识与技能",
+      "total": 120,
+      "expected": 120,
+      "missingAnswers": 30,
+      "missingExplanations": 35,
+      "completeness": 75
+    },
+    {
+      "year": 2023,
+      "subject": "中药学综合知识与技能",
+      "total": 120,
+      "expected": 120,
+      "missingAnswers": 30,
+      "missingExplanations": 31,
+      "completeness": 75
+    }
+  ],
+  "completeList": [
+    {
+      "year": 2024,
+      "subject": "中药学专业知识（二）",
+      "total": 120
+    },
+    {
+      "year": 2023,
+      "subject": "中药学专业知识（二）",
+      "total": 120
+    },
+    {
+      "year": 2022,
+      "subject": "中药学专业知识（一）",
+      "total": 120
+    },
+    {
+      "year": 2022,
+      "subject": "中药学专业知识（二）",
+      "total": 120
+    }
+  ]
+}
