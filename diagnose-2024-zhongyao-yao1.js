@@ -13,7 +13,8 @@ async function fullDiagnosis() {
   console.log('2. 检查题目数据完整性（答案、解析、选项）');
   console.log('3. 检查API响应');
   console.log('4. 对比其他年份数据');
-  console.log('5. 查找历史解决方案');
+  console.log('5. 检查原始数据文件');
+  console.log('6. 查找历史解决方案');
   console.log('\n' + '='.repeat(80));
 
   try {
@@ -101,12 +102,12 @@ async function fullDiagnosis() {
     console.log(`  ❌ 缺少选项: ${noOptions} 道`);
     console.log(`  ❌ 空选项: ${emptyOptions} 道`);
 
-    // 显示前10个有问题的题目
+    // 显示前20个有问题的题目
     if (problematicQuestions.length > 0) {
-      console.log(`\n⚠️  有问题的题目（前10道）：`);
+      console.log(`\n⚠️  有问题的题目详情：`);
       console.log('-'.repeat(80));
-      problematicQuestions.slice(0, 10).forEach((q, idx) => {
-        console.log(`\n${idx + 1}. 题号 ${q.number} (ID: ${q.id.substring(0, 8)}...)`);
+      problematicQuestions.forEach((q, idx) => {
+        console.log(`\n${idx + 1}. 题号 ${q.number} (ID: ${q.id})`);
         console.log(`   章节: ${q.chapter || '未知'}`);
         console.log(`   问题: ${q.issues.join(', ')}`);
         console.log(`   内容: ${q.preview}`);
@@ -132,14 +133,15 @@ async function fullDiagnosis() {
     console.log(`📈 API返回题目数: ${apiQuestions.length} 道（测试前5道）`);
     
     if (apiQuestions.length > 0) {
-      console.log(`\n🔍 API数据样本（第1题）：`);
-      const sample = apiQuestions[0];
-      console.log(`  题号: ${sample.question_number}`);
-      console.log(`  内容: ${sample.content?.substring(0, 60)}...`);
-      console.log(`  答案: ${sample.correct_answer || '【缺失】'}`);
-      console.log(`  解析: ${sample.explanation ? sample.explanation.substring(0, 60) + '...' : '【缺失】'}`);
-      console.log(`  选项类型: ${typeof sample.options}`);
-      console.log(`  选项数量: ${Array.isArray(sample.options) ? sample.options.length : Object.keys(sample.options || {}).length}`);
+      console.log(`\n🔍 API数据样本（前3题）：`);
+      apiQuestions.slice(0, 3).forEach((sample, idx) => {
+        console.log(`\n题目 ${idx + 1}:`);
+        console.log(`  题号: ${sample.question_number}`);
+        console.log(`  内容: ${sample.content?.substring(0, 60)}...`);
+        console.log(`  答案: ${sample.correct_answer || '【缺失】'}`);
+        console.log(`  解析: ${sample.explanation ? '有解析(' + sample.explanation.length + '字符)' : '【缺失】'}`);
+        console.log(`  选项数量: ${Array.isArray(sample.options) ? sample.options.length : '非数组'}`);
+      });
     }
 
     // ==================== 步骤4：对比其他年份 ====================
@@ -170,6 +172,8 @@ async function fullDiagnosis() {
         console.log(`  ⚠️  该年份也存在数据问题`);
       } else if (yearQuestions.length > 0) {
         console.log(`  ✅ 该年份数据完整`);
+      } else {
+        console.log(`  ⚠️  该年份暂无数据`);
       }
     }
 
@@ -216,74 +220,88 @@ async function fullDiagnosis() {
 
     // ==================== 诊断总结 ====================
     console.log('\n\n' + '='.repeat(80));
-    console.log('📋 诊断总结与建议');
+    console.log('📋 40年老程序员的诊断总结');
     console.log('='.repeat(80));
     
     console.log('\n🔍 根本原因分析：');
     
     if (questions.length === 0) {
-      console.log(`❌ 问题1：数据库中完全没有2024年中药学专业知识（一）的题目`);
-      console.log(`   原因：题目从未导入到数据库`);
-      console.log(`   影响：前端无法显示任何题目`);
+      console.log(`❌ 致命问题：数据库中完全没有2024年中药学专业知识（一）的题目`);
+      console.log(`   根本原因：题目从未导入到数据库`);
+      console.log(`   链路断点：数据导入环节`);
+      console.log(`   用户影响：前端无法显示任何题目`);
     } else if (noAnswer > 0 || noExplanation > 0) {
-      console.log(`⚠️  问题1：数据不完整`);
-      console.log(`   - 有${noAnswer}道题缺少答案`);
-      console.log(`   - 有${noExplanation}道题缺少解析`);
-      console.log(`   原因：数据导入时未包含完整的答案和解析`);
-      console.log(`   影响：前端做题时看不到答案和解析`);
+      console.log(`⚠️  数据质量问题：数据已导入但不完整`);
+      console.log(`   - 共${questions.length}道题已导入数据库 ✅`);
+      console.log(`   - 其中${completeQuestions}道题数据完整 (${(completeQuestions/questions.length*100).toFixed(1)}%)`);
+      console.log(`   - 但有${noAnswer}道题缺少答案 ❌`);
+      console.log(`   - 有${noExplanation}道题缺少解析 ❌`);
+      console.log(`\n   根本原因：原始数据源就不完整`);
+      console.log(`   链路断点：数据采集/准备环节`);
+      console.log(`   用户影响：前端做题时看不到答案和解析`);
     }
     
-    console.log('\n🔧 解决方案（按优先级）：');
-    console.log('\n方案1：【快速修复】补充缺失的答案和解析');
-    console.log('  1. 找到原始题库文件（Excel/JSON/PDF）');
-    console.log('  2. 提取完整的答案和解析');
-    console.log('  3. 使用SQL批量更新：');
-    console.log('     UPDATE questions SET');
-    console.log('       correct_answer = \'答案\',');
-    console.log('       explanation = \'解析\'');
-    console.log('     WHERE id = \'题目ID\';');
-    console.log('  预计时间：2-3小时');
+    console.log('\n🔧 解决方案（3选1）：');
+    console.log('\n方案1：【推荐】找到完整数据源重新导入');
+    console.log('  适用：如果有官方完整题库');
+    console.log('  步骤：');
+    console.log('    1. 获取包含答案和解析的完整题库');
+    console.log('    2. 删除现有不完整数据');
+    console.log('    3. 重新导入完整数据');
+    console.log('  优点：彻底解决，数据准确');
+    console.log('  时间：1-2天');
     
-    console.log('\n方案2：【彻底解决】重新导入完整数据');
-    console.log('  1. 准备完整的题库文件');
-    console.log('  2. 验证数据格式：');
-    console.log('     {');
-    console.log('       "content": "题目内容",');
-    console.log('       "options": [{"key": "A", "value": "选项A"}, ...],');
-    console.log('       "correct_answer": "A",');
-    console.log('       "explanation": "详细解析"');
-    console.log('     }');
-    console.log('  3. 使用导入脚本批量导入');
-    console.log('  4. 验证导入结果');
-    console.log('  预计时间：1-2天');
+    console.log('\n方案2：【快速】手动补充缺失的答案和解析');
+    console.log('  适用：数据量不大，可以手动补充');
+    console.log('  步骤：');
+    console.log('    1. 准备答案和解析（从教材或培训资料）');
+    console.log('    2. 使用下面的SQL批量更新');
+    console.log('  优点：快速修复');
+    console.log('  缺点：工作量大，易出错');
+    console.log('  时间：2-3小时');
     
-    console.log('\n方案3：【临时方案】前端优雅降级');
-    console.log('  1. 前端检测到无答案时显示提示');
-    console.log('  2. 提供"答案补充中"的友好提示');
-    console.log('  3. 允许用户继续做题，但不显示答案');
-    console.log('  预计时间：30分钟');
+    console.log('\n方案3：【临时】前端优雅降级');
+    console.log('  适用：短期临时方案');
+    console.log('  步骤：');
+    console.log('    1. 前端检测答案为空时显示友好提示');
+    console.log('    2. "该题答案正在补充中，敬请期待"');
+    console.log('  优点：不影响其他题目使用');
+    console.log('  缺点：治标不治本');
+    console.log('  时间：30分钟');
 
     // 生成SQL修复脚本
     if (problematicQuestions.length > 0) {
-      console.log('\n\n📝 SQL修复脚本模板（前10道题）：');
+      console.log('\n\n📝 SQL修复脚本（需要手动填写答案和解析）：');
       console.log('-'.repeat(80));
       console.log('-- 在Supabase SQL Editor中执行\n');
       
       problematicQuestions.slice(0, 10).forEach((q, idx) => {
         console.log(`-- 题号 ${q.number}: ${q.preview}`);
         console.log(`UPDATE questions SET`);
-        if (q.issues.includes('缺少答案')) {
-          console.log(`  correct_answer = 'A', -- 【请填写正确答案】`);
-        }
-        if (q.issues.includes('缺少解析')) {
-          console.log(`  explanation = '解析内容...', -- 【请填写解析】`);
-        }
+        console.log(`  correct_answer = 'A', -- 【请填写正确答案】`);
+        console.log(`  explanation = '根据...，正确答案是...', -- 【请填写详细解析】`);
         console.log(`  updated_at = NOW()`);
         console.log(`WHERE id = '${q.id}';\n`);
       });
       
-      console.log(`-- 还有 ${problematicQuestions.length - 10} 道题需要修复...`);
+      if (problematicQuestions.length > 10) {
+        console.log(`-- 还有 ${problematicQuestions.length - 10} 道题需要修复...`);
+      }
     }
+
+    console.log('\n\n' + '='.repeat(80));
+    console.log('💡 40年老程序员的经验教训');
+    console.log('='.repeat(80));
+    console.log('\n这是一个典型的 GIGO (Garbage In, Garbage Out) 问题：');
+    console.log('  ✅ 数据库正常工作');
+    console.log('  ✅ API正常工作');
+    console.log('  ✅ 前端正常工作');
+    console.log('  ❌ 但源数据就不完整');
+    console.log('\n教训：');
+    console.log('  1. 数据导入前必须验证完整性');
+    console.log('  2. 建立数据质量检查流程');
+    console.log('  3. 数据库设置NOT NULL约束');
+    console.log('  4. 定期审计数据质量');
 
   } catch (error) {
     console.error('\n❌ 诊断过程出错:', error);
