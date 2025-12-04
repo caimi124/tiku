@@ -63,13 +63,20 @@ function HistoryExamContent() {
   // 当缺失答案数据更新时，更新年份数据
   useEffect(() => {
     if (Object.keys(missingAnswersData).length > 0 && yearData.length > 0) {
-      const updatedData = yearData.map((year) => ({
-        ...year,
-        missingAnswers: missingAnswersData[year.year] || 0,
-      }));
-      setYearData(updatedData);
+      // 检查是否需要更新（避免无限循环）
+      const needsUpdate = yearData.some((year) => 
+        (year.missingAnswers || 0) !== (missingAnswersData[year.year] || 0)
+      );
+      
+      if (needsUpdate) {
+        const updatedData = yearData.map((year) => ({
+          ...year,
+          missingAnswers: missingAnswersData[year.year] || 0,
+        }));
+        setYearData(updatedData);
+      }
     }
-  }, [missingAnswersData]);
+  }, [missingAnswersData, yearData]);
 
   const fetchMissingAnswersStats = async () => {
     try {
@@ -117,7 +124,7 @@ function HistoryExamContent() {
         ...year,
         completedQuestions: 0,
         correctRate: 0,
-        missingAnswers: missingAnswersData[year.year] || 0, // 使用实际的缺失数量
+        missingAnswers: 0, // 初始为0，将由useEffect更新
       }));
       
       setYearData(enhancedData);
