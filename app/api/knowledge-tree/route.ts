@@ -302,9 +302,9 @@ function calculateAggregatedMastery(nodes: KnowledgeNode[]): void {
 
 /**
  * 获取高频考点列表 (Top N)
- * GET /api/knowledge-tree/high-frequency
+ * 内部辅助函数，不导出
  */
-export async function getHighFrequencyPoints(
+async function getHighFrequencyPoints(
   client: any,
   subjectCode: string,
   userId?: string,
