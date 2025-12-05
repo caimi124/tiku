@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -14,6 +14,7 @@ import {
   Clock,
   BookmarkPlus,
 } from "lucide-react";
+import { useLearningRecord } from "@/lib/hooks/useLearningRecord";
 
 // 模拟题目数据
 const mockQuestion = {
@@ -63,6 +64,11 @@ export default function PracticeModePage() {
   const [isMarked, setIsMarked] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
+  
+  // 学习记录 Hook - 用于记录答题数据并更新掌握度
+  // TODO: 从认证系统获取真实用户ID
+  const { recordAnswer, isSubmitting: isRecording } = useLearningRecord('demo-user');
+  const answerStartTime = useRef<number>(Date.now());
 
   // 计时器
   useEffect(() => {
@@ -73,10 +79,29 @@ export default function PracticeModePage() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleSubmit = () => {
+  // 重置答题开始时间
+  useEffect(() => {
+    answerStartTime.current = Date.now();
+  }, [currentQuestion]);
+
+  const handleSubmit = async () => {
     if (!selectedAnswer) return;
     setIsSubmitted(true);
     setShowExplanation(true);
+    
+    // 记录答题数据 - Requirements: 2.1, 2.2
+    const isCorrectAnswer = selectedAnswer === currentQuestion.correctAnswer;
+    const actualTimeSpent = Math.floor((Date.now() - answerStartTime.current) / 1000);
+    
+    // 如果题目有关联的知识点ID，记录学习数据
+    if (currentQuestion.id) {
+      await recordAnswer({
+        knowledgePointId: currentQuestion.id, // 使用题目ID作为知识点ID
+        questionId: currentQuestion.id,
+        isCorrect: isCorrectAnswer,
+        timeSpent: actualTimeSpent,
+      });
+    }
   };
 
   const handleNext = () => {
