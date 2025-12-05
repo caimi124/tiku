@@ -64,7 +64,7 @@ export interface RecommendationsData {
  * 
  * Property 13: 到期需要复习的考点必须出现在今日推荐列表中
  */
-export function shouldReviewToday(
+function shouldReviewToday(
   masteryScore: number,
   lastReviewDate: Date | null
 ): boolean {
@@ -83,7 +83,7 @@ export function shouldReviewToday(
 /**
  * 计算距离上次复习的天数
  */
-export function daysSinceLastReview(lastReviewDate: Date | null): number {
+function daysSinceLastReview(lastReviewDate: Date | null): number {
   if (!lastReviewDate) return 999 // 从未复习
   
   const now = new Date()
@@ -94,7 +94,7 @@ export function daysSinceLastReview(lastReviewDate: Date | null): number {
 /**
  * 获取掌握状态
  */
-export function getMasteryStatusInfo(score: number): { status: HighFrequencyPoint['status']; text: string } {
+function getMasteryStatusInfo(score: number): { status: HighFrequencyPoint['status']; text: string } {
   if (score >= 80) return { status: 'mastered', text: '已掌握' }
   if (score >= 60) return { status: 'review', text: '需复习' }
   if (score > 0) return { status: 'weak', text: '薄弱' }
@@ -104,7 +104,7 @@ export function getMasteryStatusInfo(score: number): { status: HighFrequencyPoin
 /**
  * 格式化日期为相对时间
  */
-export function formatRelativeTime(date: Date | null): string {
+function formatRelativeTime(date: Date | null): string {
   if (!date) return '从未'
   
   const days = daysSinceLastReview(date)
