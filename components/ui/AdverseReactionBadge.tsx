@@ -20,14 +20,13 @@ import {
 } from '@/lib/adverse-reaction-utils'
 
 // Re-export utilities for convenience
+export type { SeverityLevel, AdverseReaction }
 export {
-  SeverityLevel,
   SEVERITY_CONFIG,
   getSeverityConfig,
   isValidSeverity,
   getSeverityBgColor,
   getSeverityTextColor,
-  AdverseReaction,
   sortBySeverity
 }
 
