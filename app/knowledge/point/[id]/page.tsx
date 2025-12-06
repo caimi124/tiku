@@ -13,6 +13,8 @@ import Link from 'next/link'
 import { MasteryProgressBar } from '@/components/ui/MasteryProgressBar'
 import { MasteryStatusBadge } from '@/components/ui/MasteryStatusBadge'
 import { ImportanceStars, isHighFrequency } from '@/components/ui/ImportanceStars'
+import { ExpertTipsPanel } from '@/components/ui/ExpertTipsPanel'
+import { ExpertTips } from '@/lib/expert-tips-utils'
 
 interface BreadcrumbItem {
   id: string
@@ -68,10 +70,31 @@ export default function KnowledgePointPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [markingReview, setMarkingReview] = useState(false)
+  const [expertTips, setExpertTips] = useState<ExpertTips | null>(null)
+  const [tipsLoading, setTipsLoading] = useState(false)
 
   useEffect(() => {
     fetchPointDetail()
+    fetchExpertTips()
   }, [resolvedParams.id])
+
+  const fetchExpertTips = async () => {
+    setTipsLoading(true)
+    try {
+      const response = await fetch(`/api/expert-tips/${resolvedParams.id}`)
+      const data = await response.json()
+      if (data.success && data.data) {
+        setExpertTips(data.data)
+      } else {
+        setExpertTips(null)
+      }
+    } catch (err) {
+      console.error('获取老司机内容失败:', err)
+      setExpertTips(null)
+    } finally {
+      setTipsLoading(false)
+    }
+  }
 
   const fetchPointDetail = async () => {
     try {
@@ -194,6 +217,20 @@ export default function KnowledgePointPage({
           {point.memory_tips && (
             <MemoryTipsSection tips={point.memory_tips} />
           )}
+          
+          {/* 老司机带路 */}
+          <div className="p-6 border-b border-gray-100">
+            <ExpertTipsPanel
+              tips={expertTips || {
+                examPatterns: [],
+                trapAnalysis: [],
+                memoryTechniques: [],
+                examTactics: [],
+                predictions: []
+              }}
+              loading={tipsLoading}
+            />
+          </div>
           
           {/* 操作按钮 */}
           <div className="p-6 bg-gray-50 border-t border-gray-100">
