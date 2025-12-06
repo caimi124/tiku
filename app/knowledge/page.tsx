@@ -43,6 +43,11 @@ interface Stats {
   overall_mastery?: number
 }
 
+// 判断是否为可练习的知识点（考点或亚类）
+const isKnowledgePoint = (nodeType: string) => {
+  return ['knowledge_point', 'point', 'subsection'].includes(nodeType)
+}
+
 // 掌握度状态 (使用 Lucide 图标)
 const getMasteryStatusWithIcon = (score: number | undefined) => {
   if (score === undefined || score === 0) return { text: '未学习', icon: Target, color: 'text-gray-400', bg: 'bg-gray-100', barColor: 'bg-gray-300' }
@@ -68,8 +73,9 @@ export default function KnowledgePage() {
   const fetchKnowledgeTree = async () => {
     try {
       // 构建 API URL，支持筛选参数
+      // 使用 xiyao-er 作为默认科目（西药二完整知识图谱）
       const params = new URLSearchParams({
-        subject: 'xiyao_yaoxue_er',
+        subject: 'xiyao-er',
         content: 'true',
         filter: filterMode,
       })
@@ -83,7 +89,7 @@ export default function KnowledgePage() {
         const addMastery = (nodes: KnowledgeNode[]): KnowledgeNode[] => {
           return nodes.map(node => ({
             ...node,
-            mastery_score: node.mastery_score ?? (node.node_type === 'knowledge_point' 
+            mastery_score: node.mastery_score ?? (isKnowledgePoint(node.node_type) 
               ? Math.floor(Math.random() * 100) 
               : undefined),
             children: node.children ? addMastery(node.children) : undefined
@@ -105,7 +111,7 @@ export default function KnowledgePage() {
 
   // 计算章节掌握度
   const calculateChapterMastery = (node: KnowledgeNode): number => {
-    if (node.node_type === 'knowledge_point') {
+    if (isKnowledgePoint(node.node_type)) {
       return node.mastery_score || 0
     }
     if (!node.children || node.children.length === 0) return 0
@@ -134,7 +140,7 @@ export default function KnowledgePage() {
     const isExpanded = expandedNodes.has(node.id)
     const hasChildren = node.children && node.children.length > 0
     const isSelected = selectedNode?.id === node.id
-    const mastery = node.node_type === 'knowledge_point' 
+    const mastery = isKnowledgePoint(node.node_type) 
       ? node.mastery_score 
       : calculateChapterMastery(node)
     const status = getMasteryStatusWithIcon(mastery)
@@ -187,7 +193,7 @@ export default function KnowledgePage() {
           </span>
           
           {/* 重要性星级 */}
-          {node.node_type === 'knowledge_point' && (
+          {isKnowledgePoint(node.node_type) && (
             <span className="ml-2">{renderImportanceStars(node.importance)}</span>
           )}
           
@@ -205,7 +211,7 @@ export default function KnowledgePage() {
           <MasteryStatusBadge score={mastery || 0} size="sm" showIcon={false} />
           
           {/* 练习按钮 */}
-          {node.node_type === 'knowledge_point' && (
+          {isKnowledgePoint(node.node_type) && (
             <Link 
               href={`/knowledge/point/${node.id}`}
               className="p-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
@@ -247,7 +253,7 @@ export default function KnowledgePage() {
                 <BookOpen className="w-7 h-7 text-blue-500" />
                 知识图谱
               </h1>
-              <p className="text-gray-500 text-sm mt-1">药学专业知识（二）- 西药 · 一眼看清掌握情况</p>
+              <p className="text-gray-500 text-sm mt-1">西药二 · 药学专业知识（二）· 完整13章知识图谱</p>
             </div>
             <Link href="/dashboard" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2">
               <TrendingUp className="w-4 h-4" />
@@ -420,7 +426,7 @@ export default function KnowledgePage() {
                 </div>
                 
                 {/* 掌握度卡片 - 使用新组件 */}
-                {selectedNode.node_type === 'knowledge_point' && (
+                {isKnowledgePoint(selectedNode.node_type) && (
                   <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm text-gray-600">我的掌握度</span>
@@ -471,7 +477,7 @@ export default function KnowledgePage() {
                 )}
                 
                 {/* 操作按钮 */}
-                {selectedNode.node_type === 'knowledge_point' && (
+                {isKnowledgePoint(selectedNode.node_type) && (
                   <div className="pt-4 border-t space-y-2">
                     <button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl font-medium hover:shadow-lg transition flex items-center justify-center gap-2">
                       <Play className="w-5 h-5" />

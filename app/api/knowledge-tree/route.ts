@@ -37,7 +37,7 @@ export interface KnowledgeNode {
   code: string
   title: string
   content?: string
-  node_type: 'chapter' | 'section' | 'knowledge_point'
+  node_type: 'chapter' | 'section' | 'subsection' | 'point' | 'knowledge_point'
   point_type?: string
   drug_name?: string
   importance: number
@@ -184,7 +184,7 @@ export async function GET(request: NextRequest) {
         SELECT 
           COUNT(*) FILTER (WHERE kt.node_type = 'chapter') as chapter_count,
           COUNT(*) FILTER (WHERE kt.node_type = 'section') as section_count,
-          COUNT(*) FILTER (WHERE kt.node_type = 'knowledge_point') as point_count,
+          COUNT(*) FILTER (WHERE kt.node_type IN ('point', 'subsection', 'knowledge_point')) as point_count,
           COUNT(*) FILTER (WHERE kt.importance >= ${HIGH_FREQUENCY_THRESHOLD}) as high_importance_count,
           COUNT(*) FILTER (WHERE ukm.mastery_score >= ${MASTERY_THRESHOLDS.MASTERED}) as mastered_count,
           COUNT(*) FILTER (WHERE ukm.mastery_score >= ${MASTERY_THRESHOLDS.REVIEW} AND ukm.mastery_score < ${MASTERY_THRESHOLDS.MASTERED}) as review_count,
@@ -203,7 +203,7 @@ export async function GET(request: NextRequest) {
         SELECT 
           COUNT(*) FILTER (WHERE node_type = 'chapter') as chapter_count,
           COUNT(*) FILTER (WHERE node_type = 'section') as section_count,
-          COUNT(*) FILTER (WHERE node_type = 'knowledge_point') as point_count,
+          COUNT(*) FILTER (WHERE node_type IN ('point', 'subsection', 'knowledge_point')) as point_count,
           COUNT(*) FILTER (WHERE importance >= ${HIGH_FREQUENCY_THRESHOLD}) as high_importance_count
         FROM knowledge_tree
         WHERE subject_code = $1

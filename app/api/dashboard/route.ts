@@ -53,7 +53,7 @@ export interface DashboardData {
  * 计算总体掌握度
  * 基于各章节掌握度的加权平均
  */
-function calculateOverallMastery(chapters: ChapterMastery[]): number {
+export function calculateOverallMastery(chapters: ChapterMastery[]): number {
   if (chapters.length === 0) return 0
   
   let totalWeightedScore = 0
@@ -72,7 +72,7 @@ function calculateOverallMastery(chapters: ChapterMastery[]): number {
  * 计算薄弱考点数量
  * 掌握度 < 60% 的考点
  */
-function countWeakPoints(chapters: ChapterMastery[]): number {
+export function countWeakPoints(chapters: ChapterMastery[]): number {
   return chapters.reduce((sum, ch) => sum + ch.weak_points, 0)
 }
 
@@ -80,14 +80,14 @@ function countWeakPoints(chapters: ChapterMastery[]): number {
  * 计算已掌握考点数量
  * 掌握度 >= 80% 的考点
  */
-function countMasteredPoints(chapters: ChapterMastery[]): number {
+export function countMasteredPoints(chapters: ChapterMastery[]): number {
   return chapters.reduce((sum, ch) => sum + ch.mastered_points, 0)
 }
 
 /**
  * 计算总考点数
  */
-function countTotalPoints(chapters: ChapterMastery[]): number {
+export function countTotalPoints(chapters: ChapterMastery[]): number {
   return chapters.reduce((sum, ch) => sum + ch.total_points, 0)
 }
 
