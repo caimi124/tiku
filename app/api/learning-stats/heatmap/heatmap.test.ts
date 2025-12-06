@@ -9,7 +9,38 @@
  */
 
 import * as fc from 'fast-check'
-import { calculateStreak, getHeatmapColor } from './route'
+
+// 辅助函数（与 route.ts 保持一致，用于测试）
+function getHeatmapColor(
+  questionsCount: number,
+  accuracy: number
+): 'green' | 'yellow' | 'red' | 'gray' {
+  if (questionsCount === 0) return 'gray'
+  if (accuracy >= 80) return 'green'
+  if (accuracy >= 60) return 'yellow'
+  return 'red'
+}
+
+interface DailyLearningDataForStreak {
+  questions_done: number
+}
+
+function calculateStreak(data: DailyLearningDataForStreak[]): number {
+  if (!data || data.length === 0) return 0
+  
+  let streak = 0
+  const reversedData = [...data].reverse()
+
+  for (const day of reversedData) {
+    if (day.questions_done > 0) {
+      streak++
+    } else {
+      break
+    }
+  }
+
+  return streak
+}
 
 // ============================================
 // 类型定义

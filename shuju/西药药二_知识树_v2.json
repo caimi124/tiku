@@ -1,0 +1,660 @@
+{
+  "subject": "药学专业知识（二）",
+  "subject_code": "xiyao_yaoxue_er",
+  "total_chapters": 5,
+  "total_sections": 15,
+  "total_points": 59,
+  "chapters": [
+    {
+      "id": "2",
+      "title": "解热、镇痛、抗炎、抗风湿及抗痛风药",
+      "sections": [
+        {
+          "id": "2.1",
+          "title": "解热、镇痛、抗炎药",
+          "points": [
+            {
+              "id": "2.1.1",
+              "title": "药物分类与作用机制",
+              "content": "解热、镇痛、抗炎药又名非甾体抗炎药(NSAID), 是一类具有解热、镇痛, 大多数药物还具有抗炎、抗风湿作用的无甾体母核的药物, 主要是通过抑制前列腺素(PGs)合成过程中所需的环氧化酶(COX), 阻止花生四烯酸转化为PGs而发挥抗炎、止痛和解热作用。环氧化酶是前列腺素(PG)合成的必需酶, 也是PG合成初始步骤中的关键性限速酶(如图2-1), 目前发现环氧化酶有COX-1和COX-2两种异构体, COX-1主要存在于血管、胃、肾等组织中, 参与血管舒缩、血小板聚集、胃黏膜血流、胃黏液分泌及肾功能等的调节, 其功能与保护胃肠黏膜、调节血小板聚集、调节外周血管的阻力和调节肾血流量分布有关。COX-2主要在损伤或炎症部位表达, 并合成PGs类物质, PGs可增强该处受损组织痛觉的敏感度, 构成炎症部位肿痛炎症的症状。对COX-1和COX-2作用强度不同是NSAIDs发挥其药理作用和产生不良反应的主要原因, 对COX-1的抑制作用越强, 对消化道、肾脏等的不良反应就越大; 而对COX-2的抑制作用越强, 其抗炎、镇痛效果就越显著。\n图2-1解热、镇痛、抗炎药的作用机制",
+              "point_type": "不良反应",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "2.1.2",
+              "title": "药物临床用药评价",
+              "content": "续表\n重点强化",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        },
+        {
+          "id": "2.2",
+          "title": "抗风湿药",
+          "points": [
+            {
+              "id": "2.2.1",
+              "title": "药物分类与代表药品",
+              "content": "续表",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "2.2.2",
+              "title": "药物临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        },
+        {
+          "id": "2.3",
+          "title": "抗痛风药",
+          "points": [
+            {
+              "id": "2.3.1",
+              "title": "药物分类与作用机制",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "2.3.2",
+              "title": "秋水仙碱的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "秋水仙碱",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "2.3.3",
+              "title": "促进尿酸排泄药的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "促进尿酸排泄药",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "2.3.4",
+              "title": "抑制尿酸生成药的临床用药评价",
+              "content": "重点强化",
+              "point_type": "",
+              "drug_name": "抑制尿酸生成药",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        },
+        {
+          "id": "2.6",
+          "title": "止泻药、肠道抗感染药、肠道抗炎药",
+          "points": [
+            {
+              "id": "2.6.1",
+              "title": "止泻药的分类与代表药品",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "2.6.2",
+              "title": "止泻药的临床用药评价",
+              "content": "续表\n知识补充\n1. 抗动力药和抗分泌药不能用作细菌性腹泻的基本治疗药物。如果腹泻持续超过2天，症状恶化或出现腹部肿胀或鼓胀，请停止使用并就医。 2. 如果出现便秘、腹痛、腹胀、便血或肠梗阻，应立即停药。",
+              "point_type": "",
+              "drug_name": "止泻药",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "2.6.3",
+              "title": "肠道抗感染药的临床用药评价",
+              "content": "急性腹泻大多数为自限性，仅补液治疗即可在  3 \\sim 5  日内自行缓解。在特定的情况下，严重腹泻患者有必要应用抗菌药物，如每日排泄4次以上不成形大便、发热或便中带血、脓或黏液。一般而言，氟喹诺酮类药物因其有效性和耐受性是首选的抗生素，阿奇霉素是妊娠期妇女及儿童的首选药物，也推荐在氟喹诺酮类耐药严重地区经验性使用。\n利福昔明: ①是一个非吸收性的利福霉素类药物, 是广谱肠道抗生素, 对多数革兰阳性菌和革兰阴性菌, 包括需氧菌和厌氧菌的感染具有杀菌作用, 口服后只有  < 1\\%  的口服剂量经肠胃吸收; ②主要用于对利福昔明敏感的病原菌引起的肠道感染, 可有效治疗由非侵袭性大肠埃希菌菌株引起的旅行者腹泻, 但弯曲杆菌通常对利福昔明耐药; ③连续服用不能超过 7 日。长期大剂量用药或肠黏膜受损时, 有极少量 (小于  1\\%  ) 被吸收, 导致尿液呈粉红色。\n小檗碱亦称黄连素，是从中药黄连中分离的一种季铵生物碱。小檗碱对溶血性链球菌，金黄色葡萄球菌，淋球菌和弗氏、志贺氏痢疾杆菌等均有抗菌作用，目前是我国常用的一种肠道抗感染药。",
+              "point_type": "适应证",
+              "drug_name": "肠道抗感染药",
+              "importance": 5,
+              "memory_tips": ""
+            },
+            {
+              "id": "2.6.4",
+              "title": "肠道抗炎药的分类与代表药品",
+              "content": "炎症性肠病（IBD）主要包括溃疡性结肠（UC）和克罗恩病（CD），是一类慢性非特异性肠道炎症性疾病，其发病机制复杂，涉及遗传、环境、免疫等多因素的相互作用。",
+              "point_type": "相互作用",
+              "drug_name": "",
+              "importance": 4,
+              "memory_tips": ""
+            },
+            {
+              "id": "2.6.5",
+              "title": "肠道抗炎药的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "肠道抗炎药",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "title": "呼吸系统用药",
+      "sections": [
+        {
+          "id": "3.1",
+          "title": "镇咳药",
+          "points": [
+            {
+              "id": "3.1.1",
+              "title": "药物分类与作用机制",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "3.1.2",
+              "title": "药物临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        },
+        {
+          "id": "3.2",
+          "title": "祛痰药",
+          "points": [
+            {
+              "id": "3.2.1",
+              "title": "药物分类与作用机制",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "3.2.2",
+              "title": "恶心性和刺激性祛痰药的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "恶心性和刺激性祛痰药",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "3.2.3",
+              "title": "黏痰溶解剂的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "黏痰溶解剂",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        },
+        {
+          "id": "3.3",
+          "title": "平喘药",
+          "points": [
+            {
+              "id": "3.3.1",
+              "title": "药物分类与代表药品",
+              "content": "【润德巧记】\n短沙特，长特罗，拮抗胆碱带有“托”；二线茶碱有点黄，不良反应真够多；\n色甘酸钠酮替芬，过敏介质阻释剂；激素就找松奈德，拮抗三烯是司特。",
+              "point_type": "不良反应",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "3.3.2",
+              "title": "\\beta_{2}  受体激动剂的临床用药评价",
+              "content": "续表",
+              "point_type": "",
+              "drug_name": "\\beta_{2}  受体激动剂",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "3.3.3",
+              "title": "M 胆碱受体拮抗剂的临床用药评价",
+              "content": "续表",
+              "point_type": "",
+              "drug_name": "M 胆碱受体拮抗剂",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "3.3.4",
+              "title": "黄嘌呤类药物（磷酸二酯酶抑制剂）的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "黄嘌呤类药物（磷酸二酯酶抑制剂）",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "3.3.5",
+              "title": "过敏介质阻释剂（奥马珠单抗）的临床用药评价",
+              "content": "续表",
+              "point_type": "",
+              "drug_name": "过敏介质阻释剂（奥马珠单抗）",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "3.3.6",
+              "title": "吸入型肾上腺糖皮质激素（ICS）的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "吸入型肾上腺糖皮质激素（ICS）",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "3.3.7",
+              "title": "白三烯受体拮抗剂（LTRA）的临床用药评价",
+              "content": "重点强化——各型哮喘的用药选择\n【润德巧记】急沙特，轻中稳定选司特。\n重点强化——平喘药的治疗目的",
+              "point_type": "",
+              "drug_name": "白三烯受体拮抗剂（LTRA）",
+              "importance": 3,
+              "memory_tips": "急沙特，轻中稳定选司特。"
+            }
+          ]
+        },
+        {
+          "id": "3.4",
+          "title": "特发性肺纤维化的治疗药物",
+          "points": [
+            {
+              "id": "3.4.1",
+              "title": "药物临床用药评价",
+              "content": "续表",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "title": "消化系统用药",
+      "sections": [
+        {
+          "id": "4.1",
+          "title": "抑酸剂、抗酸药与胃黏膜保护药",
+          "points": [
+            {
+              "id": "4.1.1",
+              "title": "药物分类与代表药品",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.1.2",
+              "title": "质子泵抑制剂（PPI）的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "质子泵抑制剂（PPI）",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.1.3",
+              "title": "钾离子竞争性酸阻滞剂（P-CABs）的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "钾离子竞争性酸阻滞剂（P-CABs）",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.1.4",
+              "title": "\\mathsf{H}_2  受体拮抗剂的临床用药评价",
+              "content": "注：西咪替丁为肝药酶（CYP）抑制剂，常用的肝药酶诱导剂与抑制剂如下\n续表",
+              "point_type": "",
+              "drug_name": "\\mathsf{H}_2  受体拮抗剂",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.1.5",
+              "title": "前列腺素类抑酸剂的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "前列腺素类抑酸剂",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.1.6",
+              "title": "抗酸药的临床用药评价",
+              "content": "续表",
+              "point_type": "",
+              "drug_name": "抗酸药",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.1.7",
+              "title": "胃黏膜保护药的临床用药评价",
+              "content": "重点强化",
+              "point_type": "",
+              "drug_name": "胃黏膜保护药",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        },
+        {
+          "id": "4.2",
+          "title": "解痉药、胃肠动力药与功能性胃肠病治疗药",
+          "points": [
+            {
+              "id": "4.2.1",
+              "title": "解痉药的分类与代表药品",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.2.2",
+              "title": "抗胆碱M受体药的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "抗胆碱M受体药",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.2.3",
+              "title": "匹维溴铵的临床用药评价",
+              "content": "(1) 对症治疗与肠道功能紊乱有关的疼痛、排便异常和肠道不适。\n(2) 对症治疗与胆道功能紊乱有关的疼痛。\n(3) 为钡灌肠做准备: 应于检查前 3 天开始用药, 剂量为每天  200 \\mathrm{mg} , 宜在进餐时用水吞服。\n（4）妊娠期妇女忌服，哺乳期妇女应避免服用。\n(5) 药物可能对食管有刺激性, 需要整片吞服, 切勿咀嚼或掰碎药片, 不要在卧位时或临睡前服用。",
+              "point_type": "用法用量",
+              "drug_name": "匹维溴铵",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.2.4",
+              "title": "胃肠动力药的分类与作用机制",
+              "content": "【润德巧记】甲中外，多见外；我是莫沙促释放，你为伊托抑制酶",
+              "point_type": "作用机制",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": "甲中外，多见外；我是莫沙促释放，你为伊托抑制酶"
+            },
+            {
+              "id": "4.2.5",
+              "title": "胃肠动力药的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "胃肠动力药",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.2.6",
+              "title": "曲美布汀的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "曲美布汀",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        },
+        {
+          "id": "4.3",
+          "title": "止吐药",
+          "points": [
+            {
+              "id": "4.3.1",
+              "title": "药物分类与代表药品",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.3.2",
+              "title": "止吐药的临床用药评价",
+              "content": "续表",
+              "point_type": "",
+              "drug_name": "止吐药",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.3.3",
+              "title": "抗肿瘤治疗相关性恶心呕吐的处理原则",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.3.4",
+              "title": "依据化疗药的催吐性选用止吐药",
+              "content": "一般可将抗肿瘤药物分为高度、中度、低度和轻微4个催吐风险等级。如不予以预防处理，4个级别的呕吐发生率分别对应  >90\\%  、  30\\% \\sim 90\\%  、  10\\% \\sim 30\\%  和  < 10\\%  。\n续表  【润德巧记】高中低，321，轻微致吐可不需",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": "高中低，321，轻微致吐可不需"
+            }
+          ]
+        },
+        {
+          "id": "4.4",
+          "title": "肝胆疾病用药",
+          "points": [
+            {
+              "id": "4.4.1",
+              "title": "肝脏疾病用药的分类与代表药品",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.4.2",
+              "title": "肝脏疾病用药的临床用药评价",
+              "content": "续表",
+              "point_type": "",
+              "drug_name": "肝脏疾病用药",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.4.3",
+              "title": "胆疾病用药的分类与代表药品",
+              "content": "续表",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "4.4.4",
+              "title": "胆疾病用药的临床用药评价",
+              "content": "重点强化",
+              "point_type": "",
+              "drug_name": "胆疾病用药",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        },
+        {
+          "id": "4.7",
+          "title": "助消化药",
+          "points": [
+            {
+              "id": "4.7.1",
+              "title": "助消化药的临床用药评价",
+              "content": "重点强化",
+              "point_type": "",
+              "drug_name": "助消化药",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "title": "精神与中枢神经系统用药",
+      "sections": [
+        {
+          "id": "1.1",
+          "title": "镇静催眠药、中枢肌松药",
+          "points": [
+            {
+              "id": "1.1.1",
+              "title": "药物分类与作用机制",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "1.1.2",
+              "title": "镇静与催眠药的药理作用",
+              "content": "镇静与催眠药随用药剂量增加依次呈现不同的药理作用。剂量由小到大，分别表现出抗焦虑、镇静催眠、抗惊厥、抗癫痫、麻醉的药理作用，甚至引起呼吸麻痹而死亡，其中松弛肌肉的药理作用与剂量无关。不同种类的镇静与催眠药剂量与药理作用的关系有所差别，具体表现如下表。\n【润德巧记】\n爸比不焦急；笨蛋儿子找不到妈妈；克隆羊没有爹妈；唑吡坦是孤儿，只能一个人睡。",
+              "point_type": "用法用量",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "1.1.3",
+              "title": "巴比妥类的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "巴比妥类",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "1.1.4",
+              "title": "醛类的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "醛类",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "1.1.5",
+              "title": "苯二氮草类的临床用药评价",
+              "content": "",
+              "point_type": "",
+              "drug_name": "苯二氮草类",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "1.1.6",
+              "title": "非苯二氮草类的临床用药评价",
+              "content": "续表",
+              "point_type": "",
+              "drug_name": "非苯二氮草类",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "1.1.7",
+              "title": "褪黑素类的临床用药评价",
+              "content": "重点强化 根据失眠状态合理选药\n第二亚类 中枢肌松药\n考点透析\n中枢性肌肉松弛药通过对中枢神经多突触通道产生作用，以阻断神经冲动电波传导，从而产生肌肉松弛效应。本节主要介绍中枢性肌松药中的非苯二氮草类药物。",
+              "point_type": "",
+              "drug_name": "褪黑素类",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "1.1.1",
+              "title": "药物分类与代表药品",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "13",
+      "title": "皮肤用药及抗过敏用药",
+      "sections": [
+        {
+          "id": "13.5",
+          "title": "泻药与便秘治疗药",
+          "points": [
+            {
+              "id": "13.5.1",
+              "title": "药物分类与代表药品",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "13.5.2",
+              "title": "药物临床用药评价",
+              "content": "续表",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            },
+            {
+              "id": "13.5.3",
+              "title": "特殊人群便秘用药",
+              "content": "",
+              "point_type": "",
+              "drug_name": "",
+              "importance": 3,
+              "memory_tips": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

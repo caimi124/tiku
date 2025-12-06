@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
  * - 红色: 正确率 < 60%
  * - 灰色: 无学习记录
  */
-export function getHeatmapColor(
+function getHeatmapColor(
   questionsCount: number,
   accuracy: number
 ): 'green' | 'yellow' | 'red' | 'gray' {
@@ -156,7 +156,7 @@ export function getHeatmapColor(
  *
  * 从今天往前数，连续有学习记录的天数
  */
-export function calculateStreak(data: DailyLearningData[]): number {
+function calculateStreak(data: DailyLearningData[]): number {
   // 从最后一天（今天）开始往前数
   let streak = 0
   const reversedData = [...data].reverse()

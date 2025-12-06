@@ -14,7 +14,7 @@ import {
   daysSinceLastReview,
   getMasteryStatusInfo,
   formatRelativeTime,
-} from './route'
+} from '@/lib/review-utils'
 import { 
   getNextReviewDate, 
   needsImmediateReview, 
