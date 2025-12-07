@@ -15,7 +15,7 @@ async function checkFailedQuestions() {
   // 检查可能的问题题目
   console.log('检查可能的问题题目:');
   
-  questions.forEach((q, index) => {
+  questions.forEach((q: any, index: number) => {
     // 检查选项数量异常
     if (!q.options || q.options.length < 4) {
       console.log(`❌ 题${q.number}: 选项数量异常 (${q.options ? q.options.length : 0}个)`);
@@ -39,7 +39,7 @@ async function checkFailedQuestions() {
   
   // 检查特定题目
   console.log('\n检查前10题详情:');
-  questions.slice(0, 10).forEach(q => {
+  questions.slice(0, 10).forEach((q: any) => {
     console.log(`题${q.number}: ${q.question.substring(0, 30)}... | 选项数: ${q.options?.length || 0} | 答案: ${q.answer}`);
   });
 }

@@ -6,7 +6,13 @@
  * 查询参数:
  * - userId: 用户ID (可选，获取用户掌握度数据)
  * 
- * Requirements: 4.1, 4.3
+ * 返回数据包括：
+ * - 完整考点内容（简介、核心记忆点、作用机制、临床应用、不良反应等）
+ * - 导航信息（上下考点、同小节考点列表）
+ * - 面包屑数据
+ * - 优先级标签
+ * 
+ * Requirements: 2.5, 2.6, 5.4, 5.7
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -16,6 +22,21 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://postgres.tparjdkxxtnentsdazfw:CwKXguB7eIA4tfTn@aws-0-us-west-2.pooler.supabase.com:6543/postgres',
   ssl: { rejectUnauthorized: false }
 })
+
+// 标签定义
+const TAG_DEFINITIONS = {
+  high_frequency: { label: '高频', color: '#EF4444' },
+  must_test: { label: '必考', color: '#F97316' },
+  easy_mistake: { label: '易错', color: '#EAB308' },
+  basic: { label: '基础', color: '#3B82F6' },
+  reinforce: { label: '强化', color: '#8B5CF6' },
+}
+
+export interface PointTag {
+  type: string
+  label: string
+  color: string
+}
 
 export interface ContentItemAccuracy {
   item_key: string      // 内容项标识（如 "适应证"、"禁忌" 等）
@@ -38,6 +59,14 @@ export interface KnowledgePointDetail {
   subject_code: string
   level: number
   sort_order: number
+  // 新增字段
+  key_takeaway?: string
+  exam_years?: number[]
+  exam_frequency?: number
+  tags?: PointTag[]
+  // 章节和小节信息
+  chapter?: { id: string; title: string; code: string }
+  section?: { id: string; title: string; code: string }
   // 用户掌握度数据
   mastery_score?: number
   mastery_status?: 'mastered' | 'review' | 'weak' | 'unlearned'
@@ -47,6 +76,12 @@ export interface KnowledgePointDetail {
   correct_rate?: number
   // 父节点信息（面包屑）
   breadcrumb?: BreadcrumbItem[]
+  // 导航信息
+  navigation?: {
+    prev_point?: { id: string; title: string }
+    next_point?: { id: string; title: string }
+    section_points: { id: string; title: string }[]
+  }
   // 相关考点
   related_points?: RelatedPoint[]
   // 内容项正确率
@@ -103,6 +138,9 @@ export async function GET(
           kt.subject_code,
           kt.level,
           kt.sort_order,
+          kt.key_takeaway,
+          kt.exam_years,
+          kt.exam_frequency,
           ukm.mastery_score,
           ukm.is_weak_point,
           ukm.last_review_at,
@@ -130,7 +168,10 @@ export async function GET(
           parent_id,
           subject_code,
           level,
-          sort_order
+          sort_order,
+          key_takeaway,
+          exam_years,
+          exam_frequency
         FROM knowledge_tree
         WHERE id = $1
       `
@@ -150,6 +191,15 @@ export async function GET(
     // 获取面包屑（父节点链）
     const breadcrumb = await getBreadcrumb(client, point.parent_id)
     
+    // 获取章节和小节信息
+    const { chapter, section } = await getChapterAndSection(client, point.parent_id)
+    
+    // 获取导航信息（上下考点、同小节考点列表）
+    const navigation = await getNavigation(client, point.parent_id, point.id, point.sort_order)
+    
+    // 获取考点标签
+    const tags = await getPointTags(client, point.id, point.importance, point.exam_frequency)
+    
     // 获取相关考点（同一父节点下的其他考点）
     const relatedPoints = await getRelatedPoints(client, point.parent_id, point.id, userId)
     
@@ -163,9 +213,13 @@ export async function GET(
     
     const result: KnowledgePointDetail = {
       ...point,
+      chapter,
+      section,
+      tags,
       mastery_status: masteryStatus,
       is_weak_point: point.mastery_score !== null && point.mastery_score < MASTERY_THRESHOLDS.REVIEW,
       breadcrumb,
+      navigation,
       related_points: relatedPoints,
       content_item_accuracy: contentItemAccuracy,
     }
@@ -184,6 +238,110 @@ export async function GET(
   } finally {
     client.release()
   }
+}
+
+/**
+ * 获取章节和小节信息
+ */
+async function getChapterAndSection(client: any, sectionId: string | null): Promise<{
+  chapter: { id: string; title: string; code: string } | null
+  section: { id: string; title: string; code: string } | null
+}> {
+  if (!sectionId) return { chapter: null, section: null }
+  
+  // 获取小节信息
+  const sectionResult = await client.query(
+    'SELECT id, title, code, parent_id FROM knowledge_tree WHERE id = $1',
+    [sectionId]
+  )
+  
+  if (sectionResult.rows.length === 0) return { chapter: null, section: null }
+  
+  const section = sectionResult.rows[0]
+  
+  // 获取章节信息
+  let chapter = null
+  if (section.parent_id) {
+    const chapterResult = await client.query(
+      'SELECT id, title, code FROM knowledge_tree WHERE id = $1',
+      [section.parent_id]
+    )
+    if (chapterResult.rows.length > 0) {
+      chapter = chapterResult.rows[0]
+    }
+  }
+  
+  return {
+    chapter,
+    section: { id: section.id, title: section.title, code: section.code }
+  }
+}
+
+/**
+ * 获取导航信息（上下考点、同小节考点列表）
+ */
+async function getNavigation(
+  client: any,
+  sectionId: string | null,
+  currentId: string,
+  currentSortOrder: number
+): Promise<{
+  prev_point?: { id: string; title: string }
+  next_point?: { id: string; title: string }
+  section_points: { id: string; title: string }[]
+}> {
+  if (!sectionId) return { section_points: [] }
+  
+  // 获取同小节所有考点
+  const pointsResult = await client.query(
+    `SELECT id, title, sort_order 
+     FROM knowledge_tree 
+     WHERE parent_id = $1 AND node_type = 'knowledge_point'
+     ORDER BY sort_order`,
+    [sectionId]
+  )
+  
+  const points = pointsResult.rows
+  const currentIndex = points.findIndex((p: any) => p.id === currentId)
+  
+  return {
+    prev_point: currentIndex > 0 ? { id: points[currentIndex - 1].id, title: points[currentIndex - 1].title } : undefined,
+    next_point: currentIndex < points.length - 1 ? { id: points[currentIndex + 1].id, title: points[currentIndex + 1].title } : undefined,
+    section_points: points.map((p: any) => ({ id: p.id, title: p.title }))
+  }
+}
+
+/**
+ * 获取考点标签
+ */
+async function getPointTags(
+  client: any,
+  pointId: string,
+  importance: number,
+  examFrequency: number | null
+): Promise<PointTag[]> {
+  const tags: PointTag[] = []
+  
+  // 从数据库获取标签
+  const tagsResult = await client.query(
+    'SELECT tag_type FROM point_tags WHERE point_id = $1',
+    [pointId]
+  )
+  
+  for (const row of tagsResult.rows) {
+    const def = TAG_DEFINITIONS[row.tag_type as keyof typeof TAG_DEFINITIONS]
+    if (def) {
+      tags.push({ type: row.tag_type, label: def.label, color: def.color })
+    }
+  }
+  
+  // 自动添加高频标签
+  const isHighFrequency = importance >= 4 || (examFrequency && examFrequency >= 3)
+  if (isHighFrequency && !tags.some(t => t.type === 'high_frequency')) {
+    tags.unshift({ type: 'high_frequency', label: '高频', color: '#EF4444' })
+  }
+  
+  return tags
 }
 
 /**

@@ -119,11 +119,11 @@ async function listMissingOptions() {
     };
 
     needFixQuestions.forEach(num => {
-      const chapter = questions[num - 1].chapter;
-      if (chapter.includes('最佳选择题')) stats.best++;
-      else if (chapter.includes('配伍选择题')) stats.pairing++;
-      else if (chapter.includes('综合分析题')) stats.comprehensive++;
-      else if (chapter.includes('多项选择题')) stats.multiple++;
+      const chapter = questions[num - 1]?.chapter;
+      if (chapter?.includes('最佳选择题')) stats.best++;
+      else if (chapter?.includes('配伍选择题')) stats.pairing++;
+      else if (chapter?.includes('综合分析题')) stats.comprehensive++;
+      else if (chapter?.includes('多项选择题')) stats.multiple++;
     });
 
     console.log(`\n需要补充的题目总数：${stats.total}道`);
