@@ -426,6 +426,11 @@ function PointNode({
   isFocused,
   onSelect
 }: PointNodeProps) {
+  // 判断是否为小节总结
+  const isSummary = point.nodeType === 'section_summary'
+  // 判断是否为高频考点
+  const isHighFreq = point.importance >= 4 && !isSummary
+
   return (
     <button
       onClick={() => onSelect(point)}
@@ -434,19 +439,27 @@ function PointNode({
         ${isSelected ? 'bg-blue-100 border border-blue-300' : 'hover:bg-gray-50'}
         ${isHighlighted ? 'ring-2 ring-yellow-400' : ''}
         ${isFocused ? 'ring-2 ring-blue-500 bg-blue-50' : ''}
+        ${isSummary ? 'bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200' : ''}
       `}
     >
-      <span className="text-sm">💊</span>
+      <span className="text-sm">{isSummary ? '📋' : '💊'}</span>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-700 truncate">{point.title}</span>
-          <ImportanceStars level={point.importance} size="sm" />
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className={`text-sm truncate ${isSummary ? 'text-purple-700 font-medium' : 'text-gray-700'}`}>
+            {point.title}
+          </span>
+          {!isSummary && <ImportanceStars level={point.importance} size="sm" />}
+          {isHighFreq && (
+            <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-medium">
+              🔥高频
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2 mt-0.5">
           {point.drugName && (
             <span className="text-xs text-gray-500">{point.drugName}</span>
           )}
-          <MasteryStatusBadge score={point.masteryScore || 0} size="sm" />
+          {!isSummary && <MasteryStatusBadge score={point.masteryScore || 0} size="sm" />}
         </div>
       </div>
     </button>

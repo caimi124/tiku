@@ -22,6 +22,15 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 })
 
+// 支持的节点类型
+const NODE_TYPES = {
+  CHAPTER: 'chapter',
+  SECTION: 'section',
+  POINT: 'point',
+  SECTION_SUMMARY: 'section_summary',
+  KNOWLEDGE_POINT: 'knowledge_point'
+}
+
 // 掌握度阈值常量
 const MASTERY_THRESHOLDS = {
   MASTERED: 80,    // ≥80% 已掌握
@@ -37,7 +46,7 @@ export interface KnowledgeNode {
   code: string
   title: string
   content?: string
-  node_type: 'chapter' | 'section' | 'subsection' | 'point' | 'knowledge_point'
+  node_type: 'chapter' | 'section' | 'subsection' | 'point' | 'knowledge_point' | 'section_summary'
   point_type?: string
   drug_name?: string
   importance: number
@@ -53,6 +62,7 @@ export interface KnowledgeNode {
   last_review_at?: string
   practice_count?: number
   correct_rate?: number
+  is_high_frequency?: boolean  // 高频考点标记
   children?: KnowledgeNode[]
 }
 
@@ -165,11 +175,12 @@ export async function GET(request: NextRequest) {
     
     const nodesResult = await client.query(nodesQuery, queryParams)
     
-    // 处理节点数据，添加掌握状态
+    // 处理节点数据，添加掌握状态和高频标记
     const processedNodes = nodesResult.rows.map(node => ({
       ...node,
       mastery_status: getMasteryStatus(node.mastery_score),
       is_weak_point: node.mastery_score !== null && node.mastery_score < MASTERY_THRESHOLDS.WEAK,
+      is_high_frequency: node.importance >= HIGH_FREQUENCY_THRESHOLD,
     }))
     
     // 构建树结构

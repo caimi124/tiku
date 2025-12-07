@@ -6,7 +6,7 @@
  */
 
 // 节点类型
-export type NodeType = 'chapter' | 'section' | 'point'
+export type NodeType = 'chapter' | 'section' | 'point' | 'section_summary'
 
 // 掌握状态
 export type MasteryStatus = 'mastered' | 'review' | 'weak' | 'unlearned'
@@ -40,11 +40,12 @@ export interface KnowledgePoint {
   id: string
   code: string
   title: string
-  nodeType: 'point'
+  nodeType: 'point' | 'section_summary'
   drugName?: string
   importance: number
   masteryStatus: MasteryStatus
   masteryScore?: number
+  isHighFrequency?: boolean  // 高频考点标记
 }
 
 // 通用节点类型
@@ -54,12 +55,13 @@ export type KnowledgeNode = KnowledgeChapter | KnowledgeSection | KnowledgePoint
 export const NODE_DEPTH: Record<NodeType, number> = {
   chapter: 0,
   section: 1,
-  point: 2
+  point: 2,
+  section_summary: 2
 }
 
 // 验证节点类型
 export function isValidNodeType(type: string): type is NodeType {
-  return ['chapter', 'section', 'point'].includes(type)
+  return ['chapter', 'section', 'point', 'section_summary'].includes(type)
 }
 
 // 验证掌握状态
@@ -80,7 +82,12 @@ export function isSectionNode(node: KnowledgeNode): node is KnowledgeSection {
 
 // 检查是否为考点节点
 export function isPointNode(node: KnowledgeNode): node is KnowledgePoint {
-  return node.nodeType === 'point'
+  return node.nodeType === 'point' || node.nodeType === 'section_summary'
+}
+
+// 检查是否为小节总结节点
+export function isSectionSummaryNode(node: KnowledgeNode): boolean {
+  return node.nodeType === 'section_summary'
 }
 
 // 验证章节节点数据完整性

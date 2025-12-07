@@ -63,7 +63,7 @@ export default function KnowledgePage() {
   const fetchKnowledgeTree = async () => {
     try {
       const params = new URLSearchParams({
-        subject: 'xiyao-er',
+        subject: 'xiyao_yaoxue_er',
         content: 'true',
       })
       
@@ -98,17 +98,18 @@ export default function KnowledgePage() {
         title: section.title,
         nodeType: 'section' as const,
         masteryScore: section.mastery_score,
-        pointCount: section.children?.length || 0,
-        highFrequencyCount: section.children?.filter((p: any) => p.importance >= 4).length || 0,
+        pointCount: section.children?.filter((p: any) => p.node_type !== 'section_summary').length || 0,
+        highFrequencyCount: section.children?.filter((p: any) => p.importance >= 4 && p.node_type !== 'section_summary').length || 0,
         children: (section.children || []).map((point: any) => ({
           id: point.id,
           code: point.code,
           title: point.title,
-          nodeType: 'point' as const,
+          nodeType: point.node_type === 'section_summary' ? 'section_summary' as const : 'point' as const,
           drugName: point.drug_name,
           importance: point.importance || 3,
           masteryStatus: getMasteryStatus(point.mastery_score),
-          masteryScore: point.mastery_score
+          masteryScore: point.mastery_score,
+          isHighFrequency: point.importance >= 4
         }))
       }))
     }))
