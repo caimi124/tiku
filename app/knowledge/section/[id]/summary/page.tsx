@@ -8,8 +8,9 @@
 
 'use client'
 
-import { useEffect, useState, use } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 import { ImportanceStars, isHighFrequency } from '@/components/ui/ImportanceStars'
 import { MasteryStatusBadge } from '@/components/ui/MasteryStatusBadge'
 
@@ -32,25 +33,24 @@ interface SectionSummary {
   reinforcement_image?: string  // 重点强化图
 }
 
-export default function SectionSummaryPage({ 
-  params 
-}: { 
-  params: Promise<{ id: string }> 
-}) {
-  const resolvedParams = use(params)
+export default function SectionSummaryPage() {
+  const params = useParams()
+  const sectionId = params.id as string
   const [summary, setSummary] = useState<SectionSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [imageModalOpen, setImageModalOpen] = useState(false)
 
   useEffect(() => {
-    fetchSectionSummary()
-  }, [resolvedParams.id])
+    if (sectionId) {
+      fetchSectionSummary()
+    }
+  }, [sectionId])
 
   const fetchSectionSummary = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/section-summary/${resolvedParams.id}`)
+      const response = await fetch(`/api/section-summary/${sectionId}`)
       const data = await response.json()
       
       if (data.success) {

@@ -14,9 +14,9 @@
 
 'use client'
 
-import { useEffect, useState, use } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { Menu } from 'lucide-react'
 // BreadcrumbItem type is defined locally as ApiBreadcrumbItem
 import { MasteryProgressBar } from '@/components/ui/MasteryProgressBar'
@@ -79,12 +79,9 @@ interface KnowledgePointDetail {
   section?: { id: string; title: string; code: string }
 }
 
-export default function KnowledgePointPage({ 
-  params 
-}: { 
-  params: Promise<{ id: string }> 
-}) {
-  const resolvedParams = use(params)
+export default function KnowledgePointPage() {
+  const params = useParams()
+  const pointId = params.id as string
   const router = useRouter()
   const [point, setPoint] = useState<KnowledgePointDetail | null>(null)
   const [loading, setLoading] = useState(true)
@@ -104,14 +101,16 @@ export default function KnowledgePointPage({
   }, [])
 
   useEffect(() => {
-    fetchPointDetail()
-    fetchExpertTips()
-  }, [resolvedParams.id])
+    if (pointId) {
+      fetchPointDetail()
+      fetchExpertTips()
+    }
+  }, [pointId])
 
   const fetchExpertTips = async () => {
     setTipsLoading(true)
     try {
-      const response = await fetch(`/api/expert-tips/${resolvedParams.id}`)
+      const response = await fetch(`/api/expert-tips/${pointId}`)
       const data = await response.json()
       if (data.success && data.data) {
         setExpertTips(data.data)
@@ -129,7 +128,7 @@ export default function KnowledgePointPage({
   const fetchPointDetail = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/knowledge-point/${resolvedParams.id}`)
+      const response = await fetch(`/api/knowledge-point/${pointId}`)
       const data = await response.json()
       
       if (data.success) {
