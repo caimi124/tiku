@@ -18,7 +18,7 @@ import { useEffect, useState, use } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Menu } from 'lucide-react'
-import { BreadcrumbItem } from '@/components/ui/Breadcrumb'
+// BreadcrumbItem type is defined locally as ApiBreadcrumbItem
 import { MasteryProgressBar } from '@/components/ui/MasteryProgressBar'
 import { MasteryStatusBadge } from '@/components/ui/MasteryStatusBadge'
 import { ImportanceStars, isHighFrequency } from '@/components/ui/ImportanceStars'
@@ -46,6 +46,12 @@ interface ContentItemAccuracy {
   accuracy: number
 }
 
+interface ApiBreadcrumbItem {
+  id: string
+  title: string
+  level: number
+}
+
 interface KnowledgePointDetail {
   id: string
   code: string
@@ -65,7 +71,7 @@ interface KnowledgePointDetail {
   last_review_at?: string
   practice_count?: number
   correct_rate?: number
-  breadcrumb?: BreadcrumbItem[]
+  breadcrumb?: ApiBreadcrumbItem[]
   related_points?: RelatedPoint[]
   content_item_accuracy?: ContentItemAccuracy[]
   navigation?: NavigationInfo
@@ -209,7 +215,12 @@ export default function KnowledgePointPage({
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* 面包屑导航 */}
-        <Breadcrumb items={point.breadcrumb || []} currentTitle={point.title} />
+        <Breadcrumb 
+          items={point.breadcrumb} 
+          currentTitle={point.title}
+          chapter={point.chapter}
+          section={point.section}
+        />
         
         {/* 主内容区域 - 双栏布局 */}
         <div className="flex gap-6">
@@ -409,11 +420,32 @@ function LoadingSkeleton() {
 
 function Breadcrumb({ 
   items, 
-  currentTitle 
+  currentTitle,
+  chapter,
+  section
 }: { 
-  items: BreadcrumbItem[]
-  currentTitle: string 
+  items?: ApiBreadcrumbItem[]
+  currentTitle: string
+  chapter?: { id: string; title: string; code: string } | null
+  section?: { id: string; title: string; code: string } | null
 }) {
+  // 构建面包屑导航
+  const breadcrumbItems: { label: string; url: string }[] = []
+  
+  if (chapter) {
+    breadcrumbItems.push({
+      label: chapter.title,
+      url: `/knowledge/chapter/${chapter.id}`
+    })
+  }
+  
+  if (section && chapter) {
+    breadcrumbItems.push({
+      label: section.title,
+      url: `/knowledge/chapter/${chapter.id}/section/${section.id}`
+    })
+  }
+  
   return (
     <nav className="mb-6">
       <ol className="flex flex-wrap items-center gap-2 text-sm text-gray-500">
@@ -422,8 +454,8 @@ function Breadcrumb({
             知识图谱
           </Link>
         </li>
-        {items.map((item, idx) => (
-          <li key={`${item.type}-${idx}`} className="flex items-center gap-2">
+        {breadcrumbItems.map((item, idx) => (
+          <li key={idx} className="flex items-center gap-2">
             <span>/</span>
             <Link 
               href={item.url}
