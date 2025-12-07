@@ -2,99 +2,121 @@
 
 ## Introduction
 
-知识图谱页面重新设计项目旨在优化现有的知识点展示页面，解决三个核心问题：1）内容展示结构不清晰，缺乏章节→小节→考点→具体内容的层级结构；2）知识点内容过于教材化，缺乏帮助用户记忆的辅助内容；3）视觉设计不够友好，核心内容不突出。通过引入"老司机带路"记忆辅助系统和重新设计的树状内容展示，帮助用户更高效地记忆和掌握药学考点。
+知识图谱页面优化项目旨在重新设计 https://yikaobiguo.com/knowledge 页面的信息架构和交互体验。核心目标是：
+1. **简化知识树结构**：采用"章节→节→考点标题/小节总结"三级结构，考点内容不在树中展开
+2. **考点详情页独立化**：每个考点拥有独立URL页面，便于SEO、分享和灵活布局
+3. **小节总结页面**：与考点并列，包含考点梳理（考点标题+历年考查年份）和重点强化（思维导图）
+4. **考点标注增强**：在考点旁边标注历年考查年份和高频考点标记
+5. **内容模块化**：考点详情页支持灵活容纳不同类型内容（药物分类、作用机制、口诀、不良反应等）
 
 ## Glossary
 
-- **知识图谱(Knowledge Graph)**: 展示药学知识点层级结构和关联关系的可视化页面
-- **章节(Chapter)**: 知识体系的一级分类，如"第二章 解热镇痛抗炎药"
-- **小节(Section)**: 章节下的二级分类，如"第一节 解热镇痛抗炎药概述"
-- **考点(Knowledge Point)**: 小节下的具体知识单元，如"NSAIDs作用机制"
-- **考点内容(Point Content)**: 考点下的具体知识项，如"作用特点"、"不良反应"、"临床应用"
-- **老司机带路(Expert Tips)**: 以考过药考的老司机视角，提供出题套路、易错点、记忆技巧的辅助内容
-- **坑位地图(Trap Map)**: 针对某个考点，总结出题人常用的挖坑方式和考生常犯的错误
-- **记忆口诀(Memory Mnemonics)**: 帮助用户快速记忆知识点的顺口溜或技巧
-- **高频考点(High-Frequency Point)**: 历年考试中出现频率较高的考点，重要性等级为4-5星
-- **掌握度(Mastery Score)**: 用户对某个考点的掌握程度，范围0-100
+- **知识图谱(Knowledge Graph)**: 展示药学知识点层级结构的可视化页面
+- **章节(Chapter)**: 知识体系的一级分类，如"第一章：解热、镇痛、抗炎、抗风湿及抗痛风药"
+- **节(Section)**: 章节下的二级分类，如"第一节：秋水仙碱与痛风药物"
+- **考点(Knowledge Point)**: 节下的具体知识单元，如"考点1：秋水仙碱的临床用药"
+- **小节总结(Section Summary)**: 与考点并列的特殊节点，包含该节的考点梳理和重点强化内容
+- **考点梳理(Point Overview)**: 列出小节内所有考点标题及其历年考查情况的概览
+- **历年考查标注(Exam Year Tags)**: 标注该考点在哪些年份被考查过，如"2020、2022、2024"
+- **高频考点标记(High Frequency Tag)**: 标注几乎每年都考的重要考点
+- **重点强化(Key Reinforcement)**: 思维导图或总结图，用于视觉强化记忆
+- **考点详情页(Point Detail Page)**: 展示单个考点完整教学内容的独立页面
 
 ## Requirements
 
-### Requirement 1: 树状内容层级展示
+### Requirement 1: 知识树三级结构展示
 
-**User Story:** As a 备考用户, I want to 以清晰的树状结构查看知识点, so that 我能快速定位到具体的考点内容并了解知识体系全貌。
-
-#### Acceptance Criteria
-
-1. WHEN 用户访问知识图谱页面 THEN the 系统 SHALL 以四级树状结构展示内容：章节→小节→考点→考点内容
-2. WHEN 展示章节节点 THEN the 系统 SHALL 显示章节编号、章节标题、该章节整体掌握度百分比、包含的考点数量
-3. WHEN 展示小节节点 THEN the 系统 SHALL 显示小节编号、小节标题、该小节掌握度、包含的高频考点数量
-4. WHEN 展示考点节点 THEN the 系统 SHALL 显示考点标题、重要性星级、掌握状态标签、所属药物名称
-5. WHEN 展示考点内容 THEN the 系统 SHALL 按类型分组显示：作用机制、药动学、不良反应、临床应用、相互作用、记忆口诀
-6. WHEN 用户点击展开/收起按钮 THEN the 系统 SHALL 切换该节点的子节点显示状态
-7. WHEN 用户使用搜索功能 THEN the 系统 SHALL 在所有层级中搜索匹配的节点并高亮显示
-
-### Requirement 2: 老司机带路记忆辅助系统
-
-**User Story:** As a 备考用户, I want to 在专业知识旁边看到考试技巧和记忆方法, so that 我能更容易记住知识点并避免考试中的常见陷阱。
+**User Story:** As a 备考用户, I want to 以简洁的三级树状结构浏览知识点, so that 我能快速定位到具体考点而不被过多内容干扰。
 
 #### Acceptance Criteria
 
-1. WHEN 用户查看考点详情 THEN the 系统 SHALL 在专业内容旁边显示"老司机带路"辅助区域
-2. WHEN 显示老司机带路内容 THEN the 系统 SHALL 包含以下模块：出题套路、坑位分析、记忆技巧、应试战术
-3. WHEN 展示出题套路 THEN the 系统 SHALL 显示该考点常见的出题形式和题目示例
-4. WHEN 展示坑位分析 THEN the 系统 SHALL 明确指出考生容易犯的错误和出题人常用的陷阱
-5. WHEN 展示记忆技巧 THEN the 系统 SHALL 提供口诀、联想记忆、场景记忆等多种记忆方法
-6. WHEN 展示应试战术 THEN the 系统 SHALL 提供看到该类题目时的条件反射式解题思路
-7. WHEN 考点有必考预测 THEN the 系统 SHALL 显示预测题目和正确答案解析
+1. WHEN 用户访问知识图谱页面 THEN the 系统 SHALL 以三级树状结构展示内容：章节→节→（考点标题 + 小节总结）
+2. WHEN 展示章节节点 THEN the 系统 SHALL 显示章节编号和章节标题
+3. WHEN 展示节节点 THEN the 系统 SHALL 显示节编号、节标题、该节包含的考点数量
+4. WHEN 展示考点节点 THEN the 系统 SHALL 显示考点标题、重要性星级
+5. WHEN 考点为高频考点 THEN the 系统 SHALL 在考点旁显示"高频"标记（历年考查年份详情在小节总结页面展示）
+6. WHEN 展示节的子节点 THEN the 系统 SHALL 在考点列表末尾显示"小节总结"节点
+7. WHEN 用户点击考点标题 THEN the 系统 SHALL 跳转到该考点的独立详情页面
+8. WHEN 用户点击小节总结 THEN the 系统 SHALL 跳转到该节的小节总结页面
+9. WHEN 用户点击展开/收起按钮 THEN the 系统 SHALL 切换该节点的子节点显示状态
 
-### Requirement 3: 考点内容可视化优化
+### Requirement 2: 考点详情页独立化
 
-**User Story:** As a 备考用户, I want to 以更清晰的视觉形式查看考点内容, so that 我能快速抓住重点并提高学习效率。
-
-#### Acceptance Criteria
-
-1. WHEN 显示考点核心内容 THEN the 系统 SHALL 使用卡片式布局，每个内容类型一张卡片
-2. WHEN 显示不良反应内容 THEN the 系统 SHALL 按严重程度使用不同颜色标记：红色严重、黄色中度、绿色轻度
-3. WHEN 显示药物对比内容 THEN the 系统 SHALL 使用表格形式展示，支持横向滚动
-4. WHEN 显示数字类考点 THEN the 系统 SHALL 使用醒目的数字标签突出显示关键数值
-5. WHEN 显示高频考点 THEN the 系统 SHALL 使用特殊边框或背景色标识
-6. WHEN 内容包含关键词 THEN the 系统 SHALL 对关键词（首选、禁忌、相互作用等）进行高亮标记
-
-### Requirement 4: 知识点详情页重设计
-
-**User Story:** As a 备考用户, I want to 在详情页同时看到专业内容和记忆辅助, so that 我能在一个页面完成学习和记忆。
+**User Story:** As a 备考用户, I want to 在独立页面查看考点的完整教学内容, so that 我能专注学习单个考点并方便分享和收藏。
 
 #### Acceptance Criteria
 
-1. WHEN 用户进入知识点详情页 THEN the 系统 SHALL 采用左右分栏布局：左侧专业内容、右侧老司机带路
-2. WHEN 显示专业内容区域 THEN the 系统 SHALL 包含：分类标签、作用特点、临床应用、不良反应、注意事项
-3. WHEN 显示老司机带路区域 THEN the 系统 SHALL 包含：坑位地图、记忆口诀、应试战术、必考预测
-4. WHEN 用户在移动端访问 THEN the 系统 SHALL 将左右分栏改为上下布局，专业内容在上、辅助内容在下
-5. WHEN 用户点击"开始练习"按钮 THEN the 系统 SHALL 跳转到该考点的专项练习页面
-6. WHEN 用户点击"标记复习"按钮 THEN the 系统 SHALL 将该考点加入复习队列
+1. WHEN 用户访问考点详情页 THEN the 系统 SHALL 为该考点提供独立的URL路径（如 /knowledge/point/[id]）
+2. WHEN 显示考点详情页 THEN the 系统 SHALL 包含考点简介模块，用一句话总结该考点为什么被考
+3. WHEN 显示考点详情页 THEN the 系统 SHALL 包含核心记忆点模块，展示记忆口诀和关键要点
+4. WHEN 显示考点详情页 THEN the 系统 SHALL 包含作用特点模块，展示药物的作用机制和特点
+5. WHEN 显示考点详情页 THEN the 系统 SHALL 包含典型不良反应模块，按严重程度分类展示
+6. WHEN 显示考点详情页 THEN the 系统 SHALL 包含禁忌和注意事项模块
+7. WHEN 显示考点详情页 THEN the 系统 SHALL 包含药物相互作用模块
+8. WHEN 用户在考点详情页上下滑动 THEN the 系统 SHALL 支持流畅滚动查看全部内容
 
-### Requirement 5: 内容筛选和导航优化
+### Requirement 3: 小节总结页面
 
-**User Story:** As a 备考用户, I want to 快速筛选和定位到我需要的内容, so that 我能高效利用学习时间。
-
-#### Acceptance Criteria
-
-1. WHEN 用户使用筛选功能 THEN the 系统 SHALL 支持按掌握状态筛选：全部、未学习、薄弱、需复习、已掌握
-2. WHEN 用户使用筛选功能 THEN the 系统 SHALL 支持按重要性筛选：全部、高频（4-5星）、中频（2-3星）、低频（1星）
-3. WHEN 用户使用筛选功能 THEN the 系统 SHALL 支持按内容类型筛选：作用机制、不良反应、临床应用、相互作用
-4. WHEN 显示筛选结果 THEN the 系统 SHALL 显示匹配的考点数量和预计学习时间
-5. WHEN 用户点击面包屑导航 THEN the 系统 SHALL 支持快速跳转到上级章节或小节
-6. WHEN 用户使用快捷键 THEN the 系统 SHALL 支持键盘导航：上下箭头切换考点、Enter展开详情、Esc返回列表
-
-### Requirement 6: 老司机内容数据管理
-
-**User Story:** As a 系统管理员, I want to 管理老司机带路的内容数据, so that 我能持续更新和优化记忆辅助内容。
+**User Story:** As a 备考用户, I want to 在小节总结页面快速了解该节的考点分布和重点内容, so that 我能通过思维导图加深记忆并合理安排学习优先级。
 
 #### Acceptance Criteria
 
-1. WHEN 存储老司机内容 THEN the 系统 SHALL 为每个考点关联以下字段：出题套路、坑位分析、记忆技巧、应试战术、必考预测
-2. WHEN 导入老司机内容 THEN the 系统 SHALL 支持JSON格式批量导入
-3. WHEN 老司机内容为空 THEN the 系统 SHALL 显示默认提示"暂无老司机带路内容，敬请期待"
-4. WHEN 更新老司机内容 THEN the 系统 SHALL 记录更新时间和版本号
-5. WHEN 查询老司机内容 THEN the 系统 SHALL 支持按考点ID精确查询
+1. WHEN 用户访问小节总结页面 THEN the 系统 SHALL 为该小节提供独立的URL路径（如 /knowledge/section/[id]/summary）
+2. WHEN 显示小节总结页面 THEN the 系统 SHALL 在顶部显示"考点梳理"区域
+3. WHEN 显示考点梳理区域 THEN the 系统 SHALL 列出该节所有考点标题
+4. WHEN 显示考点梳理区域 THEN the 系统 SHALL 在每个考点旁显示历年考查年份（如"2020、2022、2024 考过"）
+5. WHEN 显示考点梳理区域 THEN the 系统 SHALL 标注高频考点（如"高频考点，几乎每年考"）
+6. WHEN 用户点击考点梳理中的考点标题 THEN the 系统 SHALL 跳转到该考点的详情页
+7. WHEN 小节包含重点强化内容 THEN the 系统 SHALL 在考点梳理下方展示"重点强化"区域
+8. WHEN 显示重点强化区域 THEN the 系统 SHALL 显示标题"重点强化"和提示文字"点击图片可放大"
+9. WHEN 用户点击思维导图图片 THEN the 系统 SHALL 以弹窗形式放大展示图片
+10. WHEN 显示放大弹窗 THEN the 系统 SHALL 支持点击弹窗外部或关闭按钮关闭弹窗
+
+### Requirement 4: 考点历年考查数据管理
+
+**User Story:** As a 内容管理员, I want to 管理考点的历年考查数据, so that 系统能在小节总结页面展示考点的考查历史。
+
+#### Acceptance Criteria
+
+1. WHEN 存储考点数据 THEN the 系统 SHALL 为每个考点关联历年考查年份字段（数组格式，如[2020, 2022, 2024]）
+2. WHEN 存储考点数据 THEN the 系统 SHALL 为每个考点关联高频考点标记字段（布尔值）
+3. WHEN 在小节总结页面展示考点 THEN the 系统 SHALL 显示历年考查年份（如"2020、2022、2024 考过"）
+4. WHEN 考点被标记为高频 THEN the 系统 SHALL 在知识树和小节总结页面显示醒目的"高频"标签
+5. WHEN 导入考点数据 THEN the 系统 SHALL 支持批量更新历年考查年份和高频标记
+
+### Requirement 5: 内容模块灵活布局
+
+**User Story:** As a 内容管理员, I want to 为不同考点配置不同类型的内容模块, so that 每个考点页面能展示最适合该考点的教学内容。
+
+#### Acceptance Criteria
+
+1. WHEN 存储考点内容 THEN the 系统 SHALL 支持以下内容类型：考点简介、核心记忆点、药物分类、作用机制、临床应用、不良反应、禁忌、药物相互作用、重点强化图
+2. WHEN 渲染考点详情页 THEN the 系统 SHALL 按照预定义顺序展示已配置的内容模块
+3. WHEN 某内容模块为空 THEN the 系统 SHALL 跳过该模块不显示，不影响其他模块展示
+4. WHEN 显示药物分类内容 THEN the 系统 SHALL 使用表格或列表形式清晰展示分类层级
+5. WHEN 显示重点强化图内容 THEN the 系统 SHALL 支持图片格式展示，并支持点击放大
+
+### Requirement 6: 页面导航和SEO优化
+
+**User Story:** As a 备考用户, I want to 通过搜索引擎找到具体考点页面, so that 我能快速访问需要复习的内容。
+
+#### Acceptance Criteria
+
+1. WHEN 渲染考点详情页 THEN the 系统 SHALL 生成包含考点标题的页面标题（title标签）
+2. WHEN 渲染考点详情页 THEN the 系统 SHALL 生成包含考点简介的页面描述（meta description）
+3. WHEN 用户在考点详情页 THEN the 系统 SHALL 显示面包屑导航：知识图谱 > 章节 > 节 > 考点
+4. WHEN 用户点击面包屑中的节 THEN the 系统 SHALL 跳转到知识图谱页面并展开该节
+5. WHEN 用户点击面包屑中的章节 THEN the 系统 SHALL 跳转到知识图谱页面并展开该章节
+6. WHEN 用户分享考点详情页URL THEN the 系统 SHALL 确保URL可直接访问该考点内容
+
+### Requirement 7: 移动端适配
+
+**User Story:** As a 移动端用户, I want to 在手机上流畅浏览知识点内容, so that 我能随时随地学习。
+
+#### Acceptance Criteria
+
+1. WHEN 用户在移动端访问知识图谱页面 THEN the 系统 SHALL 将树状导航改为可折叠的侧边栏或顶部下拉菜单
+2. WHEN 用户在移动端访问考点详情页 THEN the 系统 SHALL 采用单列布局，内容模块垂直排列
+3. WHEN 用户在移动端查看思维导图 THEN the 系统 SHALL 支持双指缩放和拖动查看
+4. WHEN 用户在移动端浏览 THEN the 系统 SHALL 确保所有可点击元素的触摸区域不小于44x44像素
 
