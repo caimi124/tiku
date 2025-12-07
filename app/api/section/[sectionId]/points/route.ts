@@ -90,7 +90,7 @@ export async function GET(
       .from('knowledge_tree')
       .select('id, code, title, key_takeaway, importance, exam_years, exam_frequency')
       .eq('parent_id', sectionId)
-      .eq('node_type', 'knowledge_point')
+      .in('node_type', ['point', 'knowledge_point'])
       .order('code')
 
     if (pointsError) {

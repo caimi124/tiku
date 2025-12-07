@@ -84,12 +84,12 @@ export async function GET(
     let totalHighFrequency = 0
 
     for (const section of sections || []) {
-      // 获取该小节下的所有考点
+      // 获取该小节下的所有考点 (兼容 point 和 knowledge_point 两种类型)
       const { data: points } = await supabase
         .from('knowledge_tree')
         .select('id, importance, exam_frequency')
         .eq('parent_id', section.id)
-        .eq('node_type', 'knowledge_point')
+        .in('node_type', ['point', 'knowledge_point'])
 
       const pointCount = points?.length || 0
       totalPoints += pointCount

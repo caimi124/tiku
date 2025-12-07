@@ -346,7 +346,7 @@ async function getHighFrequencyPoints(
         ON kt.id = ukm.knowledge_point_id 
         AND ukm.user_id = $2
       WHERE kt.subject_code = $1
-        AND kt.node_type = 'knowledge_point'
+        AND kt.node_type IN ('point', 'knowledge_point')
         AND kt.importance >= ${HIGH_FREQUENCY_THRESHOLD}
       ORDER BY kt.importance DESC, ukm.mastery_score ASC NULLS FIRST
       LIMIT $3
@@ -367,7 +367,7 @@ async function getHighFrequencyPoints(
         sort_order
       FROM knowledge_tree
       WHERE subject_code = $1
-        AND node_type = 'knowledge_point'
+        AND node_type IN ('point', 'knowledge_point')
         AND importance >= ${HIGH_FREQUENCY_THRESHOLD}
       ORDER BY importance DESC
       LIMIT $2

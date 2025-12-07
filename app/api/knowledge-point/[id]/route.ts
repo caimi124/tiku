@@ -296,7 +296,7 @@ async function getNavigation(
   const pointsResult = await client.query(
     `SELECT id, title, sort_order 
      FROM knowledge_tree 
-     WHERE parent_id = $1 AND node_type = 'knowledge_point'
+     WHERE parent_id = $1 AND node_type IN ('point', 'knowledge_point')
      ORDER BY sort_order`,
     [sectionId]
   )
@@ -401,7 +401,7 @@ async function getRelatedPoints(
         AND ukm.user_id = $3
       WHERE kt.parent_id = $1 
         AND kt.id != $2
-        AND kt.node_type = 'knowledge_point'
+        AND kt.node_type IN ('point', 'knowledge_point')
       ORDER BY kt.sort_order
       LIMIT 5
     `
@@ -415,7 +415,7 @@ async function getRelatedPoints(
       FROM knowledge_tree
       WHERE parent_id = $1 
         AND id != $2
-        AND node_type = 'knowledge_point'
+        AND node_type IN ('point', 'knowledge_point')
       ORDER BY sort_order
       LIMIT 5
     `

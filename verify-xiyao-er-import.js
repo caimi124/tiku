@@ -10,6 +10,8 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 })
 
+const SUBJECT_CODE = 'xiyao_yaoxue_er'
+
 async function verify() {
   const client = await pool.connect()
   
@@ -18,10 +20,10 @@ async function verify() {
     const result = await client.query(`
       SELECT code, title, LEFT(content, 300) as content_preview, memory_tips
       FROM knowledge_tree 
-      WHERE subject_code = 'xiyao-er' AND node_type = 'point'
+      WHERE subject_code = $1 AND node_type = 'point'
       ORDER BY code
       LIMIT 5
-    `)
+    `, [SUBJECT_CODE])
     
     console.log('\n========== 考点内容示例 ==========')
     for (const row of result.rows) {
@@ -38,10 +40,10 @@ async function verify() {
       FROM knowledge_tree c
       LEFT JOIN knowledge_tree s ON s.parent_id = c.id AND s.node_type = 'section'
       LEFT JOIN knowledge_tree p ON p.parent_id = s.id AND p.node_type = 'point'
-      WHERE c.subject_code = 'xiyao-er' AND c.node_type = 'chapter'
+      WHERE c.subject_code = $1 AND c.node_type = 'chapter'
       GROUP BY c.id, c.title, c.sort_order
       ORDER BY c.sort_order
-    `)
+    `, [SUBJECT_CODE])
     
     console.log('\n========== 各章节考点统计 ==========')
     let total = 0
@@ -55,9 +57,9 @@ async function verify() {
     const mnemonicResult = await client.query(`
       SELECT code, title, memory_tips
       FROM knowledge_tree 
-      WHERE subject_code = 'xiyao-er' AND node_type = 'point' AND memory_tips IS NOT NULL
+      WHERE subject_code = $1 AND node_type = 'point' AND memory_tips IS NOT NULL
       ORDER BY code
-    `)
+    `, [SUBJECT_CODE])
     
     console.log('\n========== 包含记忆口诀的考点 ==========')
     for (const row of mnemonicResult.rows) {

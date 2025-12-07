@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
       LEFT JOIN knowledge_tree section ON kt.parent_id = section.id
       LEFT JOIN knowledge_tree chapter ON section.parent_id = chapter.id
       WHERE kt.subject_code = $3
-        AND kt.node_type = 'knowledge_point'
+        AND kt.node_type IN ('point', 'knowledge_point')
         AND (kt.title ILIKE $2 OR kt.content ILIKE $2 OR kt.drug_name ILIKE $2)
       ORDER BY relevance_score DESC, kt.sort_order
       LIMIT $4
@@ -164,7 +164,7 @@ export async function GET(request: NextRequest) {
         SELECT DISTINCT title
         FROM knowledge_tree
         WHERE subject_code = $1
-          AND node_type = 'knowledge_point'
+          AND node_type IN ('point', 'knowledge_point')
           AND title ILIKE $2
         LIMIT 5
       `, [subject, `%${query.slice(0, 2)}%`])

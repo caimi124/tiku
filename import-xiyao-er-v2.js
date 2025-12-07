@@ -22,7 +22,7 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 })
 
-const SUBJECT_CODE = 'xiyao-er'
+const SUBJECT_CODE = 'xiyao_yaoxue_er'
 
 // 中文数字转阿拉伯数字
 function chineseToNumber(chinese) {
