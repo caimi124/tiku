@@ -6,6 +6,7 @@
  * GET /api/knowledge/structure?subject=xiyao_yaoxue_er
  * 
  * Requirements: 1.1, 1.2, 16.1
+ * Updated: 2025-12-08 - 西药药二完整数据（13章80节117知识点）
  */
 
 export const dynamic = 'force-dynamic'
