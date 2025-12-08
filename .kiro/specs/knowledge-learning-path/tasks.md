@@ -87,6 +87,8 @@
 - [x] 7. 考点行组件开发
   - [x] 7.1 创建 `PointRow` 组件
     - 显示考点标题、重要性星级、高频标签、一句话简介
+
+
     - 简介限制30字，超出截断
     - 显示收藏/标记图标
     - 支持点击跳转到详情页
@@ -95,22 +97,28 @@
 
     - **Property 4: 考点行数据完整性**
     - **Validates: Requirements 1.6**
-  - [ ]* 7.3 Write property test for point URL
+
+
+  - [x]* 7.3 Write property test for point URL
     - **Property 5: 考点详情页URL正确性**
     - **Validates: Requirements 1.7**
 
 - [x] 8. 快速预览组件开发
-  - [x] 8.1 创建 `PointPreviewCard` 组件
+  - [-] 8.1 创建 `PointPreviewCard` 组件
+
     - 显示考点标题、核心记忆点（前3条）、历年考查年份
     - 提供"查看详情"按钮
     - 支持点击外部关闭
     - _Requirements: 2.1, 2.3, 2.4, 2.5_
-  - [ ]* 8.2 Write property test for preview content
+  - [x]* 8.2 Write property test for preview content
     - **Property 6: 预览卡片内容完整性**
     - **Validates: Requirements 2.3**
 
-- [ ] 9. Checkpoint - 确保所有组件测试通过
+
+
+- [x] 9. Checkpoint - 确保所有组件测试通过
   - Ensure all tests pass, ask the user if questions arise.
+
 
 ## Phase 3: 筛选和搜索功能
 
@@ -122,13 +130,13 @@
     - 支持只看收藏、只看待复习
     - 显示筛选后的考点数量
     - _Requirements: 3.1, 13.1, 13.2, 13.3, 13.4, 13.6_
-  - [ ]* 10.2 Write property test for high frequency filter
+  - [x]* 10.2 Write property test for high frequency filter
     - **Property 7: 高频筛选正确性**
     - **Validates: Requirements 3.2, 3.3**
-  - [ ]* 10.3 Write property test for filter stats
+  - [x]* 10.3 Write property test for filter stats
     - **Property 8: 筛选统计正确性**
     - **Validates: Requirements 3.4**
-  - [ ]* 10.4 Write property test for multi-filter
+  - [x]* 10.4 Write property test for multi-filter
     - **Property 19: 多条件筛选正确性**
     - **Validates: Requirements 13.5**
 
@@ -136,6 +144,7 @@
   - [x] 11.1 创建 `SearchEnhanced` 组件
     - 支持拼音模糊搜索
     - 支持考点别名/关联词搜索
+
     - 分类显示结果：考点、小节、章节
     - 高亮匹配关键词
     - _Requirements: 5.1, 5.2, 14.1, 14.2, 14.3, 14.6_
@@ -154,7 +163,7 @@
     - 点击章节结果跳转到首页并展开该章节
     - _Requirements: 5.4, 14.4, 14.5_
 
-- [-] 12. Checkpoint - 确保所有筛选和搜索测试通过
+- [x] 12. Checkpoint - 确保所有筛选和搜索测试通过
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Phase 4: 首页重构
@@ -226,6 +235,8 @@
     - _Requirements: 12.1, 12.2_
   - [x] 16.7 添加相关考点和易混点（已实现）
     - 显示相关考点链接列表
+
+
     - 显示易混点对比卡片（如有）
     - _Requirements: 15.2, 15.3_
   - [x] 16.8 优化同小节导航（已实现）
@@ -236,6 +247,7 @@
 - [-] 17. Checkpoint - 确保详情页测试通过
   - Ensure all tests pass, ask the user if questions arise.
 
+
 ## Phase 6: 顺序学习模式
 
 - [x] 18. 顺序学习功能开发
@@ -243,7 +255,7 @@
     - 首页提供"开始顺序学习"按钮
     - 跳转到第一个未完成的考点
     - _Requirements: 11.1, 11.2_
-  - [ ]* 18.2 Write property test for sequential start
+  - [x]* 18.2 Write property test for sequential start
     - **Property 17: 顺序学习跳转正确性**
     - **Validates: Requirements 11.2**
   - [x] 18.3 实现顺序学习导航
@@ -256,7 +268,7 @@
     - 下次可继续学习
     - _Requirements: 11.6_
 
-- [-] 19. Checkpoint - 确保顺序学习测试通过
+- [x] 19. Checkpoint - 确保顺序学习测试通过
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Phase 7: 移动端适配和性能优化
@@ -270,7 +282,9 @@
     - 搜索框在移动端全宽显示
     - _Requirements: 8.2_
   - [x] 20.3 实现移动端进度统计
+
     - 使用grid响应式布局（grid-cols-2 md:grid-cols-4）
+
     - _Requirements: 8.3_
   - [x] 20.4 实现移动端预览
     - PointPreviewCard支持移动端显示
@@ -292,5 +306,5 @@
     - sectionPoints状态缓存已加载的考点数据
     - 减少重复API请求
 
-- [-] 22. Final Checkpoint - 确保所有测试通过
+- [x] 22. Final Checkpoint - 确保所有测试通过
   - Ensure all tests pass, ask the user if questions arise.

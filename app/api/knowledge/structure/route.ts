@@ -12,7 +12,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 interface ChapterStructure {
   id: string
@@ -45,13 +45,13 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const subject = searchParams.get('subject') || 'xiyao_yaoxue_er'
     
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabase = createClient(supabaseUrl, supabaseKey)
     
     // 获取所有章节
     const { data: chapters, error: chaptersError } = await supabase
       .from('knowledge_tree')
       .select('id, code, title, parent_id, node_type, importance')
-      .eq('subject', subject)
+      .eq('subject_code', subject)
       .in('node_type', ['chapter', 'section', 'point', 'knowledge_point'])
       .order('code')
     

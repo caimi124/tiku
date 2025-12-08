@@ -1,7 +1,7 @@
 /**
  * 用户收藏/标记API
  * 
- * POST /api/user/favorites - 添加/移除收藏或复习标记
+ * POST /api/user/favorites - 添加/移除收藏或复习标�?
  * GET /api/user/favorites - 获取用户收藏或待复习列表
  * 
  * Requirements: 12.1, 12.2, 12.4
@@ -12,7 +12,7 @@ import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 interface FavoriteItem {
   id: string
@@ -29,7 +29,7 @@ interface FavoriteItem {
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabase = createClient(supabaseUrl, supabaseKey)
     
     // 获取当前用户
     const cookieStore = cookies()
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
       }, { status: 500 })
     }
     
-    // 获取章节和小节信息
+    // 获取章节和小节信�?
     const items: FavoriteItem[] = []
     
     for (const fav of favorites || []) {
@@ -131,17 +131,17 @@ export async function GET(request: NextRequest) {
     console.error('获取收藏列表失败:', error)
     return NextResponse.json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: '服务器错误' }
+      error: { code: 'SERVER_ERROR', message: '服务器错�? }
     }, { status: 500 })
   }
 }
 
 /**
- * POST - 添加/移除收藏或复习标记
+ * POST - 添加/移除收藏或复习标�?
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabase = createClient(supabaseUrl, supabaseKey)
     
     // 获取当前用户
     const cookieStore = cookies()
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
       }, { status: 401 })
     }
     
-    // 解析请求体
+    // 解析请求�?
     const body = await request.json()
     const { point_id, type, action } = body
     
@@ -176,14 +176,14 @@ export async function POST(request: NextRequest) {
     if (!['favorite', 'review'].includes(type)) {
       return NextResponse.json({
         success: false,
-        error: { code: 'INVALID_TYPE', message: '无效的类型' }
+        error: { code: 'INVALID_TYPE', message: '无效的类�? }
       }, { status: 400 })
     }
     
     if (!['add', 'remove', 'toggle'].includes(action)) {
       return NextResponse.json({
         success: false,
-        error: { code: 'INVALID_ACTION', message: '无效的操作' }
+        error: { code: 'INVALID_ACTION', message: '无效的操�? }
       }, { status: 400 })
     }
     
@@ -197,11 +197,11 @@ export async function POST(request: NextRequest) {
     if (!point) {
       return NextResponse.json({
         success: false,
-        error: { code: 'POINT_NOT_FOUND', message: '考点不存在' }
+        error: { code: 'POINT_NOT_FOUND', message: '考点不存�? }
       }, { status: 404 })
     }
     
-    // 检查当前状态
+    // 检查当前状�?
     const { data: existing } = await supabase
       .from('user_favorites')
       .select('id')
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
     let result: { added: boolean }
     
     if (action === 'toggle') {
-      // 切换状态
+      // 切换状�?
       if (existing) {
         await supabase
           .from('user_favorites')
@@ -261,7 +261,8 @@ export async function POST(request: NextRequest) {
     console.error('操作收藏失败:', error)
     return NextResponse.json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: '服务器错误' }
+      error: { code: 'SERVER_ERROR', message: '服务器错�? }
     }, { status: 500 })
   }
 }
+
