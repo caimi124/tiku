@@ -165,12 +165,21 @@ function KnowledgePageContent() {
       const progressData = await progressRes.json()
       
       if (structureData.success) {
-        setChapters(structureData.data.chapters || [])
+        // API返回的是 data.structure，不是 data.chapters
+        setChapters(structureData.data.structure || structureData.data.chapters || [])
       }
       
       if (progressData.success) {
-        setUserProgress(progressData.data)
-        setRecentLearning(progressData.data.recent_learning || [])
+        // API返回的是 data.stats，需要转换为页面期望的格式
+        const stats = progressData.data.stats || progressData.data
+        setUserProgress({
+          total_points: stats.total_points || 0,
+          learned_count: stats.learned_count || 0,
+          mastered_count: stats.mastered_count || 0,
+          review_count: stats.review_count || 0,
+          overall_percentage: stats.completion_percentage || stats.overall_percentage || 0
+        })
+        setRecentLearning(progressData.data.recent_points || progressData.data.recent_learning || [])
       }
     } catch (error) {
       console.error('加载数据失败:', error)

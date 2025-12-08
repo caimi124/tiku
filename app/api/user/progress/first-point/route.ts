@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     const { data: firstPoint, error } = await supabase
       .from('knowledge_tree')
       .select('id, code, title, parent_id')
-      .eq('subject', subject)
+      .eq('subject_code', subject)
       .in('node_type', ['point', 'knowledge_point'])
       .order('code')
       .limit(1)

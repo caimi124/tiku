@@ -120,6 +120,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: {
         structure,
+        chapters: structure, // 向后兼容，同时提供 chapters 字段
         stats
       }
     })
