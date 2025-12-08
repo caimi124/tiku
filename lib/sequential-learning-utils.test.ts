@@ -104,7 +104,7 @@ const learningPositionArbitrary: fc.Arbitrary<LearningPosition> = fc.record({
   progress: fc.integer({ min: 0, max: 100 }),
   totalPoints: fc.integer({ min: 0, max: 1000 }),
   completedPoints: fc.integer({ min: 0, max: 1000 }),
-  lastUpdated: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-01-01') }).map(d => d.toISOString())
+  lastUpdated: fc.integer({ min: 1577836800000, max: 1893456000000 }).map(ts => new Date(ts).toISOString())
 }).filter(pos => pos.completedPoints <= pos.totalPoints)
 
 describe('Property 17: 顺序学习跳转正确性', () => {
