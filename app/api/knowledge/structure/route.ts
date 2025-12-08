@@ -131,6 +131,7 @@ export async function GET(request: NextRequest) {
     
     const response = NextResponse.json({
       success: true,
+      version: '2025-12-08-v3', // 版本标识，用于验证部署
       data: {
         structure,
         chapters: structure, // 向后兼容，同时提供 chapters 字段
