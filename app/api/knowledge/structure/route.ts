@@ -50,16 +50,30 @@ export async function GET(request: NextRequest) {
     
     const supabase = createClient(supabaseUrl, supabaseKey)
     
-    // 获取所有章节
-    const { data: chapters, error: chaptersError } = await supabase
-      .from('knowledge_tree')
-      .select('id, code, title, parent_id, node_type, importance')
-      .eq('subject_code', subject)
-      .in('node_type', ['chapter', 'section', 'point', 'knowledge_point'])
-      .order('code')
+    // 分别查询各类型节点（避免 .in() 可能的问题）
+    const [chaptersRes, sectionsRes, pointsRes] = await Promise.all([
+      supabase
+        .from('knowledge_tree')
+        .select('id, code, title, parent_id, node_type, importance')
+        .eq('subject_code', subject)
+        .eq('node_type', 'chapter')
+        .order('code'),
+      supabase
+        .from('knowledge_tree')
+        .select('id, code, title, parent_id, node_type, importance')
+        .eq('subject_code', subject)
+        .eq('node_type', 'section')
+        .order('code'),
+      supabase
+        .from('knowledge_tree')
+        .select('id, code, title, parent_id, node_type, importance')
+        .eq('subject_code', subject)
+        .in('node_type', ['point', 'knowledge_point'])
+        .order('code')
+    ])
     
-    if (chaptersError) {
-      console.error('获取知识结构失败:', chaptersError)
+    if (chaptersRes.error || sectionsRes.error || pointsRes.error) {
+      console.error('获取知识结构失败:', chaptersRes.error || sectionsRes.error || pointsRes.error)
       return NextResponse.json({
         success: false,
         error: { code: 'DATABASE_ERROR', message: '获取知识结构失败' }
@@ -67,11 +81,9 @@ export async function GET(request: NextRequest) {
     }
     
     // 构建层级结构
-    const chapterNodes = chapters?.filter(n => n.node_type === 'chapter') || []
-    const sectionNodes = chapters?.filter(n => n.node_type === 'section') || []
-    const pointNodes = chapters?.filter(n => 
-      n.node_type === 'point' || n.node_type === 'knowledge_point'
-    ) || []
+    const chapterNodes = chaptersRes.data || []
+    const sectionNodes = sectionsRes.data || []
+    const pointNodes = pointsRes.data || []
     
     // 统计信息
     const stats: StructureStats = {
