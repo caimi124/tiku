@@ -1,16 +1,19 @@
 /**
- * 考点列表API
+ * 考点列表API（懒加载版）
  * GET /api/section/[sectionId]/points
  * 
- * 返回指定小节下所有考点的卡片数据（入口页数据），包括：
+ * 返回指定小节下所有考点的行数据，用于首页手风琴展开时懒加载
+ * 
+ * 返回数据：
  * - 考点标题、编号
- * - 优先级标签
- * - 一句话简介（≤40字）
+ * - 重要性星级
+ * - 优先级标签（高频等）
+ * - 一句话简介（≤30字，超出截断）
  * - 历年考查年份
  * 
  * 注意：不返回详细内容（作用机制、不良反应等）
  * 
- * Requirements: 1.5, 1.6, 6.1, 6.2
+ * Requirements: 1.5, 1.6, 6.1, 6.2, 16.2
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -136,11 +139,17 @@ export async function GET(
         })
       }
 
+      // 简介限制30字，超出截断
+      let keyTakeaway = point.key_takeaway || ''
+      if (keyTakeaway.length > 30) {
+        keyTakeaway = keyTakeaway.substring(0, 30) + '...'
+      }
+
       return {
         id: point.id,
         code: point.code,
         title: point.title,
-        key_takeaway: point.key_takeaway || '',
+        key_takeaway: keyTakeaway,
         tags: pointTags,
         exam_years: point.exam_years || [],
         importance: point.importance || 3,

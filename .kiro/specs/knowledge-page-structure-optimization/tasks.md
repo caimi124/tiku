@@ -258,7 +258,9 @@
 
 
 
-  - [ ] 14.1 重构 `/app/knowledge/page.tsx`
+  - [x] 14.1 重构 `/app/knowledge/page.tsx`
+
+
     - 章节卡片网格布局
     - 整体统计区域
     - 全局搜索框
@@ -274,7 +276,8 @@
     - 移动端单列布局
     - _Requirements: 7.2, 7.3, 8.1_
 
-- [ ] 15. 章节页开发
+
+- [x] 15. 章节页开发
   - [x] 15.1 创建 `/app/knowledge/chapter/[chapterId]/page.tsx`
 
 

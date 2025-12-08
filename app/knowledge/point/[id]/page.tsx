@@ -215,7 +215,6 @@ export default function KnowledgePointPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* 面包屑导航 */}
         <Breadcrumb 
-          items={point.breadcrumb} 
           currentTitle={point.title}
           chapter={point.chapter}
           section={point.section}
@@ -418,30 +417,28 @@ function LoadingSkeleton() {
 }
 
 function Breadcrumb({ 
-  items, 
   currentTitle,
   chapter,
   section
 }: { 
-  items?: ApiBreadcrumbItem[]
   currentTitle: string
   chapter?: { id: string; title: string; code: string } | null
   section?: { id: string; title: string; code: string } | null
 }) {
-  // 构建面包屑导航
+  // 构建面包屑导航 - 链接到首页锚点
   const breadcrumbItems: { label: string; url: string }[] = []
   
   if (chapter) {
     breadcrumbItems.push({
       label: chapter.title,
-      url: `/knowledge/chapter/${chapter.id}`
+      url: `/knowledge#chapter-${chapter.id}`
     })
   }
   
-  if (section && chapter) {
+  if (section) {
     breadcrumbItems.push({
       label: section.title,
-      url: `/knowledge/chapter/${chapter.id}/section/${section.id}`
+      url: `/knowledge#section-${section.id}`
     })
   }
   
