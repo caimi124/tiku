@@ -41,6 +41,33 @@ interface ContentBlock {
 }
 
 /**
+ * 检测是否是乱码文本（OCR识别错误）
+ */
+function isGarbageText(text: string): boolean {
+  if (!text || text.length < 5) return false
+  
+  // 计算非中文、非英文、非数字、非常见标点的字符比例
+  const cleanText = text.replace(/[\s\n\r]/g, '')
+  if (cleanText.length === 0) return true
+  
+  // 有效字符：中文、英文、数字、常见标点
+  const validChars = cleanText.match(/[\u4e00-\u9fa5a-zA-Z0-9，。、；：""''（）【】《》？！·\-\+\=\%\.\,\;\:\(\)\[\]\/\\]/g) || []
+  const validRatio = validChars.length / cleanText.length
+  
+  // 如果有效字符比例低于60%，认为是乱码
+  if (validRatio < 0.6) return true
+  
+  // 检测连续的无意义字符模式
+  if (/[a-zA-Z]{2,}\s+[a-zA-Z]{2,}\s+[a-zA-Z]{2,}/.test(text) && !/[a-zA-Z]{4,}/.test(text)) {
+    // 短的随机英文字母组合，可能是OCR乱码
+    const chineseCount = (text.match(/[\u4e00-\u9fa5]/g) || []).length
+    if (chineseCount < text.length * 0.3) return true
+  }
+  
+  return false
+}
+
+/**
  * 解析内容为结构化块
  */
 function parseContent(content: string): ContentBlock[] {
@@ -55,6 +82,12 @@ function parseContent(content: string): ContentBlock[] {
     if (currentBlock.length > 0) {
       const text = currentBlock.join('\n').trim()
       if (text) {
+        // 跳过乱码文本
+        if (isGarbageText(text)) {
+          currentBlock = []
+          return
+        }
+        
         // 检查是否包含口诀
         if (text.includes('【润德巧记】') || text.includes('【巧记】') || text.includes('【口诀】')) {
           blocks.push({ type: 'mnemonic', content: text, raw: text })
@@ -360,16 +393,28 @@ function MnemonicBlock({ content }: { content: string }) {
  */
 function ImageBlock({ content }: { content: string }) {
   const [showModal, setShowModal] = useState(false)
+  const [imageError, setImageError] = useState(false)
   
-  // 提取图片路径
+  // 提取图片路径 - 支持多种格式
   const match = content.match(/\[图片:\s*([\w\/\.\-]+)\]/)
   if (!match) return null
   
-  const imagePath = match[1].startsWith('images/') ? `/${match[1]}` : `/images/${match[1]}`
+  // 构建图片路径 - 尝试多个可能的路径
+  const rawPath = match[1]
+  const imagePath = rawPath.startsWith('images/') 
+    ? `/${rawPath}` 
+    : rawPath.startsWith('/') 
+      ? rawPath 
+      : `/images/${rawPath}`
+  
+  // 如果图片加载失败，不显示这个块
+  if (imageError) {
+    return null
+  }
   
   return (
     <>
-      <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+      <div className="bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
         <div className="flex items-center justify-center">
           <div 
             className="relative cursor-pointer group"
@@ -378,27 +423,30 @@ function ImageBlock({ content }: { content: string }) {
             <img 
               src={imagePath} 
               alt="知识点图片"
-              className="max-w-full h-auto rounded-lg shadow-sm max-h-64 object-contain"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none'
-              }}
+              className="max-w-full h-auto rounded-lg shadow-md max-h-72 object-contain bg-white"
+              onError={() => setImageError(true)}
             />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-lg transition-colors flex items-center justify-center">
-              <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 rounded-lg transition-colors flex items-center justify-center">
+              <div className="bg-white/90 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                <ZoomIn className="w-5 h-5 text-gray-700" />
+              </div>
             </div>
           </div>
         </div>
-        <div className="text-center text-xs text-gray-400 mt-2">点击图片放大查看</div>
+        <div className="text-center text-xs text-gray-400 mt-3 flex items-center justify-center gap-1">
+          <ZoomIn className="w-3 h-3" />
+          <span>点击图片放大查看</span>
+        </div>
       </div>
       
       {/* 图片放大模态框 */}
       {showModal && (
         <div 
-          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={() => setShowModal(false)}
         >
           <button 
-            className="absolute top-4 right-4 p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+            className="absolute top-4 right-4 p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors z-10"
             onClick={() => setShowModal(false)}
           >
             <X className="w-6 h-6 text-white" />
@@ -406,7 +454,7 @@ function ImageBlock({ content }: { content: string }) {
           <img 
             src={imagePath} 
             alt="知识点图片"
-            className="max-w-full max-h-full object-contain"
+            className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
           />
         </div>
       )}
