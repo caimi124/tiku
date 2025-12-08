@@ -8,6 +8,8 @@
  * Requirements: 1.1, 1.2, 16.1
  */
 
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 

@@ -7,6 +7,8 @@
  * Property 9: 仪表盘数据完整性
  */
 
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 

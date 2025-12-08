@@ -13,9 +13,9 @@
 
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { 
   BookOpen, Brain, TrendingUp, Zap, Clock,
   ChevronRight, RefreshCw
@@ -101,9 +101,8 @@ interface AccordionState {
 
 const ACCORDION_STATE_KEY = 'knowledge_accordion_state'
 
-export default function KnowledgePage() {
+function KnowledgePageContent() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   
   // 数据状态
   const [chapters, setChapters] = useState<ChapterStructure[]>([])
@@ -615,5 +614,26 @@ export default function KnowledgePage() {
         />
       )}
     </div>
+  )
+}
+
+// Loading fallback component
+function KnowledgePageLoading() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+        <p className="mt-4 text-gray-600">加载知识图谱...</p>
+      </div>
+    </div>
+  )
+}
+
+// Export with Suspense boundary for useSearchParams compatibility
+export default function KnowledgePage() {
+  return (
+    <Suspense fallback={<KnowledgePageLoading />}>
+      <KnowledgePageContent />
+    </Suspense>
   )
 }

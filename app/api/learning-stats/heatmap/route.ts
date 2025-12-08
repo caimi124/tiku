@@ -10,6 +10,8 @@
  * Requirements: 7.1
  */
 
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 
