@@ -25,6 +25,7 @@ import { ImportanceStars, isHighFrequency } from '@/components/ui/ImportanceStar
 import { ExpertTipsPanel, ExpertTips } from '@/components/ui/ExpertTipsPanel'
 import { SectionTOC, MobileTOCDrawer, TOCPoint } from '@/components/ui/SectionTOC'
 import { PointNavigation, MobileBottomNav, NavPoint } from '@/components/ui/PointNavigation'
+import { SmartContentRenderer } from '@/components/ui/SmartContentRenderer'
 
 interface RelatedPoint {
   id: string
@@ -525,112 +526,47 @@ function ContentSection({
   content: string
   contentItemAccuracy?: ContentItemAccuracy[]
 }) {
-  // 创建内容项正确率映射
-  const accuracyMap = new Map<string, ContentItemAccuracy>()
-  if (contentItemAccuracy) {
-    contentItemAccuracy.forEach(item => {
-      accuracyMap.set(item.item_key, item)
-    })
-  }
-
-  // 解析内容，支持简单的格式化
-  const formatContent = (text: string) => {
-    if (!text) return null
-    
-    // 按行分割
-    const lines = text.split('\n').filter(line => line.trim())
-    
-    return lines.map((line, index) => {
-      const trimmed = line.trim()
-      
-      // 检测标题行（以【】包裹）
-      if (trimmed.startsWith('【') && trimmed.includes('】')) {
-        const match = trimmed.match(/【(.+?)】/)
-        const itemKey = match ? match[1] : ''
-        const itemAccuracy = accuracyMap.get(itemKey)
-        
-        return (
-          <div key={index} className="mt-4 first:mt-0">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gray-800">
-                {trimmed}
-              </h3>
-              {itemAccuracy && itemAccuracy.total_count > 0 && (
-                <ContentItemAccuracyBadge accuracy={itemAccuracy} />
-              )}
-            </div>
-          </div>
-        )
-      }
-      
-      // 检测列表项（以•、-、数字.开头）
-      if (/^[•\-\d\.]\s*/.test(trimmed)) {
-        return (
-          <li key={index} className="ml-4 text-gray-700">
-            {trimmed.replace(/^[•\-\d\.]\s*/, '')}
-          </li>
-        )
-      }
-      
-      // 普通段落
-      return (
-        <p key={index} className="text-gray-700 mb-2">
-          {trimmed}
-        </p>
-      )
-    })
-  }
-
   return (
     <div className="p-6 border-b border-gray-100">
       <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
         <span>📝</span> 核心内容
       </h2>
-      <div className="prose prose-sm max-w-none">
-        {content ? (
-          <div className="space-y-1">
-            {formatContent(content)}
-          </div>
-        ) : (
-          <p className="text-gray-400 italic">暂无内容</p>
-        )}
-      </div>
+      {content ? (
+        <SmartContentRenderer content={content} />
+      ) : (
+        <div className="text-gray-400 italic text-center py-8">暂无内容</div>
+      )}
     </div>
   )
 }
 
-/**
- * 内容项正确率徽章
- * Requirements: 4.2
- */
-function ContentItemAccuracyBadge({ accuracy }: { accuracy: ContentItemAccuracy }) {
-  const { icon, color, bg } = (() => {
-    if (accuracy.accuracy >= 80) return { icon: '✓', color: 'text-green-600', bg: 'bg-green-100' }
-    if (accuracy.accuracy >= 60) return { icon: '⚠', color: 'text-yellow-600', bg: 'bg-yellow-100' }
-    return { icon: '✗', color: 'text-red-600', bg: 'bg-red-100' }
-  })()
-
-  return (
-    <span 
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${color}`}
-      title={`答题 ${accuracy.total_count} 次，正确 ${accuracy.correct_count} 次`}
-    >
-      <span>{icon}</span>
-      <span>正确率 {accuracy.accuracy}%</span>
-    </span>
-  )
-}
-
 function MemoryTipsSection({ tips }: { tips: string }) {
+  // 分割多条口诀
+  const tipsList = tips.split('\n').filter(t => t.trim())
+  
   return (
     <div className="p-6 border-b border-gray-100">
       <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
         <span>💡</span> 记忆口诀
       </h2>
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100">
-        <p className="text-purple-800 font-medium whitespace-pre-line">
-          {tips}
-        </p>
+      <div className="space-y-3">
+        {tipsList.map((tip, index) => (
+          <div 
+            key={index}
+            className="bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 rounded-xl p-4 border border-amber-200/50 shadow-sm"
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                <span className="text-amber-600 text-sm">💡</span>
+              </div>
+              <div className="flex-1">
+                <p className="text-amber-800 font-medium leading-relaxed text-[15px]">
+                  {tip}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

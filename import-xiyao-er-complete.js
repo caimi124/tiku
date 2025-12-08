@@ -230,9 +230,11 @@ async function importKnowledgeTree() {
         
         // 导入知识点
         let pointIndex = 0;
+        let hasKnowledgePoints = false;
         
         // 从考点透析导入知识点
-        if (parts.考点透析?.knowledge_points) {
+        if (parts.考点透析?.knowledge_points && parts.考点透析.knowledge_points.length > 0) {
+          hasKnowledgePoints = true;
           for (const kp of parts.考点透析.knowledge_points) {
             pointIndex++;
             const pointId = generateUUID();
@@ -264,7 +266,8 @@ async function importKnowledgeTree() {
         }
         
         // 从考点梳理导入知识点
-        if (parts.考点梳理?.knowledge_points) {
+        if (parts.考点梳理?.knowledge_points && parts.考点梳理.knowledge_points.length > 0) {
+          hasKnowledgePoints = true;
           for (const kp of parts.考点梳理.knowledge_points) {
             pointIndex++;
             const pointId = generateUUID();
@@ -292,6 +295,54 @@ async function importKnowledgeTree() {
             ]);
             
             pointCount++;
+          }
+        }
+        
+        // 如果没有独立的知识点，但有general_content，则将其作为一个整体考点导入
+        if (!hasKnowledgePoints) {
+          let combinedContent = '';
+          
+          // 合并考点透析的general_content
+          if (parts.考点透析?.general_content && parts.考点透析.general_content.length > 0) {
+            combinedContent += buildContentText(parts.考点透析.general_content);
+          }
+          
+          // 合并考点梳理的general_content
+          if (parts.考点梳理?.general_content && parts.考点梳理.general_content.length > 0) {
+            const content = buildContentText(parts.考点梳理.general_content);
+            if (content) {
+              combinedContent += (combinedContent ? '\n\n' : '') + content;
+            }
+          }
+          
+          // 如果有内容，创建一个整体考点
+          if (combinedContent && combinedContent.trim().length > 0) {
+            pointIndex++;
+            const pointId = generateUUID();
+            const pointCode = generateNodeCode(chapterNum, sectionNum, pointIndex);
+            const pointTitle = section.section_title; // 使用小节标题作为考点标题
+            const pointMnemonics = extractMnemonics(combinedContent);
+            
+            await client.query(`
+              INSERT INTO knowledge_tree (id, code, title, content, node_type, importance, parent_id, subject_code, level, sort_order, memory_tips, point_type)
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            `, [
+              pointId,
+              pointCode,
+              pointTitle,
+              combinedContent,
+              'point',
+              calculateImportance(combinedContent),
+              sectionId,
+              SUBJECT_CODE,
+              3,
+              pointIndex,
+              pointMnemonics.length > 0 ? pointMnemonics.join('\n') : null,
+              '综合考点'
+            ]);
+            
+            pointCount++;
+            console.log(`   📝 补充考点: ${sectionTitle} (从general_content)`);
           }
         }
       }

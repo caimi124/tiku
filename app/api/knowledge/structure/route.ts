@@ -51,25 +51,26 @@ export async function GET(request: NextRequest) {
     const supabase = createClient(supabaseUrl, supabaseKey)
     
     // 分别查询各类型节点（避免 .in() 可能的问题）
+    // 使用 sort_order 排序确保章节按正确顺序显示（第一章、第二章...）
     const [chaptersRes, sectionsRes, pointsRes] = await Promise.all([
       supabase
         .from('knowledge_tree')
-        .select('id, code, title, parent_id, node_type, importance')
+        .select('id, code, title, parent_id, node_type, importance, sort_order')
         .eq('subject_code', subject)
         .eq('node_type', 'chapter')
-        .order('code'),
+        .order('sort_order', { ascending: true }),
       supabase
         .from('knowledge_tree')
-        .select('id, code, title, parent_id, node_type, importance')
+        .select('id, code, title, parent_id, node_type, importance, sort_order')
         .eq('subject_code', subject)
         .eq('node_type', 'section')
-        .order('code'),
+        .order('sort_order', { ascending: true }),
       supabase
         .from('knowledge_tree')
-        .select('id, code, title, parent_id, node_type, importance')
+        .select('id, code, title, parent_id, node_type, importance, sort_order')
         .eq('subject_code', subject)
         .in('node_type', ['point', 'knowledge_point'])
-        .order('code')
+        .order('sort_order', { ascending: true })
     ])
     
     if (chaptersRes.error || sectionsRes.error || pointsRes.error) {
