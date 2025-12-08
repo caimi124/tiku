@@ -13,7 +13,7 @@
 
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { ChevronDown, ChevronRight, BookOpen, CheckCircle, Clock, Circle } from 'lucide-react'
 import { MasteryProgressBar } from './MasteryProgressBar'
 
