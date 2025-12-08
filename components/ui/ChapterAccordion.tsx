@@ -62,11 +62,12 @@ export function ChapterAccordion({
   onToggle,
   children
 }: ChapterAccordionProps) {
-  const [expanded, setExpanded] = useState(isExpanded)
+  // 使用外部控制的展开状态，不再使用内部状态
+  // 这样父组件可以完全控制展开/收起行为
+  const expanded = isExpanded
   
   const handleToggle = useCallback(() => {
     const newExpanded = !expanded
-    setExpanded(newExpanded)
     onToggle?.(id, newExpanded)
   }, [expanded, id, onToggle])
   

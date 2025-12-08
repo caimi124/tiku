@@ -43,12 +43,12 @@ export function SectionAccordion({
   loading = false,
   children
 }: SectionAccordionProps) {
-  const [expanded, setExpanded] = useState(isExpanded)
+  // 使用外部控制的展开状态
+  const expanded = isExpanded
   const [hasLoaded, setHasLoaded] = useState(false)
   
   const handleToggle = useCallback(() => {
     const newExpanded = !expanded
-    setExpanded(newExpanded)
     onToggle?.(id, newExpanded)
     
     // 首次展开时触发懒加载
@@ -58,9 +58,8 @@ export function SectionAccordion({
     }
   }, [expanded, id, hasLoaded, onToggle, onExpand])
   
-  // 同步外部控制的展开状态
+  // 当外部控制展开时，触发懒加载
   useEffect(() => {
-    setExpanded(isExpanded)
     if (isExpanded && !hasLoaded) {
       setHasLoaded(true)
       onExpand?.(id)
