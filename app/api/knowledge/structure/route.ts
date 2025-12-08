@@ -48,16 +48,29 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const subject = searchParams.get('subject') || 'xiyao_yaoxue_er'
+    const debug = searchParams.get('debug') === 'true'
     
     const supabase = createClient(supabaseUrl, supabaseKey)
     
     // 获取所有章节
-    const { data: chapters, error: chaptersError } = await supabase
+    const { data: chapters, error: chaptersError, count } = await supabase
       .from('knowledge_tree')
-      .select('id, code, title, parent_id, node_type, importance')
+      .select('id, code, title, parent_id, node_type, importance', { count: 'exact' })
       .eq('subject_code', subject)
       .in('node_type', ['chapter', 'section', 'point', 'knowledge_point'])
       .order('code')
+    
+    // 调试信息
+    if (debug) {
+      return NextResponse.json({
+        debug: true,
+        supabaseUrl: supabaseUrl?.substring(0, 30) + '...',
+        subject,
+        rawCount: count,
+        dataLength: chapters?.length || 0,
+        firstFew: chapters?.slice(0, 5).map(c => ({ code: c.code, title: c.title, node_type: c.node_type }))
+      })
+    }
     
     if (chaptersError) {
       console.error('获取知识结构失败:', chaptersError)
