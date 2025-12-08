@@ -6,6 +6,8 @@
  * GET /api/knowledge/structure?subject=xiyao_yaoxue_er
  * 
  * Requirements: 1.1, 1.2, 16.1
+ * 
+ * Updated: 2024-12-08 - 强制重新部署
  */
 
 export const dynamic = 'force-dynamic'
