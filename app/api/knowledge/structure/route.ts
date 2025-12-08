@@ -117,7 +117,7 @@ export async function GET(request: NextRequest) {
       }
     })
     
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       data: {
         structure,
@@ -125,6 +125,13 @@ export async function GET(request: NextRequest) {
         stats
       }
     })
+    
+    // 禁用缓存，确保每次都从数据库获取最新数据
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+    
+    return response
     
   } catch (error) {
     console.error('知识结构API错误:', error)
