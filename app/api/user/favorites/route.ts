@@ -1,7 +1,7 @@
 /**
  * 用户收藏/标记API
  * 
- * POST /api/user/favorites - 添加/移除收藏或复习标�?
+ * POST /api/user/favorites - 添加/移除收藏或复习标记
  * GET /api/user/favorites - 获取用户收藏或待复习列表
  * 
  * Requirements: 12.1, 12.2, 12.4
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
       }, { status: 500 })
     }
     
-    // 获取章节和小节信�?
+    // 获取章节和小节信息
     const items: FavoriteItem[] = []
     
     for (const fav of favorites || []) {
@@ -131,13 +131,13 @@ export async function GET(request: NextRequest) {
     console.error('获取收藏列表失败:', error)
     return NextResponse.json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: '服务器错�? }
+      error: { code: 'SERVER_ERROR', message: '服务器错误' }
     }, { status: 500 })
   }
 }
 
 /**
- * POST - 添加/移除收藏或复习标�?
+ * POST - 添加/移除收藏或复习标记
  */
 export async function POST(request: NextRequest) {
   try {
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
       }, { status: 401 })
     }
     
-    // 解析请求�?
+    // 解析请求体
     const body = await request.json()
     const { point_id, type, action } = body
     
@@ -176,14 +176,14 @@ export async function POST(request: NextRequest) {
     if (!['favorite', 'review'].includes(type)) {
       return NextResponse.json({
         success: false,
-        error: { code: 'INVALID_TYPE', message: '无效的类�? }
+        error: { code: 'INVALID_TYPE', message: '无效的类型' }
       }, { status: 400 })
     }
     
     if (!['add', 'remove', 'toggle'].includes(action)) {
       return NextResponse.json({
         success: false,
-        error: { code: 'INVALID_ACTION', message: '无效的操�? }
+        error: { code: 'INVALID_ACTION', message: '无效的操作' }
       }, { status: 400 })
     }
     
@@ -197,11 +197,11 @@ export async function POST(request: NextRequest) {
     if (!point) {
       return NextResponse.json({
         success: false,
-        error: { code: 'POINT_NOT_FOUND', message: '考点不存�? }
+        error: { code: 'POINT_NOT_FOUND', message: '考点不存在' }
       }, { status: 404 })
     }
     
-    // 检查当前状�?
+    // 检查当前状态
     const { data: existing } = await supabase
       .from('user_favorites')
       .select('id')
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
     let result: { added: boolean }
     
     if (action === 'toggle') {
-      // 切换状�?
+      // 切换状态
       if (existing) {
         await supabase
           .from('user_favorites')
@@ -261,8 +261,7 @@ export async function POST(request: NextRequest) {
     console.error('操作收藏失败:', error)
     return NextResponse.json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: '服务器错�? }
+      error: { code: 'SERVER_ERROR', message: '服务器错误' }
     }, { status: 500 })
   }
 }
-
