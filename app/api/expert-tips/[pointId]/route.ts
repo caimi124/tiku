@@ -73,12 +73,12 @@ interface Prediction {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { pointId: string } }
+  { params }: { params: Promise<{ pointId: string }> }
 ) {
   const client = await pool.connect()
   
   try {
-    const { pointId } = params
+    const { pointId } = await params
     
     if (!pointId) {
       return NextResponse.json(

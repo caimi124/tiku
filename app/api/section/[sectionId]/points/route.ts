@@ -63,10 +63,10 @@ export interface PointOverview {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { sectionId: string } }
+  { params }: { params: Promise<{ sectionId: string }> }
 ) {
   try {
-    const { sectionId } = params
+    const { sectionId } = await params
 
     // 获取小节信息
     const { data: section, error: sectionError } = await supabase

@@ -43,10 +43,10 @@ export interface SectionsResponse {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { chapterId: string } }
+  { params }: { params: Promise<{ chapterId: string }> }
 ) {
   try {
-    const { chapterId } = params
+    const { chapterId } = await params
 
     // 获取章节信息
     const { data: chapter, error: chapterError } = await supabase

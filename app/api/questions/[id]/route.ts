@@ -4,12 +4,13 @@ import { prisma } from "@/lib/prisma";
 // GET /api/questions/[id] - 获取单个题目
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const question = await prisma.questions.findUnique({
       where: {
-        id: params.id,
+        id: id,
       },
     });
 
@@ -25,7 +26,7 @@ export async function GET(
 
     // 增加查看次数
     await prisma.questions.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         view_count: {
           increment: 1,
@@ -52,14 +53,15 @@ export async function GET(
 // PUT /api/questions/[id] - 更新题目（管理员）
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const body = await request.json();
 
     const question = await prisma.questions.update({
       where: {
-        id: params.id,
+        id: id,
       },
       data: body,
     });
@@ -83,12 +85,13 @@ export async function PUT(
 // DELETE /api/questions/[id] - 删除题目（管理员）
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     await prisma.questions.delete({
       where: {
-        id: params.id,
+        id: id,
       },
     });
 
