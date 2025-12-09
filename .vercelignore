@@ -43,9 +43,9 @@ find-*.ts
 .env.local.template
 .env.import
 
-# Expert Driver 相关文件（未使用的功能）
-lib/expert-driver/
-app/api/expert-driver/
+# Expert Driver 相关文件 - 保留以避免构建错误
+# lib/expert-driver/
+# app/api/expert-driver/
 migrations/003-expert-driver-mode.sql
 execute-expert-driver-migration.js
 .kiro/specs/expert-driver-mode/
