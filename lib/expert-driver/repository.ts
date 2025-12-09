@@ -49,6 +49,7 @@ export class ExpertDriverRepository {
     try {
       const db = getSupabase();
       
+      // @ts-ignore - 表可能不存在，忽略类型检查
       const { error } = await db
         .from('expert_driver_content')
         .upsert({
@@ -67,7 +68,7 @@ export class ExpertDriverRepository {
           source_knowledge_point_text: content.source_knowledge_point_text,
           prompt_template_version: content.prompt_template_version,
           style_check: content.style_check,
-        } as any, {
+        }, {
           onConflict: 'knowledge_point_id,style_variant',
         });
 
@@ -191,6 +192,7 @@ export class ReviewQueueRepository {
     try {
       const db = getSupabase();
       
+      // @ts-ignore - 表可能不存在，忽略类型检查
       const { error } = await db
         .from('expert_driver_review_queue')
         .insert({
@@ -199,7 +201,7 @@ export class ReviewQueueRepository {
           style_variant: item.style_variant,
           retry_attempts: item.retry_attempts,
           status: item.status,
-        } as any);
+        });
 
       if (error) {
         return { success: false, error: error.message };
@@ -249,13 +251,14 @@ export class ReviewQueueRepository {
     try {
       const db = getSupabase();
       
+      // @ts-ignore - 表可能不存在，忽略类型检查
       const { error } = await db
         .from('expert_driver_review_queue')
         .update({
           status,
           reviewer_notes: notes,
           reviewed_at: new Date().toISOString(),
-        } as any)
+        })
         .eq('id', id);
 
       return !error;
