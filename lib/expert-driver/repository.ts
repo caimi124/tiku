@@ -8,7 +8,6 @@ import {
   ExpertDriverContent,
   StyleVariant,
   ReviewQueueItem,
-  ValidationResult,
 } from './types';
 import { validateExpertDriverContent } from './schema-validator';
 
@@ -49,8 +48,8 @@ export class ExpertDriverRepository {
     try {
       const db = getSupabase();
       
-      // @ts-ignore - 表可能不存在，忽略类型检查
-      const { error } = await db
+      // @ts-expect-error - 表可能不存在，忽略类型检查
+      const { error } = await (db as any)
         .from('expert_driver_content')
         .upsert({
           knowledge_point_id: content.knowledge_point_id,
@@ -95,7 +94,7 @@ export class ExpertDriverRepository {
     try {
       const db = getSupabase();
       
-      const { data, error } = await db
+      const { data, error } = await (db as any)
         .from('expert_driver_content')
         .select('*')
         .eq('knowledge_point_id', knowledgePointId)
@@ -120,7 +119,7 @@ export class ExpertDriverRepository {
     try {
       const db = getSupabase();
       
-      const { data, error } = await db
+      const { data, error } = await (db as any)
         .from('expert_driver_content')
         .select('*')
         .eq('style_variant', styleVariant);
@@ -143,7 +142,7 @@ export class ExpertDriverRepository {
     try {
       const db = getSupabase();
       
-      const { error } = await db
+      const { error } = await (db as any)
         .from('expert_driver_content')
         .delete()
         .eq('knowledge_point_id', knowledgePointId)
@@ -192,8 +191,8 @@ export class ReviewQueueRepository {
     try {
       const db = getSupabase();
       
-      // @ts-ignore - 表可能不存在，忽略类型检查
-      const { error } = await db
+      // @ts-expect-error - 表可能不存在，忽略类型检查
+      const { error } = await (db as any)
         .from('expert_driver_review_queue')
         .insert({
           knowledge_point_id: item.knowledge_point_id,
@@ -223,7 +222,7 @@ export class ReviewQueueRepository {
     try {
       const db = getSupabase();
       
-      const { data, error } = await db
+      const { data, error } = await (db as any)
         .from('expert_driver_review_queue')
         .select('*')
         .eq('status', status)
@@ -251,8 +250,8 @@ export class ReviewQueueRepository {
     try {
       const db = getSupabase();
       
-      // @ts-ignore - 表可能不存在，忽略类型检查
-      const { error } = await db
+      // @ts-expect-error - 表可能不存在，忽略类型检查
+      const { error } = await (db as any)
         .from('expert_driver_review_queue')
         .update({
           status,
