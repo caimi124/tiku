@@ -82,15 +82,18 @@ export function PointRow({
 }: PointRowProps) {
   const hasHighFrequencyTag = tags.some(t => t.type === 'high_frequency')
   
+  const handleClick = (e: React.MouseEvent) => {
+    // 如果有onClick回调，先调用它（用于保存状态等）
+    // 但不阻止Link的默认导航行为
+    if (onClick) {
+      onClick(id)
+    }
+  }
+  
   return (
     <Link
       href={`/knowledge/point/${id}`}
-      onClick={(e) => {
-        if (onClick) {
-          e.preventDefault()
-          onClick(id)
-        }
-      }}
+      onClick={handleClick}
       className={`
         block px-3 py-2.5 rounded-lg
         hover:bg-white hover:shadow-sm
