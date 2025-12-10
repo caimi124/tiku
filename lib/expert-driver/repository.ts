@@ -48,7 +48,6 @@ export class ExpertDriverRepository {
     try {
       const db = getSupabase();
       
-      // @ts-expect-error - 表可能不存在，忽略类型检查
       const { error } = await (db as any)
         .from('expert_driver_content')
         .upsert({
@@ -128,7 +127,7 @@ export class ExpertDriverRepository {
         return [];
       }
 
-      return data.map(item => this.mapToContent(item));
+      return data.map((item: any) => this.mapToContent(item));
     } catch (error) {
       console.error('获取老司机内容列表失败:', error);
       return [];
@@ -191,7 +190,6 @@ export class ReviewQueueRepository {
     try {
       const db = getSupabase();
       
-      // @ts-expect-error - 表可能不存在，忽略类型检查
       const { error } = await (db as any)
         .from('expert_driver_review_queue')
         .insert({
@@ -232,7 +230,7 @@ export class ReviewQueueRepository {
         return [];
       }
 
-      return data.map(item => this.mapToQueueItem(item));
+      return data.map((item: any) => this.mapToQueueItem(item));
     } catch (error) {
       console.error('获取审核队列失败:', error);
       return [];
@@ -250,7 +248,6 @@ export class ReviewQueueRepository {
     try {
       const db = getSupabase();
       
-      // @ts-expect-error - 表可能不存在，忽略类型检查
       const { error } = await (db as any)
         .from('expert_driver_review_queue')
         .update({

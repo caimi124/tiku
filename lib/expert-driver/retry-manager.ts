@@ -175,8 +175,8 @@ export class RetryManager {
     if (validation.valid) return false;
 
     // 检查是否有可重试的错误类型
-    const hasSchemaErrors = validation.schema_errors && validation.schema_errors.length > 0;
-    const hasStyleErrors = validation.style_errors && validation.style_errors.length > 0;
+    const hasSchemaErrors = !!(validation.schema_errors && validation.schema_errors.length > 0);
+    const hasStyleErrors = !!(validation.style_errors && validation.style_errors.length > 0);
 
     return hasSchemaErrors || hasStyleErrors;
   }
