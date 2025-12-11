@@ -91,11 +91,12 @@ export async function GET(
       .single()
 
     // 获取该小节下的所有考点（仅入口页需要的字段）
+    // 注意：包含 'subsection' 类型，因为导入脚本将level 3的节点标记为 'subsection'
     const { data: points, error: pointsError } = await supabase
       .from('knowledge_tree')
       .select('id, code, title, key_takeaway, importance, exam_years, exam_frequency')
       .eq('parent_id', sectionId)
-      .in('node_type', ['point', 'knowledge_point'])
+      .in('node_type', ['point', 'knowledge_point', 'subsection'])
       .order('code')
 
     if (pointsError) {
