@@ -299,7 +299,7 @@ export default function KnowledgeGraphPage() {
                 </button>
                 {selectedNode.type === 'point' && (
                   <Link
-                    href={`/practice/point/${selectedNode.id}`}
+                    href={`/practice/by-point?pointId=${selectedNode.id}`}
                     className="flex-1 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm font-medium text-center"
                   >
                     开始练习

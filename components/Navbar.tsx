@@ -9,14 +9,13 @@ import {
   Menu,
   X,
   ChevronDown,
-  LayoutDashboard,
   Target,
   BarChart3,
   BookMarked,
-  Brain,
   History,
   Layers,
   Zap,
+  Home,
 } from "lucide-react";
 
 interface NavDropdownItem {
@@ -87,57 +86,78 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  const learningCenterItems: NavDropdownItem[] = [
+  const diagnosticItems: NavDropdownItem[] = [
     {
-      href: "/dashboard",
-      label: "我的仪表盘",
-      icon: <LayoutDashboard className="w-5 h-5" />,
-      description: "查看学习进度和统计",
-    },
-    {
-      href: "/dashboard#recommendations",
-      label: "学习计划",
+      href: "/exams",
+      label: "考试诊断概览",
       icon: <Target className="w-5 h-5" />,
-      description: "个性化学习推荐",
+      description: "了解 AI 诊断及可选考试",
     },
     {
-      href: "/dashboard#weak-points",
-      label: "薄弱点分析",
+      href: "/exams/start",
+      label: "开始诊断",
+      icon: <Sparkles className="w-5 h-5" />,
+      description: "AI 出题，20 题定位薄弱点",
+    },
+    {
+      href: "/exams/result",
+      label: "查看诊断报告",
       icon: <BarChart3 className="w-5 h-5" />,
-      description: "识别需要加强的知识点",
+      description: "薄弱章节与知识点建议",
+    },
+  ];
+
+  const learningItems: NavDropdownItem[] = [
+    {
+      href: "/knowledge",
+      label: "知识图谱",
+      icon: <BookMarked className="w-5 h-5" />,
+      description: "章节-知识点全景视图",
     },
     {
-      href: "/dashboard#heatmap",
-      label: "学习报告",
+      href: "/knowledge#chapter-roadmap",
+      label: "章节导航",
+      icon: <Layers className="w-5 h-5" />,
+      description: "按教材结构逐章学习",
+    },
+    {
+      href: "/knowledge#weak-points",
+      label: "薄弱点复盘",
       icon: <History className="w-5 h-5" />,
-      description: "查看学习热力图和连续天数",
+      description: "来自诊断报告的弱项列表",
     },
   ];
 
   const practiceItems: NavDropdownItem[] = [
     {
-      href: "/practice/history?exam=pharmacist",
-      label: "历年真题",
-      icon: <History className="w-5 h-5" />,
-      description: "2022-2024年真题练习",
+      href: "/practice",
+      label: "练习中心",
+      icon: <FileText className="w-5 h-5" />,
+      description: "统一查看练习模式与进度",
     },
     {
-      href: "/practice/chapter",
+      href: "/practice/by-point",
+      label: "知识点练习",
+      icon: <Target className="w-5 h-5" />,
+      description: "针对薄弱知识点专项刷题",
+    },
+    {
+      href: "/practice/by-chapter",
       label: "章节练习",
       icon: <Layers className="w-5 h-5" />,
-      description: "按章节系统学习",
+      description: "跟随教材顺序逐章练习",
     },
     {
-      href: "/practice/weak",
-      label: "薄弱专练",
-      icon: <Target className="w-5 h-5" />,
-      description: "针对薄弱点强化训练",
-    },
-    {
-      href: "/practice/smart",
-      label: "AI智能组卷",
+      href: "/practice/mock",
+      label: "模拟考试",
       icon: <Zap className="w-5 h-5" />,
-      description: "智能生成个性化试卷",
+      description: "限时全真模拟，检验掌握度",
+    },
+    {
+      href: "/practice/history",
+      label: "历年真题",
+      icon: <History className="w-5 h-5" />,
+      description: "快速进入 2022-2024 真题库",
     },
   ];
 
@@ -148,6 +168,32 @@ export default function Navbar() {
   const closeDropdown = () => {
     setOpenDropdown(null);
   };
+
+  useEffect(() => {
+    const navSummary = {
+      primaryDesktop: ["Home", "Diagnostic", "Learning", "Practice"],
+      dropdownCounts: {
+        diagnostic: diagnosticItems.length,
+        learning: learningItems.length,
+        practice: practiceItems.length,
+      },
+    };
+    // #region agent log
+    fetch("/api/debug-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: "debug-session",
+        runId: "pre-fix",
+        hypothesisId: "H1",
+        location: "components/Navbar.tsx:navSummary",
+        message: "Navbar mounted with new IA nav items",
+        data: navSummary,
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+  }, [diagnosticItems.length, learningItems.length, practiceItems.length]);
 
   return (
     <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
@@ -161,60 +207,40 @@ export default function Navbar() {
 
           {/* 桌面端导航 */}
           <div className="hidden lg:flex items-center space-x-6">
-            {/* 学习中心下拉菜单 */}
+            <Link
+              href="/"
+              className="flex items-center space-x-1 text-gray-600 hover:text-blue-500 transition font-medium"
+            >
+              <Home className="w-4 h-4" />
+              <span>Home</span>
+            </Link>
+
             <NavDropdown
-              label="学习中心"
-              icon={<LayoutDashboard className="w-4 h-4" />}
-              items={learningCenterItems}
+              label="Diagnostic"
+              icon={<Target className="w-4 h-4" />}
+              items={diagnosticItems}
+              isOpen={openDropdown === "diagnostic"}
+              onToggle={() => toggleDropdown("diagnostic")}
+              onClose={closeDropdown}
+            />
+
+            <NavDropdown
+              label="Learning"
+              icon={<BookOpen className="w-4 h-4" />}
+              items={learningItems}
               isOpen={openDropdown === "learning"}
               onToggle={() => toggleDropdown("learning")}
               onClose={closeDropdown}
             />
 
-            {/* 知识图谱 */}
-            <Link
-              href="/knowledge"
-              className="flex items-center space-x-1 text-gray-600 hover:text-blue-500 transition font-medium"
-            >
-              <BookMarked className="w-4 h-4" />
-              <span>知识图谱</span>
-            </Link>
-
-            {/* 刷题练习下拉菜单 */}
             <NavDropdown
-              label="刷题练习"
+              label="Practice"
               icon={<FileText className="w-4 h-4" />}
               items={practiceItems}
               isOpen={openDropdown === "practice"}
               onToggle={() => toggleDropdown("practice")}
               onClose={closeDropdown}
             />
-
-            {/* 模拟考试 */}
-            <Link
-              href="/exams"
-              className="flex items-center space-x-1 text-gray-600 hover:text-blue-500 transition font-medium"
-            >
-              <Target className="w-4 h-4" />
-              <span>模拟考试</span>
-            </Link>
-
-            {/* AI推荐 */}
-            <Link
-              href="/recommend"
-              className="flex items-center space-x-1 text-blue-500 hover:text-blue-600 transition font-medium"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>AI推荐</span>
-            </Link>
-
-            {/* 社区 */}
-            <Link
-              href="/community"
-              className="text-gray-600 hover:text-blue-500 transition"
-            >
-              社区
-            </Link>
           </div>
 
           {/* 右侧按钮 */}
@@ -247,11 +273,19 @@ export default function Navbar() {
         {mobileMenuOpen && (
           <div className="lg:hidden py-4 border-t">
             <div className="flex flex-col space-y-1">
-              {/* 学习中心 */}
+              <Link
+                href="/"
+                className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Home className="w-5 h-5 text-blue-500" />
+                <span className="font-medium">Home</span>
+              </Link>
+
               <div className="px-4 py-2 text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                学习中心
+                Diagnostic
               </div>
-              {learningCenterItems.map((item) => (
+              {diagnosticItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -268,19 +302,28 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              {/* 知识图谱 */}
-              <Link
-                href="/knowledge"
-                className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-lg mt-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <BookMarked className="w-5 h-5 text-blue-500" />
-                <span className="font-medium">知识图谱</span>
-              </Link>
-
-              {/* 刷题练习 */}
               <div className="px-4 py-2 text-sm font-semibold text-gray-500 uppercase tracking-wider mt-4">
-                刷题练习
+                Learning
+              </div>
+              {learningItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="text-blue-500">{item.icon}</span>
+                  <div>
+                    <div className="font-medium">{item.label}</div>
+                    {item.description && (
+                      <div className="text-sm text-gray-500">{item.description}</div>
+                    )}
+                  </div>
+                </Link>
+              ))}
+
+              <div className="px-4 py-2 text-sm font-semibold text-gray-500 uppercase tracking-wider mt-4">
+                Practice
               </div>
               {practiceItems.map((item) => (
                 <Link
@@ -298,35 +341,6 @@ export default function Navbar() {
                   </div>
                 </Link>
               ))}
-
-              {/* 其他链接 */}
-              <div className="px-4 py-2 text-sm font-semibold text-gray-500 uppercase tracking-wider mt-4">
-                更多
-              </div>
-              <Link
-                href="/exams"
-                className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-lg"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Target className="w-5 h-5 text-blue-500" />
-                <span className="font-medium">模拟考试</span>
-              </Link>
-              <Link
-                href="/recommend"
-                className="flex items-center space-x-3 px-4 py-3 text-blue-500 hover:bg-blue-50 rounded-lg"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Sparkles className="w-5 h-5" />
-                <span className="font-medium">AI推荐</span>
-              </Link>
-              <Link
-                href="/community"
-                className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-lg"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Brain className="w-5 h-5 text-blue-500" />
-                <span className="font-medium">学员社区</span>
-              </Link>
 
               {/* 登录注册 */}
               <div className="flex flex-col space-y-2 px-4 pt-4 mt-4 border-t">

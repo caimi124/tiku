@@ -36,7 +36,7 @@ import {
   Heart,
   Activity
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // FAQ 组件
 function FAQItem({ question, answer }: { question: string; answer: string }) {
@@ -60,6 +60,28 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 }
 
 export default function HomePage() {
+  useEffect(() => {
+    const heroCta = {
+      primaryCtaHref: "/exams/start",
+      primaryCtaLabel: "Start Diagnostic",
+    };
+    // #region agent log
+    fetch("/api/debug-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: "debug-session",
+        runId: "pre-fix",
+        hypothesisId: "H2",
+        location: "app/page.tsx:heroCta",
+        message: "Home hero CTA configured",
+        data: heroCta,
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-gray-50">
       
@@ -108,19 +130,19 @@ export default function HomePage() {
               {/* CTA 按钮 */}
               <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
                 <Link 
-                  href="/practice" 
+                  href="/exams/start" 
                   className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center space-x-2"
                 >
                   <Play className="w-5 h-5" />
-                  <span>免费开始刷题</span>
+                  <span>Start Diagnostic</span>
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link 
-                  href="/dashboard" 
+                  href="/knowledge" 
                   className="w-full sm:w-auto px-8 py-4 bg-white text-gray-700 border-2 border-gray-200 rounded-xl font-semibold text-lg hover:border-blue-300 hover:text-blue-500 transition-all flex items-center justify-center space-x-2"
                 >
                   <LayoutDashboard className="w-5 h-5" />
-                  <span>查看学习仪表盘</span>
+                  <span>查看知识路径</span>
                 </Link>
               </div>
               
@@ -308,7 +330,7 @@ export default function HomePage() {
             {/* 功能卡片 */}
             {[
               { icon: FileText, title: "历年真题", desc: "2022-2024年真题，还原真实考试场景", color: "blue", href: "/practice/history" },
-              { icon: Layers, title: "章节练习", desc: "按教材章节系统学习，循序渐进", color: "purple", href: "/practice/chapter" },
+              { icon: Layers, title: "章节练习", desc: "按教材章节系统学习，循序渐进", color: "purple", href: "/practice/by-chapter" },
               { icon: Target, title: "薄弱专练", desc: "AI识别薄弱点，针对性强化训练", color: "orange", href: "/practice/weak" },
               { icon: Zap, title: "AI智能组卷", desc: "根据掌握度智能生成个性化试卷", color: "green", href: "/practice/smart" },
               { icon: BookMarked, title: "知识图谱", desc: "可视化知识结构，掌握全局脉络", color: "indigo", href: "/knowledge" },
@@ -847,7 +869,7 @@ export default function HomePage() {
               <h4 className="text-white font-semibold mb-4">产品功能</h4>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/practice/history" className="hover:text-white transition">历年真题</Link></li>
-                <li><Link href="/practice/chapter" className="hover:text-white transition">章节练习</Link></li>
+                <li><Link href="/practice/by-chapter" className="hover:text-white transition">章节练习</Link></li>
                 <li><Link href="/practice/smart" className="hover:text-white transition">AI智能组卷</Link></li>
                 <li><Link href="/knowledge" className="hover:text-white transition">知识图谱</Link></li>
                 <li><Link href="/dashboard" className="hover:text-white transition">学习仪表盘</Link></li>

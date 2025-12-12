@@ -203,7 +203,25 @@ export default function KnowledgePointPage() {
   
   // 开始练习
   const handlePractice = () => {
-    router.push(`/practice/point/${point.id}`)
+    // #region agent log
+    fetch("/api/debug-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: "debug-session",
+        runId: "pre-fix",
+        hypothesisId: "H3",
+        location: "app/knowledge/point/[id]/page.tsx:handlePractice",
+        message: "Knowledge point practice CTA triggered",
+        data: {
+          target: `/practice/by-point?pointId=${point?.id ?? "unknown"}`,
+          pointId: point?.id ?? null,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+    router.push(`/practice/by-point?pointId=${point.id}`)
   }
   
   // 查看相关真题
@@ -315,7 +333,7 @@ export default function KnowledgePointPage() {
                     {markingReview ? '处理中...' : '标记为需复习'}
                   </button>
                   <Link
-                    href={`/practice/point/${point.id}`}
+                    href={`/practice/by-point?pointId=${point.id}`}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                   >
                     <span>📝</span>
