@@ -6,13 +6,13 @@ import { useMemo, useState } from "react";
 const LICENSE_OPTIONS = [
   {
     id: "tcm",
-    title: "Licensed Pharmacist – Traditional Chinese Medicine",
-    subtitle: "执业药师（中药）",
+    title: "执业药师（中药）",
+    subtitle: "适合主攻中药方向",
   },
   {
     id: "western",
-    title: "Licensed Pharmacist – Western Medicine",
-    subtitle: "执业药师（西药）",
+    title: "执业药师（西药）",
+    subtitle: "适合主攻药学方向",
   },
 ] as const;
 
@@ -51,33 +51,24 @@ export default function DiagnosticPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 px-4 py-12 text-gray-50 sm:px-8 lg:py-20">
-        {/* Section 1: Title */}
-        <section className="rounded-3xl border border-white/10 bg-gradient-to-br from-blue-900/60 via-slate-900 to-slate-950 p-8 shadow-2xl shadow-blue-500/10">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-300">
-            AI Diagnostic Setup
-          </p>
-          <h1 className="mt-3 text-4xl font-bold leading-tight text-white">
-            Let’s customize your exam diagnostic
-          </h1>
-          <p className="mt-4 text-lg text-blue-100">
-            AI 诊断设置 · 先告诉我你考什么，我来帮你定位弱点
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-gray-50 text-gray-900">
+      <div className="container mx-auto flex min-h-screen flex-col gap-8 px-4 py-16 sm:px-6 lg:px-8">
+        {/* Section 1 */}
+        <section className="mx-auto w-full max-w-3xl rounded-3xl border border-white/80 bg-white/90 p-8 text-center shadow-xl">
+          <p className="text-sm font-semibold tracking-[0.3em] text-blue-500">AI 诊断设置</p>
+          <h1 className="mt-4 text-4xl font-bold text-gray-900">只需一步配置，马上定位薄弱点</h1>
+          <p className="mt-4 text-lg text-gray-600">告诉我你的考试方向与科目，诊断才更精准。</p>
+          <p className="mt-6 inline-flex items-center justify-center rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
+            ⏱ 用时约 3–5 分钟 ｜ 不打分，仅分析
           </p>
         </section>
 
-        {/* Section 2: License selection */}
-        <section className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-300">
-            Step 1
-          </p>
-          <h2 className="mt-2 text-2xl font-bold text-white">
-            Which license are you preparing for?
-          </h2>
-          <p className="mt-1 text-lg text-blue-100">你正在备考哪一个证书？</p>
-          <p className="mt-4 text-sm text-blue-200">
-            ⚠️ 这是第一道筛选门槛，一次只能选一个，选完才能进入下一步。
-          </p>
+        {/* Section 2 */}
+        <section className="mx-auto w-full max-w-3xl space-y-4 rounded-3xl border border-gray-100 bg-white p-6 shadow-lg">
+          <p className="text-sm font-semibold text-blue-600">第 1 步</p>
+          <h2 className="text-2xl font-bold text-gray-900">你正在备考哪个证书？</h2>
+          <p className="text-gray-600">请选择当前最主要的备考方向，选完再进入下一步。</p>
+          <p className="text-sm text-gray-500">⚠ 一次只选一个</p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {LICENSE_OPTIONS.map((license) => {
               const isActive = license.id === selectedLicense;
@@ -88,32 +79,24 @@ export default function DiagnosticPage() {
                   onClick={() => handleLicenseSelect(license.id)}
                   className={`flex h-full flex-col rounded-2xl border p-5 text-left transition focus:outline-none focus:ring-2 focus:ring-blue-400 ${
                     isActive
-                      ? "border-blue-400 bg-blue-950/60 text-white"
-                      : "border-white/10 bg-white/5 text-blue-100 hover:border-white/30"
+                      ? "border-blue-500 bg-blue-50 text-blue-900 shadow-sm"
+                      : "border-gray-100 bg-gray-50 text-gray-700 hover:border-blue-200"
                   }`}
                 >
-                  <span className="text-base font-semibold text-white">
-                    {license.title}
-                  </span>
-                  <span className="mt-1 text-sm text-blue-200">
-                    {license.subtitle}
-                  </span>
+                  <span className="text-lg font-semibold">{license.title}</span>
+                  <span className="mt-2 text-sm text-gray-500">{license.subtitle}</span>
                 </button>
               );
             })}
           </div>
         </section>
 
-        {/* Section 3: Subject selection */}
+        {/* Section 3 */}
         {selectedLicense && (
-          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-300">
-              Step 2
-            </p>
-            <h2 className="mt-2 text-2xl font-bold text-white">
-              Which subject do you want to diagnose first?
-            </h2>
-            <p className="mt-1 text-lg text-blue-100">请选择你要诊断的科目</p>
+          <section className="mx-auto w-full max-w-3xl space-y-4 rounded-3xl border border-gray-100 bg-white p-6 shadow-lg">
+            <p className="text-sm font-semibold text-blue-600">第 2 步</p>
+            <h2 className="text-2xl font-bold text-gray-900">你要先诊断哪一科？</h2>
+            <p className="text-gray-600">一次只诊断一科，结果更准确。</p>
             <div className="mt-6 space-y-3">
               {subjects.map((subject) => {
                 const isActive = subject.id === selectedSubject;
@@ -124,8 +107,8 @@ export default function DiagnosticPage() {
                     onClick={() => setSelectedSubject(subject.id)}
                     className={`w-full rounded-2xl border px-5 py-4 text-left text-lg font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-400 ${
                       isActive
-                        ? "border-blue-400 bg-blue-950/60 text-white"
-                        : "border-white/10 bg-white/5 text-blue-100 hover:border-white/30"
+                        ? "border-blue-500 bg-blue-50 text-blue-900 shadow-sm"
+                        : "border-gray-100 bg-gray-50 text-gray-700 hover:border-blue-200"
                     }`}
                   >
                     {subject.title}
@@ -133,29 +116,21 @@ export default function DiagnosticPage() {
                 );
               })}
             </div>
-            <p className="mt-4 text-sm text-blue-200">
-              You can diagnose one subject at a time · 一次诊断一科，更精准
-            </p>
+            <p className="text-sm text-gray-500">一次诊断一科，系统会自动记录你的选择。</p>
           </section>
         )}
 
-        {/* Section 4: CTA */}
+        {/* Section 4 */}
         {selectedSubject && (
-          <section className="rounded-3xl border border-white/10 bg-gradient-to-br from-blue-600 to-blue-400 p-6 text-center text-white shadow-2xl shadow-blue-500/30">
-            <h2 className="text-2xl font-semibold">Start Diagnostic Test</h2>
-            <p className="mt-2 text-lg">开始诊断测试</p>
+          <section className="mx-auto w-full max-w-3xl rounded-3xl bg-gradient-to-r from-blue-600 to-purple-500 p-6 text-center text-white shadow-2xl">
+            <h2 className="text-2xl font-semibold">配置完成，开始诊断</h2>
+            <p className="mt-2 text-base text-white/80">⏱ 约 3–5 分钟完成 ｜ 随时可退出</p>
             <Link
               href={`/diagnostic/questions?license=${selectedLicense}&subject=${selectedSubject}`}
               className="mt-6 inline-flex items-center justify-center rounded-2xl bg-white px-10 py-4 text-lg font-semibold text-blue-600 transition hover:translate-y-0.5 hover:bg-slate-100"
             >
-              Start Diagnostic Test
+              开始诊断
             </Link>
-            <p className="mt-4 text-sm text-white/80">
-              Takes about 3–5 minutes · 用时约 3–5 分钟
-            </p>
-            <p className="text-sm text-white/80">
-              No score, only analysis · 不打分，只分析
-            </p>
           </section>
         )}
       </div>

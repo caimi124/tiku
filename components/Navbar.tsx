@@ -171,7 +171,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const navSummary = {
-      primaryDesktop: ["Home", "Diagnostic", "Learning", "Practice"],
+      primaryDesktop: ["首页", "诊断", "学习", "做题"],
       dropdownCounts: {
         diagnostic: diagnosticItems.length,
         learning: learningItems.length,
@@ -212,11 +212,11 @@ export default function Navbar() {
               className="flex items-center space-x-1 text-gray-600 hover:text-blue-500 transition font-medium"
             >
               <Home className="w-4 h-4" />
-              <span>Home</span>
+              <span>首页</span>
             </Link>
 
             <NavDropdown
-              label="Diagnostic"
+              label="诊断"
               icon={<Target className="w-4 h-4" />}
               items={diagnosticItems}
               isOpen={openDropdown === "diagnostic"}
@@ -225,7 +225,7 @@ export default function Navbar() {
             />
 
             <NavDropdown
-              label="Learning"
+              label="学习"
               icon={<BookOpen className="w-4 h-4" />}
               items={learningItems}
               isOpen={openDropdown === "learning"}
@@ -234,7 +234,7 @@ export default function Navbar() {
             />
 
             <NavDropdown
-              label="Practice"
+              label="做题"
               icon={<FileText className="w-4 h-4" />}
               items={practiceItems}
               isOpen={openDropdown === "practice"}
@@ -279,11 +279,11 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Home className="w-5 h-5 text-blue-500" />
-                <span className="font-medium">Home</span>
+                <span className="font-medium">首页</span>
               </Link>
 
               <div className="px-4 py-2 text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                Diagnostic
+                诊断
               </div>
               {diagnosticItems.map((item) => (
                 <Link
@@ -303,7 +303,7 @@ export default function Navbar() {
               ))}
 
               <div className="px-4 py-2 text-sm font-semibold text-gray-500 uppercase tracking-wider mt-4">
-                Learning
+                学习
               </div>
               {learningItems.map((item) => (
                 <Link
@@ -323,7 +323,7 @@ export default function Navbar() {
               ))}
 
               <div className="px-4 py-2 text-sm font-semibold text-gray-500 uppercase tracking-wider mt-4">
-                Practice
+                做题
               </div>
               {practiceItems.map((item) => (
                 <Link
