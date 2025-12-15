@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 
 import DiagnosticShell from "./_components/DiagnosticShell";
 import NavButtons from "./_components/NavButtons";
@@ -33,7 +33,7 @@ function isQuestionValid(raw: any): raw is QuestionPayload {
   return true;
 }
 
-export default function DiagnosticQuestionsPage() {
+function DiagnosticQuestionsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const license = searchParams.get("license");
@@ -300,6 +300,22 @@ export default function DiagnosticQuestionsPage() {
         <p className="text-xs text-gray-500">提示：本次为诊断题，不计入刷题记录</p>
       </div>
     </DiagnosticShell>
+  );
+}
+
+export default function DiagnosticQuestionsPage() {
+  return (
+    <Suspense
+      fallback={
+        <DiagnosticShell>
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-6 text-center text-gray-600">
+            正在准备诊断题，请稍候……
+          </div>
+        </DiagnosticShell>
+      }
+    >
+      <DiagnosticQuestionsContent />
+    </Suspense>
   );
 }
 
