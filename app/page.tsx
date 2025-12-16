@@ -70,8 +70,8 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-gray-50 text-gray-900">
       {/* First Screen */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/80 via-white to-purple-100/60" />
-        <div className="container relative mx-auto grid gap-12 px-4 py-20 md:grid-cols-2 md:items-center">
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-blue-100/80 via-white to-purple-100/60 z-0" />
+        <div className="container relative z-10 mx-auto grid gap-12 px-4 py-20 md:grid-cols-2 md:items-center">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-medium text-blue-700 shadow-sm">
               <Sparkles className="h-4 w-4" />
@@ -84,6 +84,22 @@ export default function HomePage() {
             <p className="mt-6 text-lg text-gray-600">不再猜下一步学什么，AI 直接告诉你薄弱点和补救顺序。</p>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <CTAButton />
+            </div>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              <Link
+                href="/diagnostic"
+                className="rounded-3xl border border-blue-100 bg-white/90 px-6 py-5 text-lg font-semibold text-blue-700 shadow-lg transition hover:-translate-y-0.5 hover:border-blue-300"
+              >
+                <p>开始诊断</p>
+                <p className="text-sm text-gray-500">知识图谱帮你找到薄弱考点</p>
+              </Link>
+              <Link
+                href="/diagnostic"
+                className="rounded-3xl border border-blue-100 bg-gradient-to-r from-blue-600 to-purple-500 px-6 py-5 text-lg font-semibold text-white shadow-lg transition hover:opacity-90"
+              >
+                <p>打开知识图谱</p>
+                <p className="text-sm text-white/80">用可视化地图看懂全部考点关系</p>
+              </Link>
             </div>
             <p className="mt-4 text-sm text-gray-500">无需注册 · 用时不到 5 分钟</p>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
