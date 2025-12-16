@@ -49,6 +49,7 @@ function DiagnosticQuestionsContent() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [savingError, setSavingError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [creationErrorDetails, setCreationErrorDetails] = useState<string | null>(null);
 
   const currentQuestion = questions[activeIndex];
   const currentOptionSelected = currentQuestion
@@ -67,6 +68,9 @@ function DiagnosticQuestionsContent() {
     }
 
     const createAttempt = async () => {
+      setPageError(null);
+      setCreationErrorDetails(null);
+      setIsLoading(true);
       try {
         const resp = await fetch("/api/diagnostic/attempt", {
           method: "POST",
@@ -78,7 +82,11 @@ function DiagnosticQuestionsContent() {
           }),
         });
         if (!resp.ok) {
-          throw new Error("无法创建诊断尝试，请稍后重试。");
+          const errorBody = await resp.text();
+          const detail = `HTTP ${resp.status} ${errorBody}`;
+          setCreationErrorDetails(detail);
+          console.error("diagnostic attempt request failed", detail);
+          throw new Error("诊断尝试创建失败，请稍后再试。");
         }
         const data = await resp.json();
         setAttemptId(data.attempt_id);
@@ -89,6 +97,9 @@ function DiagnosticQuestionsContent() {
         router.replace(`/diagnostic/questions?${nextParams.toString()}`);
       } catch (error) {
         console.error(error);
+        if (error instanceof Error) {
+          setCreationErrorDetails(error.message);
+        }
         setPageError("诊断尝试创建失败，请稍后再试。");
         setIsLoading(false);
       }
@@ -245,6 +256,9 @@ function DiagnosticQuestionsContent() {
             >
               返回诊断设置
             </Link>
+            {creationErrorDetails && (
+              <p className="text-xs text-gray-500">调试信息：{creationErrorDetails}</p>
+            )}
           </div>
         ) : (
           <>
