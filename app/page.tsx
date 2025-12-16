@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 const primaryCtaHref = "/diagnostic";
+const enableTestEntry = process.env.NEXT_PUBLIC_ENABLE_TEST_ENTRY === "true";
 
 function CTAButton({ label = "开始 AI 诊断（免费）", secondary = false }: { label?: string; secondary?: boolean }) {
   const base = "inline-flex items-center justify-center gap-3 rounded-xl px-8 py-4 text-lg font-semibold transition-all";
@@ -260,6 +261,17 @@ export default function HomePage() {
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <CTAButton label="开始 AI 诊断" />
           </div>
+          {enableTestEntry && (
+            <div className="mt-3 text-xs text-blue-200">
+              <Link
+                href="/test/ch1"
+                className="inline-flex items-center gap-1 text-blue-200 hover:text-white transition"
+              >
+                <span>Chapter 1 原创题（测试）</span>
+                <span aria-hidden>↗</span>
+              </Link>
+            </div>
+          )}
           <p className="mt-10 text-sm text-gray-500">© 2024 医考必过 · 数据永久保存 · 客服微信：yikaobiguo</p>
         </div>
       </footer>
