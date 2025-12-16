@@ -30,3 +30,4 @@ export default function Chapter1TestPage() {
       </div>
     </div>
   );
+}
