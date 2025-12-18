@@ -38,6 +38,8 @@ function DiagnosticQuestionsContent() {
   const searchParams = useSearchParams();
   const license = searchParams.get("license");
   const subject = searchParams.get("subject");
+  const chapterParam = searchParams.get("chapter_code") ?? "C1";
+  const normalizedChapterCode = chapterParam.toUpperCase();
   const queryAttemptId = searchParams.get("attempt_id");
 
   const [attemptId, setAttemptId] = useState<string | null>(queryAttemptId);
@@ -50,6 +52,8 @@ function DiagnosticQuestionsContent() {
   const [savingError, setSavingError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [creationErrorDetails, setCreationErrorDetails] = useState<string | null>(null);
+  const [answerDebug, setAnswerDebug] = useState<string | null>(null);
+  const [submitDebug, setSubmitDebug] = useState<string | null>(null);
 
   const currentQuestion = questions[activeIndex];
   const currentOptionSelected = currentQuestion
@@ -75,11 +79,11 @@ function DiagnosticQuestionsContent() {
         const resp = await fetch("/api/diagnostic/attempt", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            license,
-            subject,
-            chapter_code: "C1",
-          }),
+        body: JSON.stringify({
+          license,
+          subject,
+          chapter_code: normalizedChapterCode,
+        }),
         });
         if (!resp.ok) {
           const errorBody = await resp.text();
@@ -94,6 +98,7 @@ function DiagnosticQuestionsContent() {
         nextParams.set("license", license);
         nextParams.set("subject", subject);
         nextParams.set("attempt_id", data.attempt_id);
+        nextParams.set("chapter_code", normalizedChapterCode);
         router.replace(`/diagnostic/questions?${nextParams.toString()}`);
       } catch (error) {
         console.error(error);
@@ -183,8 +188,9 @@ function DiagnosticQuestionsContent() {
         [question.question_uuid]: optionKey,
       }));
       setSavingError(null);
+      setAnswerDebug(null);
       try {
-        await fetch("/api/diagnostic/answer", {
+        const resp = await fetch("/api/diagnostic/answer", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -198,9 +204,21 @@ function DiagnosticQuestionsContent() {
             time_spent_sec: 0,
           }),
         });
+        if (!resp.ok) {
+          const bodyText = await resp.text();
+          const debug = `status ${resp.status} body ${bodyText}`;
+          if (process.env.NODE_ENV !== "production") {
+            setAnswerDebug(debug);
+          }
+          throw new Error(`HTTP ${resp.status}`);
+        }
       } catch (error) {
         console.error(error);
-        setSavingError("保存失败，已在本地暂存，网络恢复会自动重试。");
+        const message =
+          error instanceof Error && error.message.startsWith("HTTP")
+            ? error.message
+            : "保存失败，已在本地暂存，网络恢复会自动重试。";
+        setSavingError(message);
       }
     },
     [attemptId],
@@ -216,13 +234,23 @@ function DiagnosticQuestionsContent() {
         body: JSON.stringify({ attempt_id: attemptId }),
       });
       if (!resp.ok) {
-        throw new Error("提交失败");
+        const bodyText = await resp.text();
+        const debug = `status ${resp.status} body ${bodyText}`;
+        if (process.env.NODE_ENV !== "production") {
+          setSubmitDebug(debug);
+        }
+        throw new Error(`HTTP ${resp.status}`);
       }
       const data = await resp.json();
+      setSubmitDebug(null);
       router.push(`/diagnostic/result?attempt_id=${data.attempt_id}`);
     } catch (error) {
       console.error(error);
-      setPageError("提交失败，请稍后重试。");
+      const message =
+        error instanceof Error && error.message.startsWith("HTTP")
+          ? error.message
+          : "提交失败，请稍后重试。";
+      setPageError(message);
     } finally {
       setSubmitting(false);
     }
@@ -267,6 +295,12 @@ function DiagnosticQuestionsContent() {
                 {savingError}
               </div>
             )}
+            {answerDebug && process.env.NODE_ENV !== "production" && (
+              <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-blue-700">
+                <p className="font-semibold">Debug (answer response)</p>
+                <p className="whitespace-pre-wrap">{answerDebug}</p>
+              </div>
+            )}
 
             {isLoading ? (
               <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-6 text-center text-gray-600">
@@ -306,6 +340,12 @@ function DiagnosticQuestionsContent() {
                     nextDisabled={!currentOptionSelected}
                     submitting={submitting}
                   />
+                  {submitDebug && process.env.NODE_ENV !== "production" && (
+                    <div className="mt-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-blue-700">
+                      <p className="font-semibold">Debug (submit response)</p>
+                      <p className="whitespace-pre-wrap">{submitDebug}</p>
+                    </div>
+                  )}
                 </div>
               )
             )}

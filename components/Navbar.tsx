@@ -246,16 +246,10 @@ export default function Navbar() {
           {/* 右侧按钮 */}
           <div className="hidden md:flex items-center space-x-4">
             <Link
-              href="/login"
-              className="text-gray-600 hover:text-blue-500 transition"
-            >
-              登录
-            </Link>
-            <Link
-              href="/register"
+              href="/diagnostic"
               className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:shadow-lg transition font-medium"
             >
-              免费注册
+              开始诊断
             </Link>
           </div>
 
@@ -342,21 +336,13 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              {/* 登录注册 */}
-              <div className="flex flex-col space-y-2 px-4 pt-4 mt-4 border-t">
+              <div className="px-4 pt-4 mt-4 border-t">
                 <Link
-                  href="/login"
-                  className="py-2 text-center text-gray-700 hover:text-blue-500"
+                  href="/diagnostic"
+                  className="block w-full py-3 text-center rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  登录
-                </Link>
-                <Link
-                  href="/register"
-                  className="py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg text-center"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  免费注册
+                  开始诊断
                 </Link>
               </div>
             </div>
