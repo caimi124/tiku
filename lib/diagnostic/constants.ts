@@ -1,18 +1,10 @@
 export type SubjectConfig = {
+  label: string;
+  license: string;
   available: boolean;
   default_question_count: number;
 };
 
-export const SUBJECT_CONFIG: Record<string, SubjectConfig> = {
-  "western-2": {
-    available: true,
-    default_question_count: 8,
-  },
-  "western-1": {
-    available: false,
-    default_question_count: 0,
-  },
-};
 export const CHAPTER_META: Record<string, { title: string }> = {
   C1: { title: "第一章 精神与中枢神经系统用药" },
   C2: { title: "第二章 消化系统用药" },
@@ -31,38 +23,41 @@ export const CHAPTER_META: Record<string, { title: string }> = {
 
 export const ALL_CHAPTER_CODES = Object.keys(CHAPTER_META);
 
-export const SUBJECT_CONFIG = {
+export const SUBJECT_CONFIG: Record<string, SubjectConfig> = {
   "western-1": {
     label: "药学专业知识（一）",
     license: "western",
     available: false,
+    default_question_count: 0,
   },
   "western-2": {
     label: "药学专业知识（二）",
     license: "western",
     available: true,
+    default_question_count: 8,
   },
   "western-3": {
     label: "药学综合知识与技能",
     license: "western",
     available: false,
+    default_question_count: 0,
   },
   "tcm-1": {
     label: "中药学专业知识（一）",
     license: "tcm",
     available: false,
+    default_question_count: 0,
   },
   "tcm-2": {
     label: "中药学专业知识（二）",
     license: "tcm",
     available: false,
+    default_question_count: 0,
   },
   "tcm-3": {
     label: "中药学综合知识与技能",
     license: "tcm",
     available: false,
+    default_question_count: 0,
   },
-} as const;
-
-export const TOTAL_DIAGNOSTIC_QUESTIONS = 20;
-
+};
