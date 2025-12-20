@@ -47,15 +47,6 @@ function parseMetadata(raw: unknown): Record<string, unknown> | null {
   return null;
 }
 
-function shuffleArray<T>(input: T[]): T[] {
-  const arr = [...input];
-  for (let i = arr.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
 export async function GET(request: NextRequest) {
   const attemptId = request.nextUrl.searchParams.get("attempt_id");
   if (!attemptId) {
@@ -269,56 +260,24 @@ export async function GET(request: NextRequest) {
       }
       selectedQuestions = chapterResult.rows;
     } else {
-      const randomResult = await client.query<
-        {
-          question_uuid: string;
-          question_type: string;
-          chapter_code: string;
-          chapter_title: string | null;
-          section_code: string;
-          section_title: string | null;
-          knowledge_point_code: string;
-          knowledge_point_title: string | null;
-          stem: string;
-          options: Record<string, string>;
-        }
-      >(
+      const chapterCountsResult = await client.query<{ chapter_code: string; total: string }>(
         `
-          SELECT
-            question_uuid,
-            question_type,
-            chapter_code,
-            chapter_title,
-            section_code,
-            section_title,
-            knowledge_point_code,
-            knowledge_point_title,
-            stem,
-            options
-          FROM (
-            SELECT
-              id::text AS question_uuid,
-              question_type,
-              chapter_code,
-              chapter_title,
-              section_code,
-              section_title,
-              knowledge_point_code,
-              knowledge_point_title,
-              stem,
-              options,
-              ROW_NUMBER() OVER (PARTITION BY chapter_code ORDER BY random()) AS rn
-            FROM public.diagnostic_questions
-            WHERE source_type = 'ai_original'
-              AND license = $1
-              AND subject = $2
-              AND chapter_code = ANY($3)
-          ) sub
-          WHERE rn <= $4
+          SELECT chapter_code, COUNT(*)::text AS total
+          FROM public.diagnostic_questions
+          WHERE source_type = 'ai_original'
+            AND license = $1
+            AND subject = $2
+            AND chapter_code = ANY($3)
+          GROUP BY chapter_code
         `,
-        [license, subject, CHAPTER_WHITELIST, QUESTIONS_PER_CHAPTER],
+        [license, subject, CHAPTER_WHITELIST],
       );
-      if (randomResult.rowCount === 0) {
+      const chapterCounts = chapterCountsResult.rows.map((row) => ({
+        chapter: row.chapter_code,
+        count: Number(row.total),
+      }));
+      const totalAvailable = chapterCounts.reduce((sum, { count }) => sum + count, 0);
+      if (totalAvailable === 0) {
         return NextResponse.json(
           {
             error: {
@@ -329,8 +288,114 @@ export async function GET(request: NextRequest) {
           { status: 409 },
         );
       }
-      const shuffled = shuffleArray(randomResult.rows);
-      selectedQuestions = shuffled.slice(0, QUESTIONS_PER_ATTEMPT);
+
+      const allocations = chapterCounts.map(({ chapter, count }) => ({
+        chapter,
+        desired: Math.max(1, Math.round((count / totalAvailable) * QUESTIONS_PER_ATTEMPT)),
+      }));
+
+      let allocatedTotal = allocations.reduce((sum, item) => sum + item.desired, 0);
+      while (allocatedTotal > QUESTIONS_PER_ATTEMPT) {
+        const largest = allocations.reduce((prev, current) =>
+          current.desired > prev.desired ? current : prev,
+        );
+        if (largest.desired > 1) {
+          largest.desired -= 1;
+          allocatedTotal -= 1;
+        } else {
+          break;
+        }
+      }
+      while (allocatedTotal < QUESTIONS_PER_ATTEMPT) {
+        const largest = allocations.reduce((prev, current) =>
+          current.desired > prev.desired ? current : prev,
+        );
+        largest.desired += 1;
+        allocatedTotal += 1;
+      }
+
+      const questionBuckets = [];
+      for (const allocation of allocations) {
+        const chapterResult = await client.query<
+          {
+            question_uuid: string;
+            question_type: string;
+            chapter_code: string;
+            chapter_title: string | null;
+            section_code: string;
+            section_title: string | null;
+            knowledge_point_code: string;
+            knowledge_point_title: string | null;
+            stem: string;
+            options: Record<string, string>;
+          }
+        >(
+          `
+            SELECT
+              id::text AS question_uuid,
+              question_type,
+              chapter_code,
+              chapter_title,
+              section_code,
+              section_title,
+              knowledge_point_code,
+              knowledge_point_title,
+              stem,
+              options
+            FROM public.diagnostic_questions
+            WHERE source_type = 'ai_original'
+              AND license = $1
+              AND subject = $2
+              AND chapter_code = $3
+            ORDER BY random()
+            LIMIT $4
+          `,
+          [license, subject, allocation.chapter, allocation.desired],
+        );
+        questionBuckets.push(...chapterResult.rows);
+      }
+
+      if (questionBuckets.length < QUESTIONS_PER_ATTEMPT) {
+        const fallback = await client.query<
+          {
+            question_uuid: string;
+            question_type: string;
+            chapter_code: string;
+            chapter_title: string | null;
+            section_code: string;
+            section_title: string | null;
+            knowledge_point_code: string;
+            knowledge_point_title: string | null;
+            stem: string;
+            options: Record<string, string>;
+          }[]
+        >(
+          `
+            SELECT
+              id::text AS question_uuid,
+              question_type,
+              chapter_code,
+              chapter_title,
+              section_code,
+              section_title,
+              knowledge_point_code,
+              knowledge_point_title,
+              stem,
+              options
+            FROM public.diagnostic_questions
+            WHERE source_type = 'ai_original'
+              AND license = $1
+              AND subject = $2
+            ORDER BY random()
+            LIMIT $3
+          `,
+          [license, subject, QUESTIONS_PER_ATTEMPT],
+        );
+        questionBuckets.push(...fallback.rows);
+      }
+
+      const uniqueQuestions = [...new Map(questionBuckets.map((q) => [q.question_uuid, q])).values()];
+      selectedQuestions = uniqueQuestions.slice(0, QUESTIONS_PER_ATTEMPT);
     }
 
     const questionIds = selectedQuestions.map((question) => question.question_uuid);
