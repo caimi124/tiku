@@ -18,6 +18,40 @@ function normalizeChapterList(value) {
     .filter(Boolean);
 }
 
+function splitChapterTokens(raw) {
+  return raw
+    .split(/[, ]+/)
+    .map((token) => token.trim().toUpperCase())
+    .filter(Boolean);
+}
+
+function parseCliChapters(argv = process.argv.slice(2)) {
+  const chapters = [];
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === "--dry-run") {
+      continue;
+    }
+    if (arg.startsWith("--chapters=")) {
+      chapters.push(...splitChapterTokens(arg.slice("--chapters=".length)));
+      continue;
+    }
+    if (arg === "--chapters") {
+      let j = i + 1;
+      while (j < argv.length && !argv[j].startsWith("--")) {
+        chapters.push(...splitChapterTokens(argv[j]));
+        j += 1;
+      }
+      i = j - 1;
+      continue;
+    }
+    if (!arg.startsWith("--")) {
+      chapters.push(...splitChapterTokens(arg));
+    }
+  }
+  return [...new Set(chapters)];
+}
+
 async function loadQuestionFiles(dataDirectory) {
   const entries = await fs.readdir(dataDirectory);
   const files = entries.filter((entry) => entry.endsWith(".json"));
@@ -25,6 +59,7 @@ async function loadQuestionFiles(dataDirectory) {
 
   for (const file of files) {
     const absolute = path.join(dataDirectory, file);
+    const fileName = path.basename(file);
     const raw = await fs.readFile(absolute, "utf-8");
     let parsed;
     try {
@@ -41,27 +76,27 @@ async function loadQuestionFiles(dataDirectory) {
         (typeof item.chapter_code === "string" && item.chapter_code.trim().toUpperCase()) ||
         chapterFromFile;
       if (!chapterCode) {
-        throw new Error(`${file} 中存在缺少 chapter_code 的题目`);
+        throw new Error(`${fileName} 中存在缺少 chapter_code 的题目`);
       }
       if (!item.stem || typeof item.stem !== "string") {
-        throw new Error(`${file} 的某题缺少有效 stem`);
+        throw new Error(`${fileName} 的某题缺少有效 stem`);
       }
       if (PLACEHOLDER_REGEX.test(item.stem)) {
-        throw new Error(`占位题出现在 ${file}：${item.stem}`);
+        throw new Error(`占位题出现在 ${fileName}：${item.stem}`);
       }
       if (!item.section_code || !item.section_title) {
         throw new Error(`${fileName} 的题目缺少节/章节描述`);
       }
       if (!item.knowledge_point_code || !item.knowledge_point_title) {
-        throw new Error(`${file} 的题目缺少知识点描述`);
+        throw new Error(`${fileName} 的题目缺少知识点描述`);
       }
       const options = item.options;
       if (!options || typeof options !== "object") {
-        throw new Error(`${file} 的题目缺少 options`);
+        throw new Error(`${fileName} 的题目缺少 options`);
       }
       for (const key of REQUIRED_OPTION_KEYS) {
         if (typeof options[key] !== "string") {
-          throw new Error(`${file} 中问题缺少选项 ${key}`);
+          throw new Error(`${fileName} 中问题缺少选项 ${key}`);
         }
       }
 
@@ -125,6 +160,20 @@ async function seedWestern2AiOriginal(options = {}) {
     console.warn(`以下章节未提供题目数据，跳过：${missing.join(", ")}`);
   }
 
+  const isDryRun = Boolean(options.dryRun);
+  if (isDryRun) {
+    console.log("🔎 Dry run 模式，仅校验 JSON 并统计题量：");
+    let dryRunTotal = 0;
+    for (const chapterCode of chaptersToSeed) {
+      const count = byChapter.get(chapterCode)?.length ?? 0;
+      dryRunTotal += count;
+      console.log(`  ${chapterCode}: ${count} 道`);
+    }
+    console.log(`✅ Dry run 完成，共 ${dryRunTotal} 道题`);
+    return;
+  }
+
+  console.log("🌐 Connecting to database...");
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false },
@@ -132,6 +181,7 @@ async function seedWestern2AiOriginal(options = {}) {
   let client;
   try {
     client = await pool.connect();
+    console.log("✅ 数据库连接成功");
   } catch (error) {
     await pool.end();
     throw new Error(`无法连接数据库：${error.message}`);
@@ -142,13 +192,14 @@ async function seedWestern2AiOriginal(options = {}) {
 
   try {
     await client.query("BEGIN");
-    await client.query(
+    const deleteResult = await client.query(
       `
         DELETE FROM public.diagnostic_questions
         WHERE license = $1 AND subject = $2 AND chapter_code = ANY($3)
       `,
       [LICENSE, SUBJECT, chaptersToSeed],
     );
+    console.log(`🧹 已删除旧题 ${deleteResult.rowCount} 条`);
 
     const insertQuery = `
       INSERT INTO public.diagnostic_questions (
@@ -193,6 +244,7 @@ async function seedWestern2AiOriginal(options = {}) {
         stats[chapterCode] += 1;
         totalInserted += 1;
       }
+      console.log(`  -> ${chapterCode}: 插入 ${stats[chapterCode]} 道`);
     }
 
     await client.query("COMMIT");
@@ -217,15 +269,20 @@ async function seedWestern2AiOriginal(options = {}) {
 module.exports = { seedWestern2AiOriginal };
 
 if (require.main === module) {
-  const cliChapters = parseCliChapters();
-  seedWestern2AiOriginal({
-    chapters: cliChapters.length ? cliChapters : undefined,
-  })
+  (async () => {
+    const argv = process.argv.slice(2);
+    const cliChapters = parseCliChapters(argv);
+    const isDryRun = argv.includes("--dry-run");
+    await seedWestern2AiOriginal({
+      chapters: cliChapters.length ? cliChapters : undefined,
+      dryRun: isDryRun,
+    });
+  })()
     .then(() => {
       console.log("诊断题目导入完成。");
     })
     .catch((error) => {
-      console.error("诊断题导入失败：", error);
+      console.error("诊断题导入失败：", error.stack || error.message);
       process.exit(1);
     });
 }
