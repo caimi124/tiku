@@ -1,0 +1,22 @@
+[
+  {
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.1",
+    "section_title": "第一节 急症止痛与呼吸",
+    "knowledge_point_code": "C12.1.2",
+    "knowledge_point_title": "急性缺血性脑卒中止痛",
+    "stem": "急性缺血性脑卒中患者出现剧烈头痛，最安全的止痛药是？",
+    "options": {
+      "A": "对乙酰氨基酚",
+      "B": "阿司匹林",
+      "C": "布洛芬",
+      "D": "吗啡",
+      "E": "纳布啡"
+    },
+    "answer": "A",
+    "explanation": "非甾体抗炎药可能增加脑出血风险，吗啡等阿片类影响意识，对乙酰氨基酚为首选。"
+  }
+]
+

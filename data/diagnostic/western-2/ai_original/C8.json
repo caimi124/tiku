@@ -1,0 +1,22 @@
+[
+  {
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.2",
+    "section_title": "第二节 泌尿抗菌",
+    "knowledge_point_code": "C8.2.1",
+    "knowledge_point_title": "尿路感染的经验用药",
+    "stem": "一名孕妇急性下尿路感染，应优先使用哪种抗菌药？",
+    "options": {
+      "A": "磺胺甲噁唑/甲氧苄啶",
+      "B": "阿奇霉素",
+      "C": "替加环素",
+      "D": "美洛西林/舒巴坦",
+      "E": "雷尼替丁"
+    },
+    "answer": "D",
+    "explanation": "孕妇不能使用磺胺类、美罗培南，首选β-内酰胺类（如美洛西林/舒巴坦）。"
+  }
+]
+

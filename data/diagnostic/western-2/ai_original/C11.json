@@ -1,0 +1,22 @@
+[
+  {
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.2",
+    "section_title": "第二节 靶向与免疫",
+    "knowledge_point_code": "C11.2.1",
+    "knowledge_point_title": "EGFR 靶向治疗耐药",
+    "stem": "肺腺癌患者使用吉非替尼 8 个月后出现突变 T790M，接下来应选哪种药物？",
+    "options": {
+      "A": "奥希替尼",
+      "B": "培美曲塞",
+      "C": "贝伐珠单抗",
+      "D": "阿替利珠单抗",
+      "E": "紫杉醇"
+    },
+    "answer": "A",
+    "explanation": "T790M 突变是吉非替尼耐药的常见机制，应切换到可覆盖该突变的三代 EGFR 抑制剂奥希替尼。"
+  }
+]
+

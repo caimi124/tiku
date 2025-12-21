@@ -1,0 +1,22 @@
+[
+  {
+    "question_type": "单选",
+    "chapter_code": "C13",
+    "chapter_title": "第十三章 皮肤与皮肤病用药",
+    "section_code": "C13.1",
+    "section_title": "第一节 皮炎与抗炎",
+    "knowledge_point_code": "C13.1.1",
+    "knowledge_point_title": "外用激素分级",
+    "stem": "面部轻度湿疹首选哪一类外用皮质类固醇？",
+    "options": {
+      "A": "弱效激素乳膏",
+      "B": "强效激素软膏",
+      "C": "中效激素乳膏",
+      "D": "非甾体抗炎凝胶",
+      "E": "抗生素软膏"
+    },
+    "answer": "A",
+    "explanation": "面部皮肤薄，首选弱效激素，避免强力激素诱发皮肤萎缩。"
+  }
+]
+

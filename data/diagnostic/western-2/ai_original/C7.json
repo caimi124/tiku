@@ -1,0 +1,22 @@
+[
+  {
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.1",
+    "section_title": "第一节 高血压药",
+    "knowledge_point_code": "C7.1.2",
+    "knowledge_point_title": "ACEI 与肾功能",
+    "stem": "高血压患者首次服用依那普利后出现血清肌酐升高 40%，下一步应如何处理？",
+    "options": {
+      "A": "继续观察并复查肌酐",
+      "B": "立即停药并改用钙通道阻滞剂",
+      "C": "减半剂量",
+      "D": "同时加用噻嗪类利尿剂",
+      "E": "添加螺内酯"
+    },
+    "answer": "A",
+    "explanation": "ACEI 可在起始期引起肾灌注压下降，肌酐升高 <30% 可继续观察，此处升高 40% 需评估肾动脉狭窄并复查再决定。"
+  }
+]
+

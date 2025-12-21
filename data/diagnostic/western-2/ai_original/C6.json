@@ -1,0 +1,22 @@
+[
+  {
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.1",
+    "section_title": "第一节 糖尿病与代谢评估",
+    "knowledge_point_code": "C6.1.3",
+    "knowledge_point_title": "SGLT2 抑制剂的适应证",
+    "stem": "2 型糖尿病患者同时伴充血性心衰史，最合适的降糖药是哪一种？",
+    "options": {
+      "A": "达格列净",
+      "B": "格列美脲",
+      "C": "阿卡波糖",
+      "D": "二甲双胍",
+      "E": "泮托拉唑"
+    },
+    "answer": "A",
+    "explanation": "SGLT2 抑制剂（如达格列净）对心衰有保护作用，是有心血管病史患者的合理选择。"
+  }
+]
+

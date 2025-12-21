@@ -1,0 +1,22 @@
+[
+  {
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.1",
+    "section_title": "第一节 抗凝与止血",
+    "knowledge_point_code": "C10.1.1",
+    "knowledge_point_title": "急性肺栓塞的首选抗凝",
+    "stem": "急性肺栓塞疑诊患者体重 70 kg，应立即开始哪种抗凝方案？",
+    "options": {
+      "A": "低分子肝素 + 华法林",
+      "B": "阿司匹林",
+      "C": "阿哌沙班",
+      "D": "依诺肝素",
+      "E": "氯吡格雷"
+    },
+    "answer": "D",
+    "explanation": "急性阶段以低分子肝素（如依诺肝素）+ 后续口服抗凝为推荐，华法林起始需并用肝素达 INR 目标。"
+  }
+]
+
