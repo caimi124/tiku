@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 
 import DiagnosticShell from "./_components/DiagnosticShell";
 import NavButtons from "./_components/NavButtons";
 import QuestionCard from "./_components/QuestionCard";
+import { ALL_CHAPTER_CODES } from "@/lib/diagnostic/constants";
 
 type QuestionPayload = {
   question_uuid: string;
@@ -22,6 +23,8 @@ type QuestionPayload = {
 
 const REQUIRED_OPTION_KEYS = ["A", "B", "C", "D"];
 const STORAGE_PREFIX = "diagnostic-answers-";
+const CHAPTER_CODE_STORAGE_KEY = "diagnostic-chapter-code";
+const VALID_CHAPTER_CODES = new Set(ALL_CHAPTER_CODES);
 
 function isQuestionValid(raw: any): raw is QuestionPayload {
   if (!raw?.question_uuid || typeof raw.question_uuid !== "string") return false;
@@ -38,8 +41,21 @@ function DiagnosticQuestionsContent() {
   const searchParams = useSearchParams();
   const license = searchParams.get("license");
   const subject = searchParams.get("subject");
-  const chapterParam = searchParams.get("chapter_code") ?? "C1";
-  const normalizedChapterCode = chapterParam.toUpperCase();
+  const chapterParam = searchParams.get("chapter_code");
+  const hasChapterParam = searchParams.has("chapter_code");
+  const normalizedChapterCode = useMemo(() => {
+    if (!chapterParam) return null;
+    const normalized = chapterParam.trim().toUpperCase();
+    if (!VALID_CHAPTER_CODES.has(normalized)) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(
+          `[Diagnostic] Ignoring invalid chapter_code "${chapterParam}". Defaulting to all-chapter start.`,
+        );
+      }
+      return null;
+    }
+    return normalized;
+  }, [chapterParam]);
   const queryAttemptId = searchParams.get("attempt_id");
 
   const [attemptId, setAttemptId] = useState<string | null>(queryAttemptId);
@@ -61,6 +77,14 @@ function DiagnosticQuestionsContent() {
     : undefined;
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (hasChapterParam && normalizedChapterCode) {
+        window.localStorage.setItem(CHAPTER_CODE_STORAGE_KEY, normalizedChapterCode);
+      } else {
+        window.localStorage.removeItem(CHAPTER_CODE_STORAGE_KEY);
+      }
+    }
+
     if (!license || !subject) {
       setPageError("缺少考试方向或科目，请重新配置后再进入诊断。");
       setIsLoading(false);
@@ -76,42 +100,78 @@ function DiagnosticQuestionsContent() {
       setCreationErrorDetails(null);
       setIsLoading(true);
       try {
+        const attemptPayload: Record<string, string> = { license, subject };
+        if (normalizedChapterCode) {
+          attemptPayload.chapter_code = normalizedChapterCode;
+        }
         const resp = await fetch("/api/diagnostic/attempt", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          license,
-          subject,
-          chapter_code: normalizedChapterCode,
-        }),
+          body: JSON.stringify(attemptPayload),
         });
+        const responseText = await resp.text();
+        let responseBody: any;
+        try {
+          responseBody = JSON.parse(responseText);
+        } catch {
+          responseBody = responseText;
+        }
         if (!resp.ok) {
-          const errorBody = await resp.text();
-          const detail = `HTTP ${resp.status} ${errorBody}`;
-          setCreationErrorDetails(detail);
-          console.error("diagnostic attempt request failed", detail);
+          const errorCode =
+            typeof responseBody === "object"
+              ? responseBody?.error?.code
+              : null;
+          const defaultMessage = "诊断尝试创建失败，请稍后再试。";
+          const message =
+            errorCode === "SUBJECT_NOT_READY"
+              ? responseBody?.error?.message ?? "该科目题库正在准备中，请稍后再试。"
+              : defaultMessage;
+          setCreationErrorDetails(responseText);
+          console.error("diagnostic attempt request failed", responseText);
+          setPageError(message);
+          setIsLoading(false);
+          return;
+        }
+        const data =
+          typeof responseBody === "object" && responseBody !== null
+            ? responseBody
+            : null;
+        if (!data?.attempt_id) {
           throw new Error("诊断尝试创建失败，请稍后再试。");
         }
-        const data = await resp.json();
         setAttemptId(data.attempt_id);
-        const nextParams = new URLSearchParams(Array.from(searchParams.entries()));
+        const nextParams = new URLSearchParams();
         nextParams.set("license", license);
         nextParams.set("subject", subject);
         nextParams.set("attempt_id", data.attempt_id);
-        nextParams.set("chapter_code", normalizedChapterCode);
-        router.replace(`/diagnostic/questions?${nextParams.toString()}`);
+        if (normalizedChapterCode) {
+          nextParams.set("chapter_code", normalizedChapterCode);
+        }
+        const finalUrl = `/diagnostic/questions?${nextParams.toString()}`;
+        if (
+          !normalizedChapterCode &&
+          process.env.NODE_ENV !== "production"
+        ) {
+          console.info(
+            "[Diagnostic] All-chapter creation: normalizedChapterCode is null and URL omits chapter_code.",
+            finalUrl,
+          );
+        }
+        router.replace(finalUrl);
       } catch (error) {
         console.error(error);
         if (error instanceof Error) {
           setCreationErrorDetails(error.message);
+          setPageError(error.message);
+        } else {
+          setPageError("诊断尝试创建失败，请稍后再试。");
         }
-        setPageError("诊断尝试创建失败，请稍后再试。");
         setIsLoading(false);
       }
     };
 
     createAttempt();
-  }, [attemptId, license, subject, router, searchParams]);
+  }, [attemptId, license, subject, router, hasChapterParam, normalizedChapterCode]);
 
   useEffect(() => {
     if (!attemptId) return;
@@ -123,11 +183,34 @@ function DiagnosticQuestionsContent() {
       setIsLoading(true);
       try {
         const resp = await fetch(`/api/diagnostic/questions?attempt_id=${attemptId}`);
-        if (!resp.ok) {
-          throw new Error("题目加载失败");
+        const responseText = await resp.text();
+        let responseBody: any;
+        try {
+          responseBody = JSON.parse(responseText);
+        } catch {
+          responseBody = responseText;
         }
-        const data = await resp.json();
-        const validated = Array.isArray(data.questions)
+        if (!resp.ok) {
+          const errorCode =
+            typeof responseBody === "object"
+              ? responseBody?.error?.code
+              : null;
+          const message =
+            errorCode === "SUBJECT_NOT_READY"
+              ? responseBody?.error?.message ?? "题库正在准备中，请稍后再试。"
+              : errorCode === "CHAPTER_NOT_FOUND"
+              ? responseBody?.error?.message ?? "所选章节不存在或尚未开放。"
+              : errorCode === "CHAPTER_NOT_READY"
+              ? responseBody?.error?.message ?? "所选章节题库正在准备中，请稍后再试。"
+              : "题目加载失败，请检查网络后重试。";
+          setPageError(message);
+          return;
+        }
+        const data =
+          typeof responseBody === "object" && responseBody !== null
+            ? responseBody
+            : null;
+        const validated = Array.isArray(data?.questions)
           ? data.questions.filter((item: any) => {
               if (!isQuestionValid(item)) {
                 console.warn("跳过无效诊断题目", item?.question_uuid);
