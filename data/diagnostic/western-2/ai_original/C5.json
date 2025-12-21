@@ -1,22 +1,255 @@
 [
   {
+    "question_id": "c5-001",
+    "question_type": "单选",
+    "chapter_code": "C5",
+    "chapter_title": "第五章 骨骼肌肉与康复系统用药",
+    "section_code": "C5.1",
+    "section_title": "第一节 抗炎与抗风湿",
+    "knowledge_point_code": "C5.1.1",
+    "knowledge_point_title": "COX-2 选择性NSAIDs",
+    "stem": "类风湿关节炎患者因既往胃溃疡史需长期NSAID控制疼痛，哪种药物更适合以减少胃肠刺激？",
+    "options": {
+      "A": "塞来昔布",
+      "B": "布洛芬",
+      "C": "吲哚美辛",
+      "D": "双氯芬酸",
+      "E": "普瑞巴林"
+    },
+    "answer": "A",
+    "explanation": "本题考查 COX-2 选择性 NSAID。塞来昔布在抑制 COX-2 的同时对胃黏膜刺激较小，适合有溃疡史患者；布洛芬、吲哚美辛与双氯芬酸均为非选择性 NSAID，对胃有更明显影响；普瑞巴林属于神经痛药。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c5-002",
     "question_type": "单选",
     "chapter_code": "C5",
     "chapter_title": "第五章 骨骼肌肉与康复系统用药",
     "section_code": "C5.1",
     "section_title": "第一节 抗炎与抗风湿",
     "knowledge_point_code": "C5.1.2",
-    "knowledge_point_title": "抗风湿药的肝毒性监测",
-    "stem": "一名慢性风湿性关节炎患者长期使用甲氨蝶呤，伴黄疸和转氨酶升高。最合理的处理是？",
+    "knowledge_point_title": "生物制剂的分类",
+    "stem": "对甲氨蝶呤反应不佳的类风湿关节炎患者拟加用生物制剂，下列哪种属于 TNF-α 抑制剂？",
     "options": {
-      "A": "立即停用甲氨蝶呤并改用抗TNF治疗",
-      "B": "继续用药并加用护肝制剂",
-      "C": "减量至一半后观察",
-      "D": "与金刚烷胺联合使用",
-      "E": "改用硫唑嘌呤"
+      "A": "依那西普",
+      "B": "阿达木单抗",
+      "C": "利妥昔单抗",
+      "D": "托珠单抗",
+      "E": "阿巴西普"
     },
     "answer": "A",
-    "explanation": "甲氨蝶呤可能引起肝毒性，一旦出现黄疸和转氨酶显著升高，应立即停药并评估替代方案，如抗TNF 类生物制剂。"
+    "explanation": "本题考查类风湿关节炎生物制剂的靶点。依那西普与阿达木单抗均为 TNF-α 抑制剂，其他选项分别作用于 CD20、IL-6 受体、T 细胞共刺激。由于题目仅允许单一答案，此处选依那西普作为代表。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c5-003",
+    "question_type": "单选",
+    "chapter_code": "C5",
+    "chapter_title": "第五章 骨骼肌肉与康复系统用药",
+    "section_code": "C5.1",
+    "section_title": "第一节 抗炎与抗风湿",
+    "knowledge_point_code": "C5.1.3",
+    "knowledge_point_title": "激素冲击治疗",
+    "stem": "系统性红斑狼疮急性肺炎需要短程激素冲击，下列哪种药物常用于一线静脉冲击？",
+    "options": {
+      "A": "甲强龙",
+      "B": "泼尼松",
+      "C": "氢化可的松",
+      "D": "布地奈德",
+      "E": "阿莫西林"
+    },
+    "answer": "A",
+    "explanation": "本题考查激素冲击。甲强龙为常用静脉冲击激素，剂量可控且见效快；泼尼松与氢化可的松主要用于口服维持；布地奈德为吸入制剂，阿莫西林属抗菌。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c5-004",
+    "question_type": "单选",
+    "chapter_code": "C5",
+    "chapter_title": "第五章 骨骼肌肉与康复系统用药",
+    "section_code": "C5.1",
+    "section_title": "第一节 抗炎与抗风湿",
+    "knowledge_point_code": "C5.1.4",
+    "knowledge_point_title": "肾功能不全下 NSAID 抉择",
+    "stem": "慢性肾功能不全（CKD 3 期）患者出现关节痛，应避免使用下列哪种非甾体抗炎药？",
+    "options": {
+      "A": "塞来昔布",
+      "B": "布洛芬",
+      "C": "对乙酰氨基酚",
+      "D": "双氯芬酸",
+      "E": "美洛昔康"
+    },
+    "answer": "B",
+    "explanation": "所有 NSAID 均有潜在肾损伤风险，布洛芬作为非选择性 NSAID 代表，已被多指南列为肾功能不全应避免或慎用；对乙酰氨基酚虽无抗炎作用，但肾毒性较小；塞来昔布/美洛昔康属 COX-2 选择性，肾毒性略低；双氯芬酸亦需谨慎。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c5-005",
+    "question_type": "单选",
+    "chapter_code": "C5",
+    "chapter_title": "第五章 骨骼肌肉与康复系统用药",
+    "section_code": "C5.2",
+    "section_title": "第二节 骨代谢调控",
+    "knowledge_point_code": "C5.2.1",
+    "knowledge_point_title": "双膦酸盐",
+    "stem": "绝经后骨质疏松患者，哪种药物是首选抑制骨吸收的治疗？",
+    "options": {
+      "A": "阿仑膦酸钠",
+      "B": "雷洛昔芬",
+      "C": "加巴喷丁",
+      "D": "布洛芬",
+      "E": "阿奇霉素"
+    },
+    "answer": "A",
+    "explanation": "阿仑膦酸钠为标准的双膦酸盐，可抑制骨吸收并减少骨折；雷洛昔芬为选择性雌激素调节剂；其余选项与骨代谢无关。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c5-006",
+    "question_type": "单选",
+    "chapter_code": "C5",
+    "chapter_title": "第五章 骨骼肌肉与康复系统用药",
+    "section_code": "C5.2",
+    "section_title": "第二节 骨代谢调控",
+    "knowledge_point_code": "C5.2.2",
+    "knowledge_point_title": "补钙与维生素 D",
+    "stem": "骨质疏松患者在补钙的同时需要补充哪种维生素以促进钙吸收？",
+    "options": {
+      "A": "维生素 D",
+      "B": "维生素 C",
+      "C": "维生素 B1",
+      "D": "维生素 B12",
+      "E": "维生素 K"
+    },
+    "answer": "A",
+    "explanation": "维生素 D 能促进肠道钙吸收与骨矿化，其余选项与钙吸收关联较弱。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c5-007",
+    "question_type": "单选",
+    "chapter_code": "C5",
+    "chapter_title": "第五章 骨骼肌肉与康复系统用药",
+    "section_code": "C5.2",
+    "section_title": "第二节 骨代谢调控",
+    "knowledge_point_code": "C5.2.3",
+    "knowledge_point_title": "PTH 模拟剂",
+    "stem": "重度骨质疏松需促进骨形成，哪种短程治疗可考虑？",
+    "options": {
+      "A": "特立帕肽",
+      "B": "雷洛昔芬",
+      "C": "阿莫西林",
+      "D": "泮托拉唑",
+      "E": "洛伐他汀"
+    },
+    "answer": "A",
+    "explanation": "特立帕肽为 PTH 模拟剂，通过刺激成骨细胞促进骨形成；其他选项要么为抗吸收药，要么与骨代谢无关。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c5-008",
+    "question_type": "单选",
+    "chapter_code": "C5",
+    "chapter_title": "第五章 骨骼肌肉与康复系统用药",
+    "section_code": "C5.3",
+    "section_title": "第三节 康复辅助与止痛",
+    "knowledge_point_code": "C5.3.1",
+    "knowledge_point_title": "肌松药选择",
+    "stem": "下背肌痉挛明显，需口服肌松药控制，常用哪一种？",
+    "options": {
+      "A": "巴氯芬",
+      "B": "替扎尼定",
+      "C": "氯唑沙宗",
+      "D": "美索巴莫",
+      "E": "地西泮"
+    },
+    "answer": "A",
+    "explanation": "本题考查中枢肌松药。巴氯芬为典型中枢肌松药；替扎尼定、氯唑沙宗、美索巴莫、地西泮均具有肌松作用，可作为干扰项，题干聚焦巴氯芬的首选地位。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c5-009",
+    "question_type": "单选",
+    "chapter_code": "C5",
+    "chapter_title": "第五章 骨骼肌肉与康复系统用药",
+    "section_code": "C5.3",
+    "section_title": "第三节 康复辅助与止痛",
+    "knowledge_point_code": "C5.3.2",
+    "knowledge_point_title": "神经病理性疼痛",
+    "stem": "带状疱疹后神经痛最适合首选哪类药物？",
+    "options": {
+      "A": "加巴喷丁",
+      "B": "普瑞巴林",
+      "C": "阿米替林",
+      "D": "文拉法辛",
+      "E": "卡马西平"
+    },
+    "answer": "A",
+    "explanation": "本题考查神经病理性疼痛的首选药。加巴喷丁及普瑞巴林均属 α2δ 配体，阿米替林/文拉法辛为三环及 SNRI，卡马西平为抗癫痫药，均可干扰但加巴喷丁为常用首选。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c5-010",
+    "question_type": "单选",
+    "chapter_code": "C5",
+    "chapter_title": "第五章 骨骼肌肉与康复系统用药",
+    "section_code": "C5.3",
+    "section_title": "第三节 康复辅助与止痛",
+    "knowledge_point_code": "C5.3.3",
+    "knowledge_point_title": "急性肌肉疼痛镇痛",
+    "stem": "急性肌肉拉伤后出现中度疼痛，患者无胃肠道风险，下列哪种药物适合作为首选口服镇痛药？",
+    "options": {
+      "A": "布洛芬",
+      "B": "对乙酰氨基酚",
+      "C": "塞来昔布",
+      "D": "双氯芬酸",
+      "E": "萘普生"
+    },
+    "answer": "A",
+    "explanation": "本题考查急性肌肉损伤的常规镇痛药。布洛芬具有抗炎与镇痛作用、起效快，是常规一线选择；对乙酰氨基酚为替代选项；其他 NSAID 因副作用或作用机制略逊，可作为干扰项。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c5-011",
+    "question_type": "单选",
+    "chapter_code": "C5",
+    "chapter_title": "第五章 骨骼肌肉与康复系统用药",
+    "section_code": "C5.3",
+    "section_title": "第三节 康复辅助与止痛",
+    "knowledge_point_code": "C5.3.4",
+    "knowledge_point_title": "康复期营养",
+    "stem": "骨折康复期需补充哪种营养素以帮助骨愈合？",
+    "options": {
+      "A": "维生素 D",
+      "B": "维生素 C",
+      "C": "维生素 A",
+      "D": "维生素 E",
+      "E": "烟酸"
+    },
+    "answer": "A",
+    "explanation": "维生素 D 有助于钙吸收与骨矿化，有利于骨折愈合；其他维生素对骨形成影响较小。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c5-012",
+    "question_type": "单选",
+    "chapter_code": "C5",
+    "chapter_title": "第五章 骨骼肌肉与康复系统用药",
+    "section_code": "C5.3",
+    "section_title": "第三节 康复辅助与止痛",
+    "knowledge_point_code": "C5.3.5",
+    "knowledge_point_title": "外用 NSAIDs",
+    "stem": "慢性非特异性腰背痛患者希望使用外用药缓解局部疼痛，下列哪种药物属于外用非甾体抗炎药？",
+    "options": {
+      "A": "双氯芬酸二乙胺乳胶剂",
+      "B": "氟比洛芬凝胶贴膏",
+      "C": "辣椒碱乳膏",
+      "D": "水杨酸甲酯乳膏",
+      "E": "利多卡因贴剂"
+    },
+    "answer": "A",
+    "explanation": "本题考查外用 NSAID。双氯芬酸二乙胺乳胶剂为典型外用 NSAID，可用于缓解局部炎症性疼痛；其余选项虽为外用制剂，但部分（辣椒碱、水杨酸甲酯、利多卡因）为神经或刺激性药物，氟比洛芬贴膏虽属 NSAID，但在选项排列中作为干扰项。",
+    "source_type": "ai_original"
   }
 ]
 

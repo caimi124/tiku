@@ -1,22 +1,255 @@
 [
   {
+    "question_id": "c12-001",
     "question_type": "单选",
     "chapter_code": "C12",
     "chapter_title": "第十二章 急症与毒理用药",
     "section_code": "C12.1",
-    "section_title": "第一节 急症止痛与呼吸",
-    "knowledge_point_code": "C12.1.2",
-    "knowledge_point_title": "急性缺血性脑卒中止痛",
-    "stem": "急性缺血性脑卒中患者出现剧烈头痛，最安全的止痛药是？",
+    "section_title": "第一节 急性止痛与呼吸支持",
+    "knowledge_point_code": "C12.1.1",
+    "knowledge_point_title": "急性哮喘首选药",
+    "stem": "急性哮喘发作伴呼气困难，首选哪类急救用药？",
     "options": {
-      "A": "对乙酰氨基酚",
-      "B": "阿司匹林",
-      "C": "布洛芬",
-      "D": "吗啡",
-      "E": "纳布啡"
+      "A": "吸入速效 β2 受体激动剂",
+      "B": "口服激素片",
+      "C": "抗过敏药",
+      "D": "静注阿司匹林",
+      "E": "利尿剂"
     },
     "answer": "A",
-    "explanation": "非甾体抗炎药可能增加脑出血风险，吗啡等阿片类影响意识，对乙酰氨基酚为首选。"
+    "explanation": "速效 β2 激动剂可迅速舒张支气管，是缓解急性哮喘的首选；激素口服起效慢，其他药物无直接支气管舒张效应。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c12-002",
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.1",
+    "section_title": "第一节 急性止痛与呼吸支持",
+    "knowledge_point_code": "C12.1.2",
+    "knowledge_point_title": "急诊镇痛",
+    "stem": "急性骨折患者剧痛难忍，需快速缓解，首选哪类药物？",
+    "options": {
+      "A": "短效阿片类（如吗啡）",
+      "B": "非甾体抗炎药口服",
+      "C": "抗组胺药",
+      "D": "抗生素",
+      "E": "利血平"
+    },
+    "answer": "A",
+    "explanation": "短效阿片起效快、镇痛强，适合急性严重疼痛；NSAID 起效较慢，其他选项不能快速镇痛。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c12-003",
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.1",
+    "section_title": "第一节 急性止痛与呼吸支持",
+    "knowledge_point_code": "C12.1.3",
+    "knowledge_point_title": "急性呼吸道阻塞",
+    "stem": "严重过敏反应导致喉头水肿、窒息风险，首选哪种药物立即处理？",
+    "options": {
+      "A": "肾上腺素",
+      "B": "盐水注射",
+      "C": "氢氯噻嗪",
+      "D": "阿托品",
+      "E": "维生素 K"
+    },
+    "answer": "A",
+    "explanation": "肾上腺素可快速减轻喉头水肿、解除支气管痉挛并维持血压，是过敏性休克一线急救药；其他药无此作用。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c12-004",
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.1",
+    "section_title": "第一节 急性止痛与呼吸支持",
+    "knowledge_point_code": "C12.1.4",
+    "knowledge_point_title": "麻醉诱导",
+    "stem": "需要快速诱导气管插管的急诊患者，常选用哪种药物兼顾起效快与稳定性？",
+    "options": {
+      "A": "酮胺（氯胺酮）",
+      "B": "静注维生素 B1",
+      "C": "肝素",
+      "D": "阿托品贴片",
+      "E": "甲泼尼龙"
+    },
+    "answer": "A",
+    "explanation": "酮胺起效快且维持呼吸驱动，是常用的快速序贯诱导药；其余药物不能提供快速麻醉。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c12-005",
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.2",
+    "section_title": "第二节 中毒治疗与解药",
+    "knowledge_point_code": "C12.2.1",
+    "knowledge_point_title": "阿片类中毒解救",
+    "stem": "疑似阿片类药物过量伴呼吸抑制，应立即给予哪种解毒剂？",
+    "options": {
+      "A": "纳洛酮",
+      "B": "氯丙嗪",
+      "C": "地高辛",
+      "D": "硫酸镁",
+      "E": "阿托品"
+    },
+    "answer": "A",
+    "explanation": "纳洛酮是阿片受体拮抗剂，可迅速逆转呼吸抑制；其余药物无针对性。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c12-006",
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.2",
+    "section_title": "第二节 中毒治疗与解药",
+    "knowledge_point_code": "C12.2.2",
+    "knowledge_point_title": "氰化物中毒解救",
+    "stem": "接触氰化物后出现意识下降与呼吸抑制，首选哪种解毒剂？",
+    "options": {
+      "A": "羟钴胺",
+      "B": "维生素 K",
+      "C": "阿司匹林",
+      "D": "硝酸甘油",
+      "E": "青霉素"
+    },
+    "answer": "A",
+    "explanation": "羟钴胺可与氰离子结合形成无毒络合物，是现代首选；其他药物不能清除氰离子。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c12-007",
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.2",
+    "section_title": "第二节 中毒治疗与解药",
+    "knowledge_point_code": "C12.2.3",
+    "knowledge_point_title": "有机磷中毒",
+    "stem": "有机磷农药中毒伴流涎、肌束颤动，首选哪种抗胆碱药？",
+    "options": {
+      "A": "阿托品",
+      "B": "异丙肾上腺素",
+      "C": "布洛芬",
+      "D": "普萘洛尔",
+      "E": "泮托拉唑"
+    },
+    "answer": "A",
+    "explanation": "阿托品能迅速对抗胆碱能危象，改善呼吸道分泌与痉挛；其他药物无此作用。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c12-008",
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.2",
+    "section_title": "第二节 中毒治疗与解药",
+    "knowledge_point_code": "C12.2.4",
+    "knowledge_point_title": "抗胆碱中毒解救",
+    "stem": "抗组胺药过量出现中枢兴奋、口干与瞳孔散大，首选解毒剂是？",
+    "options": {
+      "A": "司可巴尔胺（毒扁豆碱）",
+      "B": "维生素 C",
+      "C": "甲氨蝶呤",
+      "D": "阿米替林",
+      "E": "阿卡波糖"
+    },
+    "answer": "A",
+    "explanation": "毒扁豆碱可抑制胆碱酯酶并穿越血脑屏障，逆转抗胆碱综合征；其他药物无解毒作用。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c12-009",
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.3",
+    "section_title": "第三节 危急心脑用药",
+    "knowledge_point_code": "C12.3.1",
+    "knowledge_point_title": "心律失常急救",
+    "stem": "室性心动过速伴意识障碍，应首选哪种静脉用药配合除颤？",
+    "options": {
+      "A": "胺碘酮",
+      "B": "阿司匹林",
+      "C": "雷尼替丁",
+      "D": "依诺肽",
+      "E": "氯吡格雷"
+    },
+    "answer": "A",
+    "explanation": "胺碘酮静脉可稳定心肌，联合电复律用于室速；其他药无抗室速作用。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c12-010",
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.3",
+    "section_title": "第三节 危急心脑用药",
+    "knowledge_point_code": "C12.3.2",
+    "knowledge_point_title": "急性低血压处理",
+    "stem": "急性心源性休克伴低血压，首选哪种升压药维持灌注？",
+    "options": {
+      "A": "去甲肾上腺素",
+      "B": "阿司匹林",
+      "C": "地塞米松",
+      "D": "硝酸甘油",
+      "E": "茚地那韦"
+    },
+    "answer": "A",
+    "explanation": "去甲肾上腺素可增强血管张力并维持重要脏器灌注；其他药物不能迅速升压。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c12-011",
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.3",
+    "section_title": "第三节 危急心脑用药",
+    "knowledge_point_code": "C12.3.3",
+    "knowledge_point_title": "急性缺血性脑卒中",
+    "stem": "急性缺血性脑卒中患者在入院后 4.5 小时内应首选哪类药物？",
+    "options": {
+      "A": "静脉溶栓（rt-PA）",
+      "B": "阿司匹林抗血小板",
+      "C": "普罗帕酮",
+      "D": "硝普钠",
+      "E": "螺内酯"
+    },
+    "answer": "A",
+    "explanation": "rt-PA 溶栓仍是 4.5 小时窗内的首选；阿司匹林多用于无法溶栓的患者。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c12-012",
+    "question_type": "单选",
+    "chapter_code": "C12",
+    "chapter_title": "第十二章 急症与毒理用药",
+    "section_code": "C12.3",
+    "section_title": "第三节 危急心脑用药",
+    "knowledge_point_code": "C12.3.4",
+    "knowledge_point_title": "急诊中风预防再出血",
+    "stem": "高血压脑出血患者首要控制血压，常用哪种静脉降压药？",
+    "options": {
+      "A": "拉贝洛尔",
+      "B": "硝酸甘油",
+      "C": "阿司匹林",
+      "D": "利伐沙班",
+      "E": "氯化钠注射液"
+    },
+    "answer": "A",
+    "explanation": "拉贝洛尔可快速降压并易于滴定，是脑出血急性期常用药；硝酸甘油更适合心绞痛，抗血小板/抗凝药禁用。",
+    "source_type": "ai_original"
   }
 ]
 

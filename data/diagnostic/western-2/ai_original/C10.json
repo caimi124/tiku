@@ -1,22 +1,255 @@
 [
   {
+    "question_id": "c10-001",
     "question_type": "单选",
     "chapter_code": "C10",
     "chapter_title": "第十章 血液系统与止血辅助用药",
     "section_code": "C10.1",
     "section_title": "第一节 抗凝与止血",
     "knowledge_point_code": "C10.1.1",
-    "knowledge_point_title": "急性肺栓塞的首选抗凝",
-    "stem": "急性肺栓塞疑诊患者体重 70 kg，应立即开始哪种抗凝方案？",
+    "knowledge_point_title": "华法林桥接策略",
+    "stem": "房颤患者准备择期手术停用华法林，哪种药物最常用于术前桥接以保持抗凝作用？",
     "options": {
-      "A": "低分子肝素 + 华法林",
-      "B": "阿司匹林",
-      "C": "阿哌沙班",
-      "D": "依诺肝素",
+      "A": "低分子肝素",
+      "B": "双嘧达莫",
+      "C": "阿司匹林",
+      "D": "肝素酶",
       "E": "氯吡格雷"
     },
-    "answer": "D",
-    "explanation": "急性阶段以低分子肝素（如依诺肝素）+ 后续口服抗凝为推荐，华法林起始需并用肝素达 INR 目标。"
+    "answer": "A",
+    "explanation": "低分子肝素起效快、停药后清除也快，是华法林停用期间维持抗凝的常用方案；抗血小板药物与肝素酶均不适合桥接。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c10-002",
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.1",
+    "section_title": "第一节 抗凝与止血",
+    "knowledge_point_code": "C10.1.2",
+    "knowledge_point_title": "直接 Xa 抑制剂与肾功能",
+    "stem": "慢性肾病患者拟长期服用利伐沙班治疗静脉血栓，下列哪种做法最重要？",
+    "options": {
+      "A": "按肾功能调整剂量",
+      "B": "每日补充维生素 K",
+      "C": "合用布洛芬缓解疼痛",
+      "D": "降低饮食钾摄入",
+      "E": "停用所有降压药"
+    },
+    "answer": "A",
+    "explanation": "利伐沙班主要经肾排泄，肾功能下降会延长半衰期，因此需根据 eGFR 调整剂量；其他措施与药代动力学无直接关系。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c10-003",
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.1",
+    "section_title": "第一节 抗凝与止血",
+    "knowledge_point_code": "C10.1.3",
+    "knowledge_point_title": "维生素 K 逆转华法林",
+    "stem": "华法林 INR 达到 5.0 且无出血时，最佳处理方式是？",
+    "options": {
+      "A": "口服维生素 K",
+      "B": "静脉注射原纤维蛋白原浓缩物",
+      "C": "继续现有剂量观察",
+      "D": "加用阿司匹林",
+      "E": "给予肝素泵注"
+    },
+    "answer": "A",
+    "explanation": "口服维生素 K 可促进凝血因子恢复，适合无出血但 INR 过高者；原纤维蛋白原或肝素用于其他情况，继续观察风险较大。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c10-004",
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.1",
+    "section_title": "第一节 抗凝与止血",
+    "knowledge_point_code": "C10.1.4",
+    "knowledge_point_title": "肝素诱导的血小板减少症",
+    "stem": "接受普通肝素治疗的患者第 7 天血小板显著下降，需警惕何种并发症？",
+    "options": {
+      "A": "肝素诱导的血小板减少症",
+      "B": "铁缺乏",
+      "C": "血友病",
+      "D": "急性白血病",
+      "E": "维生素 K 缺乏"
+    },
+    "answer": "A",
+    "explanation": "肝素诱导血小板减少常在用药 5~10 天出现，应立即停用肝素并改用非肝素抗凝；其他疾病与时间关系不符。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c10-005",
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.2",
+    "section_title": "第二节 血液生成与贫血",
+    "knowledge_point_code": "C10.2.1",
+    "knowledge_point_title": "缺铁性贫血首选治疗",
+    "stem": "育龄女性缺铁性贫血，首选的补铁方案是？",
+    "options": {
+      "A": "口服硫酸亚铁",
+      "B": "静脉万古霉素",
+      "C": "口服维生素 B12",
+      "D": "皮下注射促红素",
+      "E": "静脉葡萄糖"
+    },
+    "answer": "A",
+    "explanation": "口服硫酸亚铁成本低、吸收好，是缺铁性贫血的首选；B、C、D、E 与缺铁矫治无直接关系。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c10-006",
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.2",
+    "section_title": "第二节 血液生成与贫血",
+    "knowledge_point_code": "C10.2.2",
+    "knowledge_point_title": "维生素 B12 重建",
+    "stem": "恶性贫血患者应采用哪种给药途径快速纠正维生素 B12 缺乏？",
+    "options": {
+      "A": "肌注氰钴胺",
+      "B": "口服叶酸",
+      "C": "口服维生素 C",
+      "D": "口服铁剂",
+      "E": "口服维生素 D"
+    },
+    "answer": "A",
+    "explanation": "恶性贫血由于内因子缺乏需肌注 B12 才能吸收；叶酸或铁剂不能替代。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c10-007",
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.2",
+    "section_title": "第二节 血液生成与贫血",
+    "knowledge_point_code": "C10.2.3",
+    "knowledge_point_title": "促红素与高血压",
+    "stem": "慢性肾病患者使用促红素后出现血压升高，应如何处理？",
+    "options": {
+      "A": "控制剂量并加强血压监测",
+      "B": "停用铁剂",
+      "C": "停用他汀",
+      "D": "加用阿司匹林",
+      "E": "停止透析"
+    },
+    "answer": "A",
+    "explanation": "促红素可能升高血压，需调低剂量并密切监测；其他措施与血压变化无直接关联。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c10-008",
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.3",
+    "section_title": "第三节 输血与紧急止血",
+    "knowledge_point_code": "C10.3.1",
+    "knowledge_point_title": "红细胞输注阈值",
+    "stem": "无心血管病史、Hb 7.2 g/dL 的稳定失血患者是否应输注红细胞？",
+    "options": {
+      "A": "是，达到 7 g/dL 可输注",
+      "B": "否，应等到 9 g/dL",
+      "C": "否，用铁剂即可",
+      "D": "是，应立即输血小板",
+      "E": "否，先补钙"
+    },
+    "answer": "A",
+    "explanation": "多数指南建议 Hb ≤7 g/dL 即考虑输注红细胞以改善氧供；其他做法不能快速纠正失血。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c10-009",
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.3",
+    "section_title": "第三节 输血与紧急止血",
+    "knowledge_point_code": "C10.3.2",
+    "knowledge_point_title": "血小板输注指征",
+    "stem": "血小板计数 10×10^9/L 的化疗患者无出血，应否输注？",
+    "options": {
+      "A": "是，<10×10^9/L 通常需输注",
+      "B": "否，只有出血才输",
+      "C": "否，仅静注维生素 K",
+      "D": "是，即使 >50×10^9/L 也输",
+      "E": "否，应加用抗血小板"
+    },
+    "answer": "A",
+    "explanation": "化疗导致的严重血小板减少在计数 <10×10^9/L 时建议预防性输注；其余选项不符合指南。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c10-010",
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.3",
+    "section_title": "第三节 输血与紧急止血",
+    "knowledge_point_code": "C10.3.3",
+    "knowledge_point_title": "抗纤溶药",
+    "stem": "子宫肌瘤术中大量出血，哪种药物可抑制纤溶、减少失血？",
+    "options": {
+      "A": "氨甲环酸",
+      "B": "肝素",
+      "C": "阿司匹林",
+      "D": "肝素酶",
+      "E": "依诺肽"
+    },
+    "answer": "A",
+    "explanation": "氨甲环酸为抗纤溶药，可稳定血栓；肝素、阿司匹林、依诺肽均为抗凝药，肝素酶用于逆转肝素。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c10-011",
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.3",
+    "section_title": "第三节 输血与紧急止血",
+    "knowledge_point_code": "C10.3.4",
+    "knowledge_point_title": "Xa 抑制剂逆转",
+    "stem": "需紧急手术但患者近期使用利伐沙班，哪种药物可逆转其抗凝作用？",
+    "options": {
+      "A": "安替沙班",
+      "B": "维生素 K",
+      "C": "阿司匹林",
+      "D": "布洛芬",
+      "E": "依诺肽"
+    },
+    "answer": "A",
+    "explanation": "安替沙班可特异性结合因子 Xa 抑制剂实现快速逆转；维生素 K 对 DOAC 无效，其他药非逆转剂。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c10-012",
+    "question_type": "单选",
+    "chapter_code": "C10",
+    "chapter_title": "第十章 血液系统与止血辅助用药",
+    "section_code": "C10.3",
+    "section_title": "第三节 输血与紧急止血",
+    "knowledge_point_code": "C10.3.5",
+    "knowledge_point_title": "DIC 输血策略",
+    "stem": "播散性血管内凝血合并大出血时，应优先补充哪类血液成分？",
+    "options": {
+      "A": "新鲜冻结血浆 (FFP)",
+      "B": "维生素 D",
+      "C": "口服铁剂",
+      "D": "碳酸钙",
+      "E": "链激酶"
+    },
+    "answer": "A",
+    "explanation": "DIC 伴凝血因子消耗需优先补充血浆恢复凝血因子；其他选项无法快速补充缺乏因子。",
+    "source_type": "ai_original"
   }
 ]
 

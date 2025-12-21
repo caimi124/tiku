@@ -1,22 +1,255 @@
 [
   {
+    "question_id": "c8-001",
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.1",
+    "section_title": "第一节 利尿/RAAS 调控",
+    "knowledge_point_code": "C8.1.1",
+    "knowledge_point_title": "袢利尿的首选",
+    "stem": "急性肺水肿伴明显体液潴留的患者，为立即减轻肺动脉压，首选哪类利尿药？",
+    "options": {
+      "A": "呋塞米",
+      "B": "氢氯噻嗪",
+      "C": "螺内酯",
+      "D": "依他尼酸",
+      "E": "噻嗪类复方"
+    },
+    "answer": "A",
+    "explanation": "袢利尿剂如呋塞米起效快、排钠力强，可迅速减轻肺淤血；噻嗪或保钾利尿剂起效慢，依他尼酸不常用于急症。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c8-002",
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.1",
+    "section_title": "第一节 利尿/RAAS 调控",
+    "knowledge_point_code": "C8.1.2",
+    "knowledge_point_title": "ACEI/ARB 在肾病",
+    "stem": "2 型糖尿病伴微量白蛋白尿时，为延缓肾病进展，应首选哪类药物？",
+    "options": {
+      "A": "ACEI 或 ARB",
+      "B": "钙通道阻滞剂",
+      "C": "β 受体阻滞剂",
+      "D": "袢利尿",
+      "E": "α 受体阻滞剂"
+    },
+    "answer": "A",
+    "explanation": "ACEI/ARB 可降低肾小球内压并减少蛋白尿，是糖尿病肾病最有证据的方案；其他药物虽能降压但缺乏肾保护数据。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c8-003",
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.1",
+    "section_title": "第一节 利尿/RAAS 调控",
+    "knowledge_point_code": "C8.1.3",
+    "knowledge_point_title": "噻嗪类利尿注意",
+    "stem": "慢性高血压患者长期服用氢氯噻嗪，应重点监测下列哪种电解质紊乱？",
+    "options": {
+      "A": "低钾血症",
+      "B": "高钾血症",
+      "C": "高钠血症",
+      "D": "低钙血症",
+      "E": "低镁血症"
+    },
+    "answer": "A",
+    "explanation": "噻嗪类促进钠钾排泄，低钾血症常见；高钾多见于保钾利尿，低钙则较少出现。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c8-004",
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.1",
+    "section_title": "第一节 利尿/RAAS 调控",
+    "knowledge_point_code": "C8.1.4",
+    "knowledge_point_title": "醛固酮拮抗剂的适应证",
+    "stem": "原发性醛固酮增多症确诊后，首选哪种药物控制高血压同时保钾？",
+    "options": {
+      "A": "螺内酯",
+      "B": "呋塞米",
+      "C": "氢氯噻嗪",
+      "D": "氨苯蝶啶",
+      "E": "依普利酮"
+    },
+    "answer": "A",
+    "explanation": "螺内酯直接拮抗醛固酮受体，是原醛增多的首选；其他利尿剂无法纠正激素驱动。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c8-005",
     "question_type": "单选",
     "chapter_code": "C8",
     "chapter_title": "第八章 泌尿系统与肾病用药",
     "section_code": "C8.2",
-    "section_title": "第二节 泌尿抗菌",
+    "section_title": "第二节 泌尿系统抗菌",
     "knowledge_point_code": "C8.2.1",
-    "knowledge_point_title": "尿路感染的经验用药",
-    "stem": "一名孕妇急性下尿路感染，应优先使用哪种抗菌药？",
+    "knowledge_point_title": "非复杂膀胱炎用药",
+    "stem": "健康年轻女性出现典型膀胱炎症状，尿培养未行，首选哪种药物？",
     "options": {
-      "A": "磺胺甲噁唑/甲氧苄啶",
-      "B": "阿奇霉素",
-      "C": "替加环素",
-      "D": "美洛西林/舒巴坦",
-      "E": "雷尼替丁"
+      "A": "呋喃妥因",
+      "B": "头孢哌酮",
+      "C": "阿米卡星",
+      "D": "万古霉素",
+      "E": "脲嘧啶"
     },
-    "answer": "D",
-    "explanation": "孕妇不能使用磺胺类、美罗培南，首选β-内酰胺类（如美洛西林/舒巴坦）。"
+    "answer": "A",
+    "explanation": "呋喃妥因在尿液中浓度高且耐药率低，是单纯性膀胱炎的经验首选；其他药需静脉给药或覆盖过度。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c8-006",
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.2",
+    "section_title": "第二节 泌尿系统抗菌",
+    "knowledge_point_code": "C8.2.2",
+    "knowledge_point_title": "肾盂肾炎首选",
+    "stem": "社区获得性急性肾盂肾炎需口服治疗时，下列哪种药物具有良好肾组织穿透性？",
+    "options": {
+      "A": "左氧氟沙星",
+      "B": "甲硝唑",
+      "C": "头孢曲松",
+      "D": "克拉霉素",
+      "E": "阿莫西林"
+    },
+    "answer": "A",
+    "explanation": "左氧氟沙星为氟喹诺酮类，组织穿透力强，适合肾盂肾炎；甲硝唑对厌氧菌，头孢曲松需静脉，克拉霉素/阿莫西林对阴性菌覆盖有限。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c8-007",
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.2",
+    "section_title": "第二节 泌尿系统抗菌",
+    "knowledge_point_code": "C8.2.3",
+    "knowledge_point_title": "慢性前列腺炎抗菌",
+    "stem": "慢性细菌性前列腺炎需长期疗程抗菌，下列哪种药物因对前列腺组织亲和而常用？",
+    "options": {
+      "A": "环丙沙星",
+      "B": "甲硝唑",
+      "C": "阿奇霉素",
+      "D": "青霉素",
+      "E": "庆大霉素"
+    },
+    "answer": "A",
+    "explanation": "环丙沙星等氟喹诺酮在前列腺浓度高，疗程可达 4~6 周；其余药物穿透差或针对其他病原。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c8-008",
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.2",
+    "section_title": "第二节 泌尿系统抗菌",
+    "knowledge_point_code": "C8.2.4",
+    "knowledge_point_title": "复杂尿路感染联合用药",
+    "stem": "免疫功能低下的复杂尿路感染患者需经验性联合覆盖，下列哪种组合兼顾耐药覆盖与组织穿透？",
+    "options": {
+      "A": "左氧氟沙星 + 阿米卡星",
+      "B": "头孢呋辛 + 呋喃妥因",
+      "C": "头孢他啶 + 替加环素",
+      "D": "阿莫西林 + 克拉维酸",
+      "E": "庆大霉素 + 甲氧苄啶"
+    },
+    "answer": "A",
+    "explanation": "本组合兼具口服/注射灵活性，左氧氟沙星覆盖革兰阴性菌并可口服，阿米卡星强化抗 PsA 作用；C 选项更适合重症 ICU，B/D/E 覆盖范围或穿透力不足。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c8-009",
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.3",
+    "section_title": "第三节 肾病支持治疗",
+    "knowledge_point_code": "C8.3.1",
+    "knowledge_point_title": "超急性高钾血症处理",
+    "stem": "急性高钾血症伴 ECG 改变时，首要采取哪种措施稳定心肌？",
+    "options": {
+      "A": "静脉注射葡萄糖/胰岛素复合液",
+      "B": "口服钾盐",
+      "C": "静脉注射氯化钠",
+      "D": "口服钙片",
+      "E": "皮下注射肾上腺素"
+    },
+    "answer": "A",
+    "explanation": "葡萄糖联合胰岛素可迅速将钾转入细胞，是急救首选；其他做法不能快速降低血钾。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c8-010",
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.3",
+    "section_title": "第三节 肾病支持治疗",
+    "knowledge_point_code": "C8.3.2",
+    "knowledge_point_title": "肾性骨病用药选择",
+    "stem": "透析患者常出现高磷血症，首选哪类药物控制磷吸收？",
+    "options": {
+      "A": "碳酸镧",
+      "B": "钙片",
+      "C": "维生素 D",
+      "D": "醋酸钙",
+      "E": "磷酸氢钠"
+    },
+    "answer": "A",
+    "explanation": "碳酸镧为非钙类磷结合剂，可避免高钙血症；钙盐或维生素 D 可能增加钙负荷，磷酸氢钠反而含磷。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c8-011",
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.3",
+    "section_title": "第三节 肾病支持治疗",
+    "knowledge_point_code": "C8.3.3",
+    "knowledge_point_title": "肾性贫血治疗",
+    "stem": "慢性肾病伴轻度贫血，首选哪类药物促进造血？",
+    "options": {
+      "A": "重组人促红素",
+      "B": "铁剂",
+      "C": "叶酸",
+      "D": "维生素 B12",
+      "E": "肝素"
+    },
+    "answer": "A",
+    "explanation": "肾性贫血的病因是促红素缺乏，应补充重组人促红素；铁剂、叶酸、维生素 B12 仅适用于相应营养缺乏。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c8-012",
+    "question_type": "单选",
+    "chapter_code": "C8",
+    "chapter_title": "第八章 泌尿系统与肾病用药",
+    "section_code": "C8.3",
+    "section_title": "第三节 肾病支持治疗",
+    "knowledge_point_code": "C8.3.4",
+    "knowledge_point_title": "移植免疫抑制",
+    "stem": "肾移植患者长期免疫抑制，首选哪种药物可抑制钙调神经磷酸酶？",
+    "options": {
+      "A": "他克莫司",
+      "B": "吗替麦考酚",
+      "C": "环孢素",
+      "D": "泼尼松",
+      "E": "环磷酰胺"
+    },
+    "answer": "A",
+    "explanation": "他克莫司可直接抑制钙调神经磷酸酶阻断 T 细胞活化，是肾移植常用主干药；其他药物机制不同或多作辅助。",
+    "source_type": "ai_original"
   }
 ]
 

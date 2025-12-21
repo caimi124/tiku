@@ -1,22 +1,255 @@
 [
   {
+    "question_id": "c11-001",
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.1",
+    "section_title": "第一节 传统化疗药物",
+    "knowledge_point_code": "C11.1.1",
+    "knowledge_point_title": "蒽环类心脏毒性",
+    "stem": "乳腺癌采用蒽环类化疗时，需重点监测哪项器官功能？",
+    "options": {
+      "A": "心功能",
+      "B": "肝功能",
+      "C": "肾功能",
+      "D": "肺功能",
+      "E": "血糖"
+    },
+    "answer": "A",
+    "explanation": "蒽环类药物存在剂量相关的心肌毒性，应定期评估左心室射血分数；其他器官虽需关注但非主要风险。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c11-002",
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.1",
+    "section_title": "第一节 传统化疗药物",
+    "knowledge_point_code": "C11.1.2",
+    "knowledge_point_title": "环磷酰胺膀胱毒性",
+    "stem": "接受环磷酰胺治疗的患者需预防何种泌尿系统不良反应？",
+    "options": {
+      "A": "出血性膀胱炎",
+      "B": "间质性肺炎",
+      "C": "肾结石",
+      "D": "膀胱结石",
+      "E": "尿酸结晶"
+    },
+    "answer": "A",
+    "explanation": "环磷酰胺代谢物可刺激膀胱引发出血，常需配合水化及美司钠；其他选项并非典型毒性。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c11-003",
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.1",
+    "section_title": "第一节 传统化疗药物",
+    "knowledge_point_code": "C11.1.3",
+    "knowledge_point_title": "叶酸拮抗与救援",
+    "stem": "高剂量甲氨蝶呤治疗后需用何种药物降低毒性？",
+    "options": {
+      "A": "亚叶酸钙",
+      "B": "右旋糖酐",
+      "C": "阿司匹林",
+      "D": "维生素 C",
+      "E": "氯吡格雷"
+    },
+    "answer": "A",
+    "explanation": "亚叶酸钙可补充正常叶酸，保护骨髓与肠黏膜，是甲氨蝶呤救援标准方案。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c11-004",
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.1",
+    "section_title": "第一节 传统化疗药物",
+    "knowledge_point_code": "C11.1.4",
+    "knowledge_point_title": "紫杉醇与神经毒性",
+    "stem": "紫杉醇类药物最常见的神经系统副作用是？",
+    "options": {
+      "A": "周围神经病变",
+      "B": "面瘫",
+      "C": "小脑功能障碍",
+      "D": "癫痫发作",
+      "E": "精神错乱"
+    },
+    "answer": "A",
+    "explanation": "紫杉醇易致周围神经麻木、刺痛等症状；其他类型神经病变少见。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c11-005",
     "question_type": "单选",
     "chapter_code": "C11",
     "chapter_title": "第十一章 肿瘤治疗与支持用药",
     "section_code": "C11.2",
-    "section_title": "第二节 靶向与免疫",
+    "section_title": "第二节 靶向与免疫治疗",
     "knowledge_point_code": "C11.2.1",
-    "knowledge_point_title": "EGFR 靶向治疗耐药",
-    "stem": "肺腺癌患者使用吉非替尼 8 个月后出现突变 T790M，接下来应选哪种药物？",
+    "knowledge_point_title": "EGFR 抑制剂皮疹",
+    "stem": "非小细胞肺癌患者服用吉非替尼后出现痤疮样皮疹，其机制主要是？",
     "options": {
-      "A": "奥希替尼",
-      "B": "培美曲塞",
-      "C": "贝伐珠单抗",
-      "D": "阿替利珠单抗",
-      "E": "紫杉醇"
+      "A": "EGFR 抑制导致表皮更新受阻",
+      "B": "细菌感染",
+      "C": "激素缺乏",
+      "D": "维生素 A 过量",
+      "E": "免疫抑制"
     },
     "answer": "A",
-    "explanation": "T790M 突变是吉非替尼耐药的常见机制，应切换到可覆盖该突变的三代 EGFR 抑制剂奥希替尼。"
+    "explanation": "EGFR 抑制剂阻断皮肤生长因子通路导致屏障破坏，出现痤疮样皮疹，需对症处理；非感染所致。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c11-006",
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.2",
+    "section_title": "第二节 靶向与免疫治疗",
+    "knowledge_point_code": "C11.2.2",
+    "knowledge_point_title": "HER2 抑制剂心毒性",
+    "stem": "乳腺癌患者应用曲妥珠单抗时最需监测哪项不良反应？",
+    "options": {
+      "A": "左心室射血分数下降",
+      "B": "肝酶升高",
+      "C": "肾功能下降",
+      "D": "肺纤维化",
+      "E": "皮疹"
+    },
+    "answer": "A",
+    "explanation": "曲妥珠单抗可影响心肌细胞，需定期评估左心室功能；其他不良反应相对少见。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c11-007",
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.2",
+    "section_title": "第二节 靶向与免疫治疗",
+    "knowledge_point_code": "C11.2.3",
+    "knowledge_point_title": "抗 VEGF 伴栓塞风险",
+    "stem": "贝伐单抗治疗过程中常见需警惕的并发症是？",
+    "options": {
+      "A": "动静脉血栓事件",
+      "B": "肝炎",
+      "C": "贫血",
+      "D": "低钾血症",
+      "E": "晕厥"
+    },
+    "answer": "A",
+    "explanation": "抗 VEGF 药物可引起血管内皮损伤增加血栓风险，需监测；B~E 不是典型不良反应。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c11-008",
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.2",
+    "section_title": "第二节 靶向与免疫治疗",
+    "knowledge_point_code": "C11.2.4",
+    "knowledge_point_title": "PD-1 抑制剂与肺毒性",
+    "stem": "免疫检查点抑制剂治疗中需警惕哪种肺部免疫相关不良反应？",
+    "options": {
+      "A": "免疫相关性肺炎",
+      "B": "慢阻肺",
+      "C": "支气管哮喘",
+      "D": "肺栓塞",
+      "E": "过敏性鼻炎"
+    },
+    "answer": "A",
+    "explanation": "PD-1/PD-L1 抑制剂可诱发免疫相关肺炎，若出现咳嗽/影像异常需及时处理；其他选项非典型免疫不良反应。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c11-009",
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.3",
+    "section_title": "第三节 护理与支持",
+    "knowledge_point_code": "C11.3.1",
+    "knowledge_point_title": "抗呕吐联合",
+    "stem": "高致吐性化疗开始前，首选哪种联合方案以预防呕吐？",
+    "options": {
+      "A": "5-HT3 拮抗剂 + NK1 拮抗剂",
+      "B": "阿片类 + 丙戊酸",
+      "C": "抗组胺 + 青霉素",
+      "D": "甲氨蝶呤 + 他汀",
+      "E": "氯吡格雷 + 依托咪定"
+    },
+    "answer": "A",
+    "explanation": "5-HT3 结合 NK1 拮抗剂为高致吐化疗的标准预防方案；其余组合无抗呕吐协同作用。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c11-010",
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.3",
+    "section_title": "第三节 护理与支持",
+    "knowledge_point_code": "C11.3.2",
+    "knowledge_point_title": "粒细胞刺激因子",
+    "stem": "化疗后出现中性粒细胞减少，哪种生长因子能加速恢复？",
+    "options": {
+      "A": "粒细胞集落刺激因子",
+      "B": "促红素",
+      "C": "白介素-2",
+      "D": "红细胞生成素",
+      "E": "促甲状腺素"
+    },
+    "answer": "A",
+    "explanation": "G-CSF 专门促进中性粒细胞生成，可降低感染风险；其他生长因子靶点不同。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c11-011",
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.3",
+    "section_title": "第三节 护理与支持",
+    "knowledge_point_code": "C11.3.3",
+    "knowledge_point_title": "骨转移支持",
+    "stem": "骨转移患者为预防病理骨折，常长期使用哪类药物？",
+    "options": {
+      "A": "双膦酸盐",
+      "B": "抗生素",
+      "C": "抗菌肽",
+      "D": "胆固醇吸收抑制剂",
+      "E": "利尿剂"
+    },
+    "answer": "A",
+    "explanation": "双膦酸盐抑制破骨细胞活动，减少骨相关事件；其余选项无骨保护作用。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c11-012",
+    "question_type": "单选",
+    "chapter_code": "C11",
+    "chapter_title": "第十一章 肿瘤治疗与支持用药",
+    "section_code": "C11.3",
+    "section_title": "第三节 护理与支持",
+    "knowledge_point_code": "C11.3.4",
+    "knowledge_point_title": "肿瘤溶解综合征预防",
+    "stem": "高肿瘤负荷的白血病患者化疗前为防止肿瘤溶解综合征，应使用哪种药物？",
+    "options": {
+      "A": "别嘌醇",
+      "B": "利尿剂",
+      "C": "胰岛素",
+      "D": "碳酸氢钠",
+      "E": "螺内酯"
+    },
+    "answer": "A",
+    "explanation": "别嘌醇抑制黄嘌呤氧化酶，可降低尿酸堆积；其他药物不能直接减少溶解综合征风险。",
+    "source_type": "ai_original"
   }
 ]
 

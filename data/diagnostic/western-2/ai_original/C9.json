@@ -1,22 +1,255 @@
 [
   {
+    "question_id": "c9-001",
     "question_type": "单选",
     "chapter_code": "C9",
-    "chapter_title": "第九章 抗感染与免疫调节用药",
+    "chapter_title": "第九章 抗感染与免疫调节",
     "section_code": "C9.1",
-    "section_title": "第一节 抗菌药",
-    "knowledge_point_code": "C9.1.3",
-    "knowledge_point_title": "抗菌药与耐药",
-    "stem": "对于药敏结果显示对氨苄西林/舒巴坦敏感的复杂腹腔感染，首选的静脉方案是？",
+    "section_title": "第一节 抗菌药物",
+    "knowledge_point_code": "C9.1.1",
+    "knowledge_point_title": "β-内酰胺/β-内酰胺酶抑制剂",
+    "stem": "多耐肺炎链球菌感染时，需使用哪类药物增加对 β-内酰胺酶的抵抗力？",
     "options": {
-      "A": "氨苄西林/舒巴坦",
-      "B": "头孢他啶",
-      "C": "亚胺培南/西司他丁",
+      "A": "阿莫西林/克拉维酸钾",
+      "B": "青霉素 G",
+      "C": "头孢呋辛",
       "D": "阿奇霉素",
-      "E": "庆大霉素"
+      "E": "利福平"
     },
     "answer": "A",
-    "explanation": "感受氨苄西林/舒巴坦则优先使用该组合，其他方案如亚胺培南为广谱但不必要。"
+    "explanation": "克拉维酸可抑制细菌产生的 β-内酰胺酶，使阿莫西林仍然有效；单用青霉素或头孢易被酶破坏，其他药物机制不同。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c9-002",
+    "question_type": "单选",
+    "chapter_code": "C9",
+    "chapter_title": "第九章 抗感染与免疫调节",
+    "section_code": "C9.1",
+    "section_title": "第一节 抗菌药物",
+    "knowledge_point_code": "C9.1.2",
+    "knowledge_point_title": "MRSA 经验治疗",
+    "stem": "疑似院内获得性 MRSA 感染时，首选下列哪种药物？",
+    "options": {
+      "A": "万古霉素",
+      "B": "头孢克洛",
+      "C": "头孢他啶",
+      "D": "左氧氟沙星",
+      "E": "头孢呋辛"
+    },
+    "answer": "A",
+    "explanation": "万古霉素对 MRSA 仍具可靠活性，是经验治疗首选；其他 β-内酰胺或氟喹诺酮对 MRSA 无效。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c9-003",
+    "question_type": "单选",
+    "chapter_code": "C9",
+    "chapter_title": "第九章 抗感染与免疫调节",
+    "section_code": "C9.1",
+    "section_title": "第一节 抗菌药物",
+    "knowledge_point_code": "C9.1.3",
+    "knowledge_point_title": "青霉素过敏替代",
+    "stem": "青霉素严重过敏患者需治疗链球菌性咽炎时，哪种药物为常用替代？",
+    "options": {
+      "A": "红霉素",
+      "B": "阿莫西林",
+      "C": "青霉素 V",
+      "D": "头孢克洛",
+      "E": "阿奇霉素"
+    },
+    "answer": "A",
+    "explanation": "大环内酯类如红霉素对链球菌有效且与青霉素无交叉过敏；阿莫西林/头孢存在交叉风险，阿奇霉素亦可用但非经典。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c9-004",
+    "question_type": "单选",
+    "chapter_code": "C9",
+    "chapter_title": "第九章 抗感染与免疫调节",
+    "section_code": "C9.1",
+    "section_title": "第一节 抗菌药物",
+    "knowledge_point_code": "C9.1.4",
+    "knowledge_point_title": "肠道类抗菌",
+    "stem": "对产毒性大肠杆菌引发的旅行者腹泻，常选用哪种非吸收性抗菌药？",
+    "options": {
+      "A": "利福昔明",
+      "B": "左氧氟沙星",
+      "C": "莫西沙星",
+      "D": "阿莫西林",
+      "E": "甲硝唑"
+    },
+    "answer": "A",
+    "explanation": "利福昔明主要在肠腔发挥作用，可减少肠道毒素；其他药为系统吸收型，用于更重感染。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c9-005",
+    "question_type": "单选",
+    "chapter_code": "C9",
+    "chapter_title": "第九章 抗感染与免疫调节",
+    "section_code": "C9.2",
+    "section_title": "第二节 抗病毒与抗真菌",
+    "knowledge_point_code": "C9.2.1",
+    "knowledge_point_title": "流感抗病毒",
+    "stem": "流行季节出现高热、肌痛、咳嗽的流感病例，确诊后 48 小时内首选哪种药物？",
+    "options": {
+      "A": "奥司他韦",
+      "B": "干扰素",
+      "C": "利巴韦林",
+      "D": "阿昔洛韦",
+      "E": "氯雷他定"
+    },
+    "answer": "A",
+    "explanation": "奥司他韦抑制神经氨酸酶，48 小时内使用可缩短病程；干扰素和利巴韦林为其他病毒用药。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c9-006",
+    "question_type": "单选",
+    "chapter_code": "C9",
+    "chapter_title": "第九章 抗感染与免疫调节",
+    "section_code": "C9.2",
+    "section_title": "第二节 抗病毒与抗真菌",
+    "knowledge_point_code": "C9.2.2",
+    "knowledge_point_title": "乙肝抗病毒",
+    "stem": "慢性乙型肝炎患者经评估需长期抗病毒治疗，首选哪种核苷类似物？",
+    "options": {
+      "A": "恩替卡韦",
+      "B": "拉米夫定",
+      "C": "阿德福韦",
+      "D": "干扰素",
+      "E": "两性霉素B"
+    },
+    "answer": "A",
+    "explanation": "恩替卡韦活性强、耐药率低，是目前首选；拉米夫定与阿德福韦耐药率较高，干扰素为免疫制剂。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c9-007",
+    "question_type": "单选",
+    "chapter_code": "C9",
+    "chapter_title": "第九章 抗感染与免疫调节",
+    "section_code": "C9.2",
+    "section_title": "第二节 抗病毒与抗真菌",
+    "knowledge_point_code": "C9.2.3",
+    "knowledge_point_title": "抗真菌治疗",
+    "stem": "念珠菌性口咽炎常用哪种局部制剂治疗？",
+    "options": {
+      "A": "制霉菌素含漱液",
+      "B": "酮康唑洗剂",
+      "C": "两性霉素B 灌肠",
+      "D": "氟康唑静滴",
+      "E": "阿昔洛韦凝胶"
+    },
+    "answer": "A",
+    "explanation": "制霉菌素含漱液可局部清除念珠菌，安全性高；酮康唑洗剂用于皮肤，两性霉素/氟康唑为系统用药。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c9-008",
+    "question_type": "单选",
+    "chapter_code": "C9",
+    "chapter_title": "第九章 抗感染与免疫调节",
+    "section_code": "C9.2",
+    "section_title": "第二节 抗病毒与抗真菌",
+    "knowledge_point_code": "C9.2.4",
+    "knowledge_point_title": "带状疱疹抗病毒",
+    "stem": "带状疱疹出现后 48 小时内，以下哪种药物可缩短病程并减少后遗神经痛？",
+    "options": {
+      "A": "阿昔洛韦",
+      "B": "干扰素",
+      "C": "阿莫西林",
+      "D": "洛伐他汀",
+      "E": "氯雷他定"
+    },
+    "answer": "A",
+    "explanation": "阿昔洛韦为核苷类似物，可抑制疱疹病毒复制；其他药物无直接作用。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c9-009",
+    "question_type": "单选",
+    "chapter_code": "C9",
+    "chapter_title": "第九章 抗感染与免疫调节",
+    "section_code": "C9.3",
+    "section_title": "第三节 免疫调节与生物制剂",
+    "knowledge_point_code": "C9.3.1",
+    "knowledge_point_title": "干扰素应用",
+    "stem": "慢性乙型肝炎抗病毒治疗中，干扰素的主要作用是什么？",
+    "options": {
+      "A": "增强细胞免疫反应",
+      "B": "抗菌作用",
+      "C": "抑制血小板聚集",
+      "D": "抑制肾素",
+      "E": "促进胆固醇合成"
+    },
+    "answer": "A",
+    "explanation": "干扰素通过激活 NK 细胞与 Th1 反应增强细胞免疫，对病毒复制产生抑制；其他选项不符合其机制。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c9-010",
+    "question_type": "单选",
+    "chapter_code": "C9",
+    "chapter_title": "第九章 抗感染与免疫调节",
+    "section_code": "C9.3",
+    "section_title": "第三节 免疫调节与生物制剂",
+    "knowledge_point_code": "C9.3.2",
+    "knowledge_point_title": "免疫抑制药物",
+    "stem": "类风湿关节炎患者需长期免疫抑制，以下哪种药物通过抑制嘌呤合成发挥作用？",
+    "options": {
+      "A": "吗替麦考酚酯",
+      "B": "氯喹",
+      "C": "柳氮磺吡啶",
+      "D": "甲氨蝶呤",
+      "E": "泼尼松"
+    },
+    "answer": "A",
+    "explanation": "吗替麦考酚酯抑制次黄嘌呤单磷酸脱氢酶，阻断嘌呤合成；其他药物通过不同通路发挥免疫调节作用。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c9-011",
+    "question_type": "单选",
+    "chapter_code": "C9",
+    "chapter_title": "第九章 抗感染与免疫调节",
+    "section_code": "C9.3",
+    "section_title": "第三节 免疫调节与生物制剂",
+    "knowledge_point_code": "C9.3.3",
+    "knowledge_point_title": "单抗抗 TNF",
+    "stem": "重度溃疡性结肠炎患者考虑使用生物制剂。下列哪种是完全人源化的抗 TNF-α 单克隆抗体？",
+    "options": {
+      "A": "英夫利昔单抗",
+      "B": "阿达木单抗",
+      "C": "依那西普",
+      "D": "托珠单抗",
+      "E": "阿巴西普"
+    },
+    "answer": "B",
+    "explanation": "阿达木单抗为全人源化单抗；英夫利昔单抗为嵌合抗体，依那西普为受体融合蛋白，托珠单抗与阿巴西普靶点不同。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c9-012",
+    "question_type": "单选",
+    "chapter_code": "C9",
+    "chapter_title": "第九章 抗感染与免疫调节",
+    "section_code": "C9.3",
+    "section_title": "第三节 免疫调节与生物制剂",
+    "knowledge_point_code": "C9.3.4",
+    "knowledge_point_title": "疫苗常见不良反应",
+    "stem": "接种流感疫苗后最常见的局部反应是？",
+    "options": {
+      "A": "注射部位疼痛与红肿",
+      "B": "高钾血症",
+      "C": "胃出血",
+      "D": "肝功能衰竭",
+      "E": "脑膜炎"
+    },
+    "answer": "A",
+    "explanation": "大多数疫苗仅引起局部疼痛或红肿属正常反应，其余严重反应极少见。",
+    "source_type": "ai_original"
   }
 ]
 

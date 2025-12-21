@@ -1,22 +1,255 @@
 [
   {
+    "question_id": "c6-001",
     "question_type": "单选",
     "chapter_code": "C6",
     "chapter_title": "第六章 内分泌及代谢性疾病用药",
     "section_code": "C6.1",
-    "section_title": "第一节 糖尿病与代谢评估",
-    "knowledge_point_code": "C6.1.3",
-    "knowledge_point_title": "SGLT2 抑制剂的适应证",
-    "stem": "2 型糖尿病患者同时伴充血性心衰史，最合适的降糖药是哪一种？",
+    "section_title": "第一节 糖尿病基础与风险管理",
+    "knowledge_point_code": "C6.1.1",
+    "knowledge_point_title": "糖化血红蛋白目标",
+    "stem": "65 岁 2 型糖尿病患者无心血管病史、肾功能正常，哪项 HbA1c 目标最适合长期控制？",
     "options": {
-      "A": "达格列净",
-      "B": "格列美脲",
+      "A": "＜7.0%",
+      "B": "＜6.0%",
+      "C": "＜8.5%",
+      "D": "＜5.5%",
+      "E": "＜9.0%"
+    },
+    "answer": "A",
+    "explanation": "本题考查 HbA1c 目标。一般 60~75 岁、自理良好、无严重并发症者可将目标定于＜7.0%；＜6.0% 过低易发生低血糖；＞8.5% 仍属控制不佳。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c6-002",
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.1",
+    "section_title": "第一节 糖尿病基础与风险管理",
+    "knowledge_point_code": "C6.1.2",
+    "knowledge_point_title": "生活方式干预",
+    "stem": "哪项生活方式调整最有助于 2 型糖尿病患者改善胰岛素敏感性？",
+    "options": {
+      "A": "规律有氧运动",
+      "B": "单纯增加膳食脂肪",
+      "C": "完全禁饮水",
+      "D": "长期卧床休息",
+      "E": "每日只吃一次大餐"
+    },
+    "answer": "A",
+    "explanation": "本题考查生活方式。规律有氧运动（如快走、游泳）可改善胰岛素敏感性；其他选项均不利于糖代谢和整体健康。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c6-003",
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.1",
+    "section_title": "第一节 糖尿病基础与风险管理",
+    "knowledge_point_code": "C6.1.3",
+    "knowledge_point_title": "空腹血糖监测",
+    "stem": "糖尿病患者每日监测空腹血糖，目标范围为？",
+    "options": {
+      "A": "4.4~7.0 mmol/L",
+      "B": "8.0~10.0 mmol/L",
+      "C": "2.5~3.5 mmol/L",
+      "D": "10.0~12.0 mmol/L",
+      "E": ">12.0 mmol/L"
+    },
+    "answer": "A",
+    "explanation": "本题考查空腹血糖目标。常规目标为 4.4~7.0 mmol/L；其余选项均明显高或低，不符合常规控制。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c6-004",
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.1",
+    "section_title": "第一节 糖尿病基础与风险管理",
+    "knowledge_point_code": "C6.1.4",
+    "knowledge_point_title": "高危人群筛查",
+    "stem": "下列哪一项最能反映糖尿病患者心血管风险，需要优先评估？",
+    "options": {
+      "A": "血压控制情况",
+      "B": "头皮屑程度",
+      "C": "尿酸水平",
+      "D": "肠胃蠕动",
+      "E": "听力下降"
+    },
+    "answer": "A",
+    "explanation": "本题考查心血管风险。血压与糖尿病合并心血管事件密切相关，是优先评估与控制目标；其他选项虽可能涉及合并症，但不属于心血管风险核心指标。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c6-005",
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.2",
+    "section_title": "第二节 内分泌药物治疗",
+    "knowledge_point_code": "C6.2.1",
+    "knowledge_point_title": "长效基础胰岛素",
+    "stem": "2 型糖尿病患者在口服药控制不佳后首次加用胰岛素，以下哪种适合作为基础胰岛素？",
+    "options": {
+      "A": "甘精胰岛素",
+      "B": "胰岛素泵短效",
+      "C": "胰岛素类似物餐时短效",
+      "D": "葡萄糖片",
+      "E": "阿卡波糖"
+    },
+    "answer": "A",
+    "explanation": "本题考查基础胰岛素。甘精胰岛素为常用的长效基础制剂；其他选项要么为餐时用药、口服降糖药或糖补剂，不符合基础需求。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c6-006",
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.2",
+    "section_title": "第二节 内分泌药物治疗",
+    "knowledge_point_code": "C6.2.2",
+    "knowledge_point_title": "二甲双胍常见优势",
+    "stem": "2 型糖尿病首选口服药物二甲双胍的主要作用机制是？",
+    "options": {
+      "A": "减少肝糖生成",
+      "B": "刺激胰岛素分泌",
+      "C": "延缓葡萄糖吸收",
+      "D": "抑制食欲",
+      "E": "促进脂肪吸收"
+    },
+    "answer": "A",
+    "explanation": "本题考查二甲双胍机制。其主要通过降低肝脏糖生成与改善周围组织胰岛素敏感性；其他选项描述了不同药物或机制。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c6-007",
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.2",
+    "section_title": "第二节 内分泌药物治疗",
+    "knowledge_point_code": "C6.2.3",
+    "knowledge_point_title": "甲状腺激素替代",
+    "stem": "甲状腺功能减退患者日常维持治疗首选药物是？",
+    "options": {
+      "A": "左甲状腺素钠",
+      "B": "甲巯咪唑",
+      "C": "普萘洛尔",
+      "D": "地塞米松",
+      "E": "丙戊酸钠"
+    },
+    "answer": "A",
+    "explanation": "本题考查甲状腺素替代。左甲状腺素钠（LT4）为标准维持治疗；其他选项为抗甲状腺、β 受体阻断剂或抗癫痫药。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c6-008",
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.2",
+    "section_title": "第二节 内分泌药物治疗",
+    "knowledge_point_code": "C6.2.4",
+    "knowledge_point_title": "醛固酮拮抗剂",
+    "stem": "充血性心力衰竭合并低钾的糖尿病患者，哪种药物既可保钾又抑制醛固酮？",
+    "options": {
+      "A": "螺内酯",
+      "B": "氢氯噻嗪",
+      "C": "呋塞米",
+      "D": "卡托普利",
+      "E": "阿司匹林"
+    },
+    "answer": "A",
+    "explanation": "螺内酯为醛固酮受体拮抗剂，具有保钾效应；氢氯噻嗪/呋塞米为排钾利尿药；其他选项与醛固酮无直接拮抗作用。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c6-009",
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.3",
+    "section_title": "第三节 代谢性疾病与并发管理",
+    "knowledge_point_code": "C6.3.1",
+    "knowledge_point_title": "痛风慢性管理",
+    "stem": "慢性痛风患者每天尿酸控制需低于 360 µmol/L，首选哪类药物进行降尿酸？",
+    "options": {
+      "A": "别嘌醇",
+      "B": "洛伐他汀",
       "C": "阿卡波糖",
-      "D": "二甲双胍",
+      "D": "甲氨蝶呤",
       "E": "泮托拉唑"
     },
     "answer": "A",
-    "explanation": "SGLT2 抑制剂（如达格列净）对心衰有保护作用，是有心血管病史患者的合理选择。"
+    "explanation": "本题考查慢性降尿酸药。别嘌醇抑制黄嘌呤氧化酶，是首选药物；其他选项为降脂、降糖或抗原，非降尿酸。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c6-010",
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.3",
+    "section_title": "第三节 代谢性疾病与并发管理",
+    "knowledge_point_code": "C6.3.2",
+    "knowledge_point_title": "脂质异常首选干预",
+    "stem": "2 型糖尿病伴轻度高 LDL-C，首选哪类药物进行干预？",
+    "options": {
+      "A": "他汀类",
+      "B": "降糖药",
+      "C": "利尿剂",
+      "D": "抗凝药",
+      "E": "抗生素"
+    },
+    "answer": "A",
+    "explanation": "他汀类为降低 LDL-C 的首选，且可提供心血管保护；其余选项作用方向与血脂控制无关。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c6-011",
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.3",
+    "section_title": "第三节 代谢性疾病与并发管理",
+    "knowledge_point_code": "C6.3.3",
+    "knowledge_point_title": "肥胖伴随代谢",
+    "stem": "肥胖患者长期代谢异常，合并睡眠呼吸暂停且 BMI 40 kg/m²，哪种治疗干预可考虑在药物之外优先推荐？",
+    "options": {
+      "A": "生活方式+体重管理",
+      "B": "单次大剂量进食",
+      "C": "长期静坐",
+      "D": "过度限盐",
+      "E": "滥用减肥药"
+    },
+    "answer": "A",
+    "explanation": "本题考查肥胖干预。生活方式与体重管理（饮食、运动）是基础策略；其余选项为不科学或有害行为。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c6-012",
+    "question_type": "单选",
+    "chapter_code": "C6",
+    "chapter_title": "第六章 内分泌及代谢性疾病用药",
+    "section_code": "C6.3",
+    "section_title": "第三节 代谢性疾病与并发管理",
+    "knowledge_point_code": "C6.3.4",
+    "knowledge_point_title": "低血糖急救",
+    "stem": "2 型糖尿病患者出现低血糖，最便于患者自我应急的是？",
+    "options": {
+      "A": "口服葡萄糖片",
+      "B": "静脉胰岛素",
+      "C": "口服甲巯咪唑",
+      "D": "口服普瑞巴林",
+      "E": "肌注黄体酮"
+    },
+    "answer": "A",
+    "explanation": "本题考查低血糖急救。口服葡萄糖片为最常用应急方法；其他选项与低血糖处理无关或会加重情况。",
+    "source_type": "ai_original"
   }
 ]
 

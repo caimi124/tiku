@@ -1,22 +1,255 @@
 [
   {
+    "question_id": "c7-001",
     "question_type": "单选",
     "chapter_code": "C7",
     "chapter_title": "第七章 心血管系统用药",
     "section_code": "C7.1",
-    "section_title": "第一节 高血压药",
-    "knowledge_point_code": "C7.1.2",
-    "knowledge_point_title": "ACEI 与肾功能",
-    "stem": "高血压患者首次服用依那普利后出现血清肌酐升高 40%，下一步应如何处理？",
+    "section_title": "第一节 高血压药物选择",
+    "knowledge_point_code": "C7.1.1",
+    "knowledge_point_title": "ACEI/ARB 的肾脏保护",
+    "stem": "2 型糖尿病患者合并微量白蛋白尿，为延缓肾病进展应首选下列哪类降压药？",
     "options": {
-      "A": "继续观察并复查肌酐",
-      "B": "立即停药并改用钙通道阻滞剂",
-      "C": "减半剂量",
-      "D": "同时加用噻嗪类利尿剂",
-      "E": "添加螺内酯"
+      "A": "ACEI 或 ARB",
+      "B": "β 受体阻滞剂",
+      "C": "噻嗪类利尿剂",
+      "D": "钙通道拮抗剂",
+      "E": "α 受体阻滞剂"
     },
     "answer": "A",
-    "explanation": "ACEI 可在起始期引起肾灌注压下降，肌酐升高 <30% 可继续观察，此处升高 40% 需评估肾动脉狭窄并复查再决定。"
+    "explanation": "ACEI/ARB 可降低肾小球内压并减少蛋白尿，是糖尿病肾病伴微量白蛋白尿的一线方案；其他药物虽可降压，但肾脏保护证据不足。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c7-002",
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.1",
+    "section_title": "第一节 高血压药物选择",
+    "knowledge_point_code": "C7.1.2",
+    "knowledge_point_title": "兼具 α/β 拮抗的 β 阻滞剂",
+    "stem": "高血压合并慢性心力衰竭的患者需使用可降低死亡率的 β 阻滞剂，下列哪种药物兼具 α1 与 β 受体阻滞作用？",
+    "options": {
+      "A": "卡维地洛",
+      "B": "美托洛尔",
+      "C": "比索洛尔",
+      "D": "阿替洛尔",
+      "E": "普萘洛尔"
+    },
+    "answer": "A",
+    "explanation": "卡维地洛同时阻断 β 与 α1 受体，可改善血流动力学并降低心衰患者死亡风险；其他选项缺乏显著 α1 拮抗作用。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c7-003",
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.1",
+    "section_title": "第一节 高血压药物选择",
+    "knowledge_point_code": "C7.1.3",
+    "knowledge_point_title": "老年高血压的钙拮抗剂",
+    "stem": "老年孤立性收缩期高血压患者需每日一次平稳降压，宜选用下列哪种长效钙通道拮抗剂？",
+    "options": {
+      "A": "氨氯地平",
+      "B": "硝苯地平控释片",
+      "C": "非洛地平缓释片",
+      "D": "地尔硫䓬缓释片",
+      "E": "维拉帕米"
+    },
+    "answer": "A",
+    "explanation": "氨氯地平为典型长效二氢吡啶类，每日一次即可平稳控制收缩压；其他制剂需严格控释或具有心脏传导作用，首选性略低。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c7-004",
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.1",
+    "section_title": "第一节 高血压药物选择",
+    "knowledge_point_code": "C7.1.4",
+    "knowledge_point_title": "孕期高血压用药",
+    "stem": "妊娠期高血压患者需控制血压，下列哪种药物因安全性较高而常作为首选？",
+    "options": {
+      "A": "甲基多巴",
+      "B": "赖诺普利",
+      "C": "阿利司他",
+      "D": "氢氯噻嗪",
+      "E": "舒尼替尼"
+    },
+    "answer": "A",
+    "explanation": "甲基多巴孕期安全性资料充分，为经典首选；ACEI、ARB 及多数新药孕期禁用或缺乏数据。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c7-005",
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.2",
+    "section_title": "第二节 冠心病与血脂管理",
+    "knowledge_point_code": "C7.2.1",
+    "knowledge_point_title": "高强度他汀",
+    "stem": "稳定型冠心病患者需将 LDL-C 降至 <1.8 mmol/L，下列哪种他汀常用于高强度治疗？",
+    "options": {
+      "A": "阿托伐他汀",
+      "B": "普伐他汀",
+      "C": "洛伐他汀",
+      "D": "辛伐他汀",
+      "E": "依折麦布"
+    },
+    "answer": "A",
+    "explanation": "阿托伐他汀和瑞舒伐他汀属于高强度他汀，可显著降低 LDL-C；普伐他汀、洛伐他汀与辛伐他汀强度较低，依折麦布为胆固醇吸收抑制剂。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c7-006",
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.2",
+    "section_title": "第二节 冠心病与血脂管理",
+    "knowledge_point_code": "C7.2.2",
+    "knowledge_point_title": "抗血小板药物",
+    "stem": "急性冠脉综合征患者行 PCI 后需双联抗血小板治疗，下列哪对药物组合符合指南推荐？",
+    "options": {
+      "A": "阿司匹林 + 替格瑞洛",
+      "B": "阿司匹林 + 华法林",
+      "C": "氯吡格雷 + 华法林",
+      "D": "布洛芬 + 替格瑞洛",
+      "E": "阿替洛尔 + 阿司匹林"
+    },
+    "answer": "A",
+    "explanation": "阿司匹林联合 P2Y12 受体拮抗剂（如替格瑞洛）为 PCI 后标准双抗；其余组合不是首选或增加出血风险。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c7-007",
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.2",
+    "section_title": "第二节 冠心病与血脂管理",
+    "knowledge_point_code": "C7.2.3",
+    "knowledge_point_title": "长效硝酸酯",
+    "stem": "稳定型心绞痛为减少发作频率，可选用下列哪种长效硝酸酯类药物？",
+    "options": {
+      "A": "单硝酸异山梨酯缓释片",
+      "B": "硝酸甘油舌下片",
+      "C": "硝酸异山梨酯普通片",
+      "D": "尼可地尔",
+      "E": "地尔硫䓬"
+    },
+    "answer": "A",
+    "explanation": "单硝酸异山梨酯缓释片作用时间长，可维持扩血管 effect；舌下及普通片为短效，尼可地尔与地尔硫䓬属于其他类别药物。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c7-008",
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.2",
+    "section_title": "第二节 冠心病与血脂管理",
+    "knowledge_point_code": "C7.2.4",
+    "knowledge_point_title": "纤维酸类用途",
+    "stem": "针对高甘油三酯血症，下列哪种纤维酸类药物常与他汀联合使用？",
+    "options": {
+      "A": "非诺贝特",
+      "B": "吉非贝齐",
+      "C": "苯扎贝特",
+      "D": "依折麦布",
+      "E": "普罗布考"
+    },
+    "answer": "A",
+    "explanation": "非诺贝特可显著降低甘油三酯，并可在监测下与他汀联合；吉非贝齐、苯扎贝特亦为纤维酸类但联用风险稍高；依折麦布与普罗布考不属此类。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c7-009",
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.3",
+    "section_title": "第三节 心衰与心律失常",
+    "knowledge_point_code": "C7.3.1",
+    "knowledge_point_title": "ARNI 在心衰中的应用",
+    "stem": "射血分数降低型心衰患者在服用 ACEI 后仍症状频发，下列哪种药物属于 ARNI，可替代 ACEI？",
+    "options": {
+      "A": "沙库巴曲/缬沙坦",
+      "B": "缬沙坦",
+      "C": "依那普利",
+      "D": "贝那普利",
+      "E": "美托洛尔"
+    },
+    "answer": "A",
+    "explanation": "沙库巴曲/缬沙坦为 ARNI，需停 ACEI 后改用；缬沙坦、依那普利、贝那普利为单一 RAAS 抑制剂，美托洛尔为 β 阻滞剂。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c7-010",
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.3",
+    "section_title": "第三节 心衰与心律失常",
+    "knowledge_point_code": "C7.3.2",
+    "knowledge_point_title": "袢利尿剂的不良反应",
+    "stem": "慢性心衰患者长期应用袢利尿剂时最应警惕哪种电解质紊乱？",
+    "options": {
+      "A": "低钾血症",
+      "B": "高钾血症",
+      "C": "高钠血症",
+      "D": "高钙血症",
+      "E": "低镁血症"
+    },
+    "answer": "A",
+    "explanation": "袢利尿剂可大量排钠排钾，低钾血症常见且可诱发心律失常；其他电解质异常发生率相对较低。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c7-011",
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.3",
+    "section_title": "第三节 心衰与心律失常",
+    "knowledge_point_code": "C7.3.3",
+    "knowledge_point_title": "房颤节律控制",
+    "stem": "心衰伴房颤患者需进行节律控制，以下哪种抗心律失常药在心衰中相对安全？",
+    "options": {
+      "A": "胺碘酮",
+      "B": "普罗帕酮",
+      "C": "索他洛尔",
+      "D": "决奈达隆",
+      "E": "地高辛"
+    },
+    "answer": "A",
+    "explanation": "胺碘酮对心衰的负性肌力作用最小，常用于心衰合并房颤的节律控制；普罗帕酮、索他洛尔、决奈达隆在心衰中增加风险；地高辛用于控制心室率而非恢复窦律。",
+    "source_type": "ai_original"
+  },
+  {
+    "question_id": "c7-012",
+    "question_type": "单选",
+    "chapter_code": "C7",
+    "chapter_title": "第七章 心血管系统用药",
+    "section_code": "C7.3",
+    "section_title": "第三节 心衰与心律失常",
+    "knowledge_point_code": "C7.3.4",
+    "knowledge_point_title": "室速急救用药",
+    "stem": "室性心动过速合并血流动力学不稳定时，在电复律前可静脉使用哪种药物帮助稳定心律？",
+    "options": {
+      "A": "胺碘酮",
+      "B": "利多卡因",
+      "C": "普罗帕酮",
+      "D": "维拉帕米",
+      "E": "腺苷"
+    },
+    "answer": "A",
+    "explanation": "静脉胺碘酮能抑制室速并与同步电复律联合使用；利多卡因为备选但作用有限，普罗帕酮、维拉帕米和腺苷可能加重室速或无效。",
+    "source_type": "ai_original"
   }
 ]
 
