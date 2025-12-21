@@ -31,6 +31,19 @@ type AttemptRow = {
   metadata: unknown | null;
 };
 
+type QuestionRow = {
+  question_uuid: string;
+  question_type: string;
+  chapter_code: string;
+  chapter_title: string | null;
+  section_code: string;
+  section_title: string | null;
+  knowledge_point_code: string;
+  knowledge_point_title: string | null;
+  stem: string;
+  options: Record<string, string>;
+};
+
 function parseMetadata(raw: unknown): Record<string, unknown> | null {
   if (!raw) return null;
   if (typeof raw === "string") {
@@ -185,20 +198,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let selectedQuestions:
-      | {
-          question_uuid: string;
-          question_type: string;
-          chapter_code: string;
-          chapter_title: string | null;
-          section_code: string;
-          section_title: string | null;
-          knowledge_point_code: string;
-          knowledge_point_title: string | null;
-          stem: string;
-          options: Record<string, string>;
-        }[]
-      | null = null;
+    let selectedQuestions: QuestionRow[] | null = null;
 
     if (targetChapter) {
       if (!CHAPTER_WHITELIST.includes(targetChapter)) {
@@ -314,22 +314,9 @@ export async function GET(request: NextRequest) {
         allocatedTotal += 1;
       }
 
-      const questionBuckets = [];
+      const questionBuckets: QuestionRow[] = [];
       for (const allocation of allocations) {
-        const chapterResult = await client.query<
-          {
-            question_uuid: string;
-            question_type: string;
-            chapter_code: string;
-            chapter_title: string | null;
-            section_code: string;
-            section_title: string | null;
-            knowledge_point_code: string;
-            knowledge_point_title: string | null;
-            stem: string;
-            options: Record<string, string>;
-          }
-        >(
+        const chapterResult = await client.query<QuestionRow>(
           `
             SELECT
               id::text AS question_uuid,
@@ -356,20 +343,7 @@ export async function GET(request: NextRequest) {
       }
 
       if (questionBuckets.length < QUESTIONS_PER_ATTEMPT) {
-        const fallback = await client.query<
-          {
-            question_uuid: string;
-            question_type: string;
-            chapter_code: string;
-            chapter_title: string | null;
-            section_code: string;
-            section_title: string | null;
-            knowledge_point_code: string;
-            knowledge_point_title: string | null;
-            stem: string;
-            options: Record<string, string>;
-          }[]
-        >(
+        const fallback = await client.query<QuestionRow>(
           `
             SELECT
               id::text AS question_uuid,
@@ -391,7 +365,9 @@ export async function GET(request: NextRequest) {
           `,
           [license, subject, QUESTIONS_PER_ATTEMPT],
         );
-        questionBuckets.push(...fallback.rows);
+        if (fallback.rows?.length) {
+          questionBuckets.push(...fallback.rows);
+        }
       }
 
       const uniqueQuestions = [...new Map(questionBuckets.map((q) => [q.question_uuid, q])).values()];
