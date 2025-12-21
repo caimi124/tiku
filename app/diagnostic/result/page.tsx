@@ -72,6 +72,44 @@ const COMMON_ERROR_HINTS = [
   "重要细节未抓住",
 ];
 
+const PASSING_SCORE = 0.6;
+
+const RISK_INFO = {
+  high: {
+    level: "high",
+    label: "🔴 高风险",
+    alert:
+      "当前水平与通过线差距较大，若不进行针对性补强，通过概率极低",
+    cta: "🔵 立即补强高频考点（防止考试失分）",
+  },
+  medium: {
+    level: "medium",
+    label: "🟠 中风险",
+    alert:
+      "当前接近通过线，但薄弱点仍可能导致失分，建议集中补强高频考点",
+    cta: "🔵 开始冲刺补弱（避免差几分不过）",
+  },
+  low: {
+    level: "low",
+    label: "🟢 相对安全",
+    alert:
+      "当前已达到基本通过水平，建议巩固薄弱点以提升通过稳定性",
+    cta: "🔵 巩固练习，提升通过稳定性",
+  },
+} as const;
+
+type RiskLevel = keyof typeof RISK_INFO;
+
+function getRiskLevel(score: number) {
+  if (score < 0.4) {
+    return "high";
+  }
+  if (score < PASSING_SCORE) {
+    return "medium";
+  }
+  return "low";
+}
+
 export default function DiagnosticResultPage({ searchParams }: DiagnosticResultPageProps) {
   const attemptId = searchParams?.attempt_id;
   const [report, setReport] = useState<Report | null>(null);
@@ -186,7 +224,12 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
     );
   }
 
-  const ctaHref = `/practice/by-point?source=diagnostic&attempt_id=${attemptId}`;
+  const riskScore = summary?.score ?? 0;
+  const riskLevel = getRiskLevel(riskScore);
+  const riskMeta = RISK_INFO[riskLevel];
+  const gapValue = Math.round((riskScore - PASSING_SCORE) * 100);
+  const gapLabel = `${gapValue >= 0 ? "+" : ""}${gapValue}%`;
+  const ctaHref = `/practice/diagnostic-special?attempt_id=${attemptId}&risk_level=${riskLevel}`;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -245,10 +288,12 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                   className="flex items-center justify-center gap-2 rounded-2xl bg-white/90 px-6 py-4 text-center text-lg font-semibold text-blue-600 transition hover:bg-white/100"
                 >
                   <span>🔵</span>
-                  <span>
-                    开始今日学习（{summary?.total ?? 0} 题 · 仅针对薄弱点）
-                  </span>
+                  <span>{riskMeta.cta}</span>
                 </Link>
+                <p className="text-xs text-white/80">
+                  当前正确率 {formatPercent(summary?.score)} · 通过线 60% · 差距 {gapLabel}
+                </p>
+                <p className="text-xs text-white/80">{riskMeta.alert}</p>
                 <p className="text-xs text-white/80">
                   预计用时：15–20 分钟 · 不重复诊断题，全部来自薄弱考点
                 </p>
