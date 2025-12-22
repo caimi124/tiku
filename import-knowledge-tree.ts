@@ -18,6 +18,9 @@ interface KnowledgeRecord {
   point_type?: string
   drug_name?: string
   importance?: number
+  learn_mode?: string
+  importance_level?: number
+  error_pattern_tags?: string[]
   memory_tips?: string
   parent_id: string | null
   subject_code: string
@@ -46,8 +49,8 @@ async function importKnowledgeTree() {
       await prisma.$executeRaw`
         INSERT INTO knowledge_tree (
           id, code, title, content, node_type, point_type, 
-          drug_name, importance, memory_tips, parent_id, 
-          subject_code, level, sort_order
+          drug_name, importance, importance_level, learn_mode, error_pattern_tags,
+          memory_tips, parent_id, subject_code, level, sort_order
         ) VALUES (
           ${record.id},
           ${record.code},
@@ -57,6 +60,9 @@ async function importKnowledgeTree() {
           ${record.point_type || null},
           ${record.drug_name || null},
           ${record.importance || 3},
+          ${record.importance || 3},
+          ${record.learn_mode || 'BOTH'},
+          ${record.error_pattern_tags || []},
           ${record.memory_tips || null},
           ${record.parent_id},
           ${record.subject_code},
@@ -69,6 +75,9 @@ async function importKnowledgeTree() {
           point_type = EXCLUDED.point_type,
           drug_name = EXCLUDED.drug_name,
           importance = EXCLUDED.importance,
+          importance_level = EXCLUDED.importance_level,
+          learn_mode = EXCLUDED.learn_mode,
+          error_pattern_tags = EXCLUDED.error_pattern_tags,
           memory_tips = EXCLUDED.memory_tips,
           updated_at = NOW()
       `

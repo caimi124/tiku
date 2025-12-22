@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+type LearnMode = "MEMORIZE" | "PRACTICE" | "BOTH";
+
 type Report = {
   attempt_id: string;
   ready: boolean;
@@ -36,6 +38,10 @@ type Report = {
     wrong: number;
     accuracy: number;
     level: string;
+    knowledge_point_id?: string;
+    knowledge_point_name?: string;
+    importance_level?: number;
+    learn_mode?: "MEMORIZE" | "PRACTICE" | "BOTH";
   }[];
   weaknesses: {
     code: string;
@@ -44,6 +50,10 @@ type Report = {
     total: number;
     wrong: number;
     accuracy: number;
+    knowledge_point_code?: string;
+    point_name?: string;
+    importance_level?: number;
+    learn_mode?: "MEMORIZE" | "PRACTICE" | "BOTH";
   }[];
   questions: {
     question_uuid: string;
@@ -73,6 +83,80 @@ const COMMON_ERROR_HINTS = [
 ];
 
 const PASSING_SCORE = 0.6;
+const IMPORTANCE_BADGES = [
+  { minLevel: 4, symbol: "🔥", label: "高频", className: "bg-red-100 text-red-600" },
+  { minLevel: 3, symbol: "🟡", label: "常考", className: "bg-amber-100 text-amber-600" },
+  { minLevel: 1, symbol: "⚪", label: "低频", className: "bg-slate-100 text-slate-500" },
+];
+
+const LEARN_MODE_BADGES: Record<LearnMode, { label: string; className: string }> = {
+  MEMORIZE: { label: "必背", className: "bg-amber-100 text-amber-700" },
+  PRACTICE: { label: "多练", className: "bg-emerald-100 text-emerald-700" },
+  BOTH: { label: "背+练", className: "bg-slate-100 text-slate-700" },
+};
+
+const ACTION_VARIANTS = {
+  memorize: "MEMORIZE",
+  practice: "PRACTICE",
+} as const;
+
+function getImportanceBadge(level?: number) {
+  const badge =
+    IMPORTANCE_BADGES.find((item) => (level ?? 0) >= item.minLevel) ??
+    IMPORTANCE_BADGES[2];
+  return badge;
+}
+
+function getLearnModeBadge(mode?: LearnMode) {
+  return (mode && LEARN_MODE_BADGES[mode]) || LEARN_MODE_BADGES.BOTH;
+}
+
+type WeaknessAction = {
+  label: string;
+  href: string;
+  variant: keyof typeof ACTION_VARIANTS;
+};
+
+function buildWeaknessActions(
+  weakness: Report["weaknesses"][number],
+  attemptId: string,
+) {
+  const pointCode = weakness.knowledge_point_code;
+  const baseHref = pointCode
+    ? `/practice/by-point?code=${pointCode}&source=diagnostic&attempt_id=${attemptId}`
+    : `/practice/diagnostic-special?attempt_id=${attemptId}`;
+
+  if (!pointCode) {
+    return [
+      {
+        label: "去专项练习",
+        href: baseHref,
+        variant: "practice",
+      },
+    ];
+  }
+
+  const mode = weakness.learn_mode ?? "BOTH";
+  const actions: WeaknessAction[] = [];
+
+  if (mode === "MEMORIZE" || mode === "BOTH") {
+    actions.push({
+      label: "去背",
+      href: `${baseHref}&focus=memorize`,
+      variant: "memorize",
+    });
+  }
+
+  if (mode === "PRACTICE" || mode === "BOTH") {
+    actions.push({
+      label: "去练",
+      href: `${baseHref}&focus=practice`,
+      variant: "practice",
+    });
+  }
+
+  return actions;
+}
 
 const RISK_INFO = {
   high: {
@@ -339,14 +423,19 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                 {topWeaknesses.map((weak, index) => {
                   const correct = Math.max(weak.total - weak.wrong, 0);
                   const accuracy = Math.round((weak.accuracy ?? 0) * 100);
-                  const planHref = weak.code
-                    ? `/practice/by-point?pointId=${weak.code}&source=diagnostic`
-                    : `/practice/by-point?source=diagnostic`;
                   const hint = COMMON_ERROR_HINTS[index % COMMON_ERROR_HINTS.length];
+                  const importanceMeta = getImportanceBadge(weak.importance_level);
+                  const learnModeMeta = getLearnModeBadge(weak.learn_mode);
+                  const titleText =
+                    weak.point_name ??
+                    weak.knowledge_point_name ??
+                    weak.title ??
+                    "待分析";
+                  const actions = buildWeaknessActions(weak, attemptId!);
                   return (
                     <div
-                      key={weak.code ?? `${index}-${weak.title}`}
-                      className="space-y-2 rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                      key={weak.code ?? `${index}-${titleText}`}
+                      className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4"
                     >
                       <div className="flex items-center justify-between text-xs text-slate-500">
                         <span className="font-semibold text-rose-600">
@@ -354,21 +443,40 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                         </span>
                         <span>{weak.sectionTitle ?? "其他"}</span>
                       </div>
-                      <p className="text-lg font-semibold text-slate-900">
-                        {weak.title ?? "待分析"}
-                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <p className="text-lg font-semibold text-slate-900">{titleText}</p>
+                        <span
+                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${importanceMeta.className}`}
+                        >
+                          {importanceMeta.symbol} {importanceMeta.label}
+                        </span>
+                        <span
+                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${learnModeMeta.className}`}
+                        >
+                          {learnModeMeta.label}
+                        </span>
+                      </div>
                       <p className="text-xs text-slate-500">
                         正确率：{accuracy}%（{correct}/{weak.total}）
                       </p>
                       <p className="text-xs text-slate-500">
                         常见错误类型：{hint}
                       </p>
-                      <Link
-                        href={planHref}
-                        className="text-xs font-semibold text-blue-600"
-                      >
-                        去专项练习 →
-                      </Link>
+                      <div className="flex flex-wrap gap-2">
+                        {actions.map((action) => (
+                          <Link
+                            key={action.label}
+                            href={action.href}
+                            className={`text-xs font-semibold rounded-lg border px-3 py-1 transition ${
+                              action.variant === "memorize"
+                                ? "border-amber-200 bg-amber-50 text-amber-700"
+                                : "border-blue-200 bg-blue-50 text-blue-700"
+                            }`}
+                          >
+                            {action.label}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   );
                 })}

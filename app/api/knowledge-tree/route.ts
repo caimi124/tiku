@@ -52,6 +52,9 @@ export interface KnowledgeNode {
   point_type?: string
   drug_name?: string
   importance: number
+  importance_level?: number
+  learn_mode?: string
+  error_pattern_tags?: string[]
   memory_tips?: string
   parent_id?: string
   subject_code: string
@@ -110,6 +113,12 @@ export async function GET(request: NextRequest) {
           kt.point_type,
           kt.drug_name,
           kt.importance,
+          kt.importance_level,
+          kt.learn_mode,
+          kt.error_pattern_tags,
+          kt.importance_level,
+          kt.learn_mode,
+          kt.error_pattern_tags,
           kt.memory_tips,
           kt.parent_id,
           kt.subject_code,
@@ -333,6 +342,9 @@ async function getHighFrequencyPoints(
         kt.point_type,
         kt.drug_name,
         kt.importance,
+        kt.importance_level,
+        kt.learn_mode,
+        kt.error_pattern_tags,
         kt.memory_tips,
         kt.parent_id,
         kt.subject_code,
@@ -362,6 +374,9 @@ async function getHighFrequencyPoints(
         point_type,
         drug_name,
         importance,
+        importance_level,
+        learn_mode,
+        error_pattern_tags,
         memory_tips,
         parent_id,
         subject_code,

@@ -36,6 +36,11 @@ type AnswerRow = {
   stem: string | null;
   options: Record<string, string> | null;
   created_at: string | null;
+  knowledge_point_id: string | null;
+  knowledge_point_name: string | null;
+  point_name: string | null;
+  importance_level: number | null;
+  learn_mode: "MEMORIZE" | "PRACTICE" | "BOTH" | null;
 };
 
 const LEVELS = {
@@ -67,6 +72,11 @@ type PointStat = {
   wrong: number;
   accuracy: number;
   level: string;
+  knowledge_point_id?: string;
+  knowledge_point_name?: string;
+  point_name?: string;
+  importance_level?: number;
+  learn_mode?: "MEMORIZE" | "PRACTICE" | "BOTH";
 };
 
 export async function GET(
@@ -123,10 +133,17 @@ export async function GET(
           q.explanation,
           q.stem,
           q.options,
-          a.created_at
+          a.created_at,
+          kt.id AS knowledge_point_id,
+          kt.title AS point_name,
+          kt.title AS knowledge_point_name,
+          kt.importance AS importance_level,
+          'BOTH' AS learn_mode
         FROM public.diagnostic_attempt_answers a
         JOIN public.diagnostic_questions q
           ON q.id::text = a.question_id
+        LEFT JOIN public.knowledge_tree kt
+          ON kt.code = a.knowledge_point_code
         WHERE a.attempt_id = $1
         ORDER BY a.created_at ASC
       `,
@@ -157,9 +174,14 @@ export async function GET(
       }
       sectionsMap.set(sectionKey, section);
 
+      const pointTitle =
+        row.point_name ??
+        row.knowledge_point_name ??
+        row.knowledge_point_title ??
+        "其他";
       const point = pointsMap.get(pointKey) ?? {
         code: pointKey,
-        title: row.knowledge_point_title ?? "其他",
+        title: pointTitle,
         sectionCode: sectionKey,
         sectionTitle: section.title,
         total: 0,
@@ -167,6 +189,12 @@ export async function GET(
         wrong: 0,
         accuracy: 0,
         level: LEVELS.weak,
+        knowledge_point_id: row.knowledge_point_id ?? undefined,
+        knowledge_point_name: pointTitle,
+        point_name: pointTitle,
+        knowledge_point_code: row.knowledge_point_code ?? pointKey,
+        importance_level: row.importance_level ?? undefined,
+        learn_mode: row.learn_mode ?? "BOTH",
       };
       point.total += 1;
       if (row.is_correct) {

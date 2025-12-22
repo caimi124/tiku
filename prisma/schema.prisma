@@ -478,7 +478,9 @@ model knowledge_points {
   section           String?
   point_name        String
   point_content     String?
-  importance_level  Int?
+  importance_level  Int?                      @default(3)
+  learn_mode        String?                   @default("BOTH")
+  error_pattern_tags String[]                  @default([])
   frequency         Int?      @default(0)
   exam_years        Int[]
   related_questions String[]

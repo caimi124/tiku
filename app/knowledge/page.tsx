@@ -63,6 +63,8 @@ interface PointRowData {
   is_completed: boolean
   is_favorited: boolean
   is_marked_review: boolean
+  learn_mode?: 'MEMORIZE' | 'PRACTICE' | 'BOTH'
+  importance_level?: number
 }
 
 // 用户进度数据
@@ -583,6 +585,8 @@ function KnowledgePageContent() {
                             title={point.title}
                             keyTakeaway={point.key_takeaway}
                             importance={point.importance}
+                          importanceLevel={point.importance_level ?? point.importance}
+                          learnMode={point.learn_mode}
                             tags={point.tags}
                             examYears={point.exam_years}
                             isFavorite={point.is_favorited}

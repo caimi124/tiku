@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS knowledge_tree (
     drug_name TEXT,                        -- 所属药物名称
     importance INT DEFAULT 3,              -- 重要性 1-5
     memory_tips TEXT,                      -- 记忆口诀
+    importance_level INT DEFAULT 3,        -- 重要程度(1-5)（同步自知识点评估）
+    learn_mode TEXT DEFAULT 'BOTH',        -- 学习模式标签：MEMORIZE/PRACTICE/BOTH
+    error_pattern_tags TEXT[] DEFAULT '{}', -- 错题模式标签
     parent_id TEXT REFERENCES knowledge_tree(id) ON DELETE CASCADE,
     subject_code TEXT NOT NULL,            -- 科目代码
     level INT NOT NULL,                    -- 层级: 1=章, 2=节, 3=知识点
@@ -134,6 +137,9 @@ LEFT JOIN user_knowledge_mastery ukm ON ukm.knowledge_point_id = kp.id
 WHERE kt.node_type = 'chapter'
 GROUP BY kt.id, kt.code, kt.title, kt.subject_code, ukm.user_id;
 
+COMMENT ON COLUMN knowledge_tree.importance_level IS '知识点重要程度 1-5，用于前端排序与标签展示';
+COMMENT ON COLUMN knowledge_tree.learn_mode IS '学习模式：MEMORIZE/PRACTICE/BOTH';
+COMMENT ON COLUMN knowledge_tree.error_pattern_tags IS '错题模式标签字典';
 COMMENT ON TABLE knowledge_tree IS '知识点树状结构表，存储章节、小节、知识点的层级关系';
 COMMENT ON TABLE user_knowledge_mastery IS '用户知识点掌握度表，记录用户对每个知识点的掌握情况';
 COMMENT ON TABLE learning_records IS '学习记录表，记录用户的每次学习行为';

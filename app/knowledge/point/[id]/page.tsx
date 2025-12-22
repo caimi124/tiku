@@ -31,6 +31,9 @@ interface RelatedPoint {
   id: string
   title: string
   importance: number
+  importance_level?: number
+  learn_mode?: 'MEMORIZE' | 'PRACTICE' | 'BOTH'
+  error_pattern_tags?: string[]
   mastery_score?: number
 }
 
@@ -78,6 +81,26 @@ interface KnowledgePointDetail {
   navigation?: NavigationInfo
   chapter?: { id: string; title: string; code: string }
   section?: { id: string; title: string; code: string }
+}
+
+const LEARN_MODE_BADGES: Record<'MEMORIZE' | 'PRACTICE' | 'BOTH', { label: string; className: string }> = {
+  MEMORIZE: { label: '必背', className: 'bg-amber-100 text-amber-700' },
+  PRACTICE: { label: '多练', className: 'bg-emerald-100 text-emerald-700' },
+  BOTH: { label: '背+练', className: 'bg-slate-100 text-slate-700' },
+}
+
+function getImportanceBadge(level?: number) {
+  if ((level ?? 0) >= 4) {
+    return { symbol: '🔥', label: '高频', className: 'bg-red-100 text-red-600' }
+  }
+  if ((level ?? 0) === 3) {
+    return { symbol: '🟡', label: '常考', className: 'bg-amber-100 text-amber-600' }
+  }
+  return { symbol: '⚪', label: '低频', className: 'bg-slate-100 text-slate-500' }
+}
+
+function getLearnModeBadge(mode?: 'MEMORIZE' | 'PRACTICE' | 'BOTH') {
+  return (mode && LEARN_MODE_BADGES[mode]) || LEARN_MODE_BADGES.BOTH
 }
 
 export default function KnowledgePointPage() {
@@ -196,6 +219,10 @@ export default function KnowledgePointPage() {
     )
   }
 
+  const effectiveImportanceLevel = point.importance_level ?? point.importance
+  const importanceBadge = getImportanceBadge(effectiveImportanceLevel)
+  const learnModeBadge = getLearnModeBadge(point.learn_mode)
+
   // 导航到其他考点
   const handleNavigate = (pointId: string) => {
     router.push(`/knowledge/point/${pointId}`)
@@ -254,7 +281,13 @@ export default function KnowledgePointPage() {
                     </h1>
                     <div className="flex flex-wrap items-center gap-3 text-sm">
                       <ImportanceStars level={point.importance} size="md" />
-                      {isHighFrequency(point.importance) && (
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${importanceBadge.className}`}>
+                        {importanceBadge.symbol} {importanceBadge.label}
+                      </span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${learnModeBadge.className}`}>
+                        {learnModeBadge.label}
+                      </span>
+                      {isHighFrequency(effectiveImportanceLevel) && (
                         <span className="px-2 py-0.5 bg-orange-100 text-orange-600 rounded-full text-xs font-medium">
                           高频考点
                         </span>

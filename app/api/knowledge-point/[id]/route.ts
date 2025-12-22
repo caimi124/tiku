@@ -61,6 +61,9 @@ export interface KnowledgePointDetail {
   subject_code: string
   level: number
   sort_order: number
+  importance_level?: number
+  learn_mode?: 'MEMORIZE' | 'PRACTICE' | 'BOTH'
+  error_pattern_tags?: string[]
   // 新增字段
   key_takeaway?: string
   exam_years?: number[]
@@ -135,6 +138,9 @@ export async function GET(
           kt.point_type,
           kt.drug_name,
           kt.importance,
+          kt.importance_level,
+          kt.learn_mode,
+          kt.error_pattern_tags,
           kt.memory_tips,
           kt.parent_id,
           kt.subject_code,
@@ -166,6 +172,9 @@ export async function GET(
           point_type,
           drug_name,
           importance,
+          importance_level,
+          learn_mode,
+          error_pattern_tags,
           memory_tips,
           parent_id,
           subject_code,

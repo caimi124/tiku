@@ -49,6 +49,9 @@ export interface PointSummary {
   exam_years: number[]
   importance: number
   mastery_score: number
+  importance_level?: number
+  learn_mode?: string
+  error_pattern_tags?: string[]
 }
 
 export interface PointOverview {
@@ -94,7 +97,7 @@ export async function GET(
     // 注意：包含 'subsection' 类型，因为导入脚本将level 3的节点标记为 'subsection'
     const { data: points, error: pointsError } = await supabase
       .from('knowledge_tree')
-      .select('id, code, title, key_takeaway, importance, exam_years, exam_frequency')
+      .select('id, code, title, key_takeaway, importance, importance_level, learn_mode, error_pattern_tags, exam_years, exam_frequency')
       .eq('parent_id', sectionId)
       .in('node_type', ['point', 'knowledge_point', 'subsection'])
       .order('code')
@@ -156,6 +159,9 @@ export async function GET(
         tags: pointTags,
         exam_years: point.exam_years || [],
         importance: point.importance || 3,
+        importance_level: point.importance_level ?? point.importance || 3,
+        learn_mode: point.learn_mode || 'BOTH',
+        error_pattern_tags: point.error_pattern_tags || [],
         mastery_score: 0 // TODO: 从用户掌握度表获取
       }
     })

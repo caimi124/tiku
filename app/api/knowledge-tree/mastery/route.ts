@@ -59,7 +59,10 @@ export async function GET(request: NextRequest) {
         SELECT 
           ukm.*,
           kt.title as knowledge_point_title,
-          kt.code as knowledge_point_code
+          kt.code as knowledge_point_code,
+          kt.importance_level,
+          kt.learn_mode,
+          kt.error_pattern_tags
         FROM user_knowledge_mastery ukm
         JOIN knowledge_tree kt ON ukm.knowledge_point_id = kt.id
         WHERE ukm.user_id = $1 AND ukm.knowledge_point_id = $2
@@ -72,7 +75,10 @@ export async function GET(request: NextRequest) {
           ukm.*,
           kt.title as knowledge_point_title,
           kt.code as knowledge_point_code,
-          kt.importance
+          kt.importance,
+          kt.importance_level,
+          kt.learn_mode,
+          kt.error_pattern_tags
         FROM user_knowledge_mastery ukm
         JOIN knowledge_tree kt ON ukm.knowledge_point_id = kt.id
         WHERE ukm.user_id = $1 AND kt.subject_code = $2

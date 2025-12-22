@@ -36,6 +36,8 @@ export interface PointRowProps {
   isReview?: boolean
   isHighlighted?: boolean
   onClick?: (id: string) => void
+  learnMode?: 'MEMORIZE' | 'PRACTICE' | 'BOTH'
+  importanceLevel?: number
 }
 
 /**
@@ -67,20 +69,45 @@ function truncateText(text: string, maxLength: number = 30): string {
   return text.substring(0, maxLength) + '...'
 }
 
+const LEARN_MODE_META: Record<'MEMORIZE' | 'PRACTICE' | 'BOTH', { label: string; className: string }> = {
+  MEMORIZE: { label: '必背', className: 'bg-amber-100 text-amber-700' },
+  PRACTICE: { label: '多练', className: 'bg-emerald-100 text-emerald-700' },
+  BOTH: { label: '背+练', className: 'bg-slate-100 text-slate-700' },
+}
+
+function getLearnModeMeta(mode?: 'MEMORIZE' | 'PRACTICE' | 'BOTH') {
+  return (mode && LEARN_MODE_META[mode]) || LEARN_MODE_META.BOTH
+}
+
+function getImportanceBadge(level?: number) {
+  if ((level ?? 0) >= 4) {
+    return { symbol: '🔥', label: '高频', className: 'bg-red-100 text-red-600' }
+  }
+  if ((level ?? 0) === 3) {
+    return { symbol: '🟡', label: '常考', className: 'bg-amber-100 text-amber-600' }
+  }
+  return { symbol: '⚪', label: '低频', className: 'bg-slate-100 text-slate-500' }
+}
+
 export function PointRow({
   id,
   code,
   title,
   keyTakeaway,
   importance,
+  importanceLevel,
   tags,
   examYears = [],
   isFavorite = false,
   isReview = false,
   isHighlighted = false,
-  onClick
+  onClick,
+  learnMode
 }: PointRowProps) {
   const hasHighFrequencyTag = tags.some(t => t.type === 'high_frequency')
+  const effectiveImportanceLevel = importanceLevel ?? importance
+  const importanceBadge = getImportanceBadge(effectiveImportanceLevel)
+  const learnModeMeta = getLearnModeMeta(learnMode)
   
   const handleClick = (e: React.MouseEvent) => {
     // 如果有onClick回调，先调用它（用于保存状态等）
@@ -111,6 +138,16 @@ export function PointRow({
             <h5 className="font-medium text-gray-800 text-sm line-clamp-1">
               {title}
             </h5>
+            <span
+              className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${importanceBadge.className}`}
+            >
+              {importanceBadge.symbol} {importanceBadge.label}
+            </span>
+            <span
+              className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${learnModeMeta.className}`}
+            >
+              {learnModeMeta.label}
+            </span>
             
             {/* 高频标签 */}
             {hasHighFrequencyTag && (
