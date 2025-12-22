@@ -21,6 +21,7 @@ type Report = {
     total: number;
     started_at: string | null;
     completed_at: string | null;
+    error_pattern_tags?: string[];
   };
   sections: {
     section_code: string;
@@ -83,6 +84,7 @@ const COMMON_ERROR_HINTS = [
 ];
 
 const PASSING_SCORE = 0.6;
+const PASS_LINE = 60;
 const IMPORTANCE_BADGES = [
   { minLevel: 4, symbol: "🔥", label: "高频", className: "bg-red-100 text-red-600" },
   { minLevel: 3, symbol: "🟡", label: "常考", className: "bg-amber-100 text-amber-600" },
@@ -90,9 +92,9 @@ const IMPORTANCE_BADGES = [
 ];
 
 const LEARN_MODE_BADGES: Record<LearnMode, { label: string; className: string }> = {
-  MEMORIZE: { label: "必背", className: "bg-amber-100 text-amber-700" },
-  PRACTICE: { label: "多练", className: "bg-emerald-100 text-emerald-700" },
-  BOTH: { label: "背+练", className: "bg-slate-100 text-slate-700" },
+  MEMORIZE: { label: "必背 · 不背必错", className: "bg-amber-100 text-amber-700" },
+  PRACTICE: { label: "多练 · 题型固定", className: "bg-emerald-100 text-emerald-700" },
+  BOTH: { label: "背+练 · 高频陷阱型", className: "bg-slate-100 text-slate-700" },
 };
 
 const ACTION_VARIANTS = {
@@ -117,6 +119,44 @@ type WeaknessAction = {
   variant: keyof typeof ACTION_VARIANTS;
 };
 
+const FAST_FIX_TAGS = ["概念混淆", "首选药不清", "适应证判断"];
+
+function isFastFixPattern(tags?: string[]) {
+  if (!tags || tags.length === 0) return false;
+  return tags.some((tag) => FAST_FIX_TAGS.includes(tag));
+}
+
+function isUnknownWeakness(point?: Report["weaknesses"][number]) {
+  const name = point?.point_name?.trim();
+  return !name || name === "其他";
+}
+
+function sortWeaknesses(list: Report["weaknesses"]) {
+  return [...list].sort((a, b) => {
+    const importanceA = a.importance_level ?? 0;
+    const importanceB = b.importance_level ?? 0;
+    if (importanceA !== importanceB) {
+      return importanceB - importanceA;
+    }
+    const isUnknownA = isUnknownWeakness(a);
+    const isUnknownB = isUnknownWeakness(b);
+    if (isUnknownA !== isUnknownB) {
+      return isUnknownA ? 1 : -1;
+    }
+    const hasPointA = Boolean(a.point_name);
+    const hasPointB = Boolean(b.point_name);
+    if (hasPointA !== hasPointB) {
+      return hasPointA ? -1 : 1;
+    }
+    return (b.accuracy ?? 0) - (a.accuracy ?? 0);
+  });
+}
+
+const WEAKNESS_PLAN_COPY: Record<keyof typeof ACTION_VARIANTS, string> = {
+  memorize: "👉 先背 5 分钟（防止再错）",
+  practice: "👉 再练 3 题（形成条件反射）",
+};
+
 function buildWeaknessActions(
   weakness: Report["weaknesses"][number],
   attemptId: string,
@@ -129,7 +169,7 @@ function buildWeaknessActions(
   if (!pointCode) {
     return [
       {
-        label: "去专项练习",
+        label: "👉 立即专项练习（护住分数）",
         href: baseHref,
         variant: "practice",
       },
@@ -141,7 +181,7 @@ function buildWeaknessActions(
 
   if (mode === "MEMORIZE" || mode === "BOTH") {
     actions.push({
-      label: "去背",
+      label: WEAKNESS_PLAN_COPY.memorize,
       href: `${baseHref}&focus=memorize`,
       variant: "memorize",
     });
@@ -149,7 +189,7 @@ function buildWeaknessActions(
 
   if (mode === "PRACTICE" || mode === "BOTH") {
     actions.push({
-      label: "去练",
+      label: WEAKNESS_PLAN_COPY.practice,
       href: `${baseHref}&focus=practice`,
       variant: "practice",
     });
@@ -277,11 +317,17 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
     [report],
   );
 
-  const topWeaknesses = useMemo(() => report?.weaknesses.slice(0, 3) ?? [], [
-    report,
-  ]);
+  const sortedWeaknesses = useMemo(
+    () => (report ? sortWeaknesses(report.weaknesses) : []),
+    [report],
+  );
+  const topWeaknesses = sortedWeaknesses.slice(0, 3);
 
   const wrongCount = summary ? Math.max(summary.total - summary.correct, 0) : 0;
+  const hasFastFixTags = useMemo(
+    () => isFastFixPattern(report?.summary.error_pattern_tags),
+    [report],
+  );
 
   const formatPercent = (value: number | null | undefined) =>
     value == null ? "0%" : `${Math.round(value * 100)}%`;
@@ -314,6 +360,14 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
   const gapValue = Math.round((riskScore - PASSING_SCORE) * 100);
   const gapLabel = `${gapValue >= 0 ? "+" : ""}${gapValue}%`;
   const ctaHref = `/practice/diagnostic-special?attempt_id=${attemptId}&risk_level=${riskLevel}`;
+  const currentRate = summary?.score ?? 0;
+  const predictedScore = Math.round(currentRate * 100);
+  const simulationStatus =
+    currentRate < 0.3
+      ? "几乎必挂"
+      : currentRate < PASSING_SCORE
+      ? "高风险边缘"
+      : "处在边线，仍需稳住";
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -360,6 +414,29 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
               <p className="text-sm text-slate-500">
                 首次诊断出现低分很常见，系统已根据你的答题情况为你生成学习路径
               </p>
+            </section>
+
+            <section className="rounded-3xl border border-red-200 bg-white px-6 py-6 shadow-sm space-y-4">
+              <p className="text-xs uppercase tracking-[0.3em] text-red-500">
+                考试结果模拟（按当前水平）
+              </p>
+              <div className="space-y-1">
+                <p className="text-2xl font-semibold text-slate-900">
+                  ⚠️ 考试判决书 + 可抢救手术单
+                </p>
+                <p className="text-lg text-slate-800">
+                  你的预估得分 ≈ {predictedScore} 分 · 通过线：{PASS_LINE} 分
+                </p>
+                <div className="space-y-1 text-sm text-slate-600">
+                  <p>结论：</p>
+                  <p className="text-base font-semibold text-rose-600">
+                    当前状态：❌ {simulationStatus}
+                  </p>
+                  <p className="text-base font-semibold text-slate-700">
+                    原因：高频 / 常考考点未建立稳定判断
+                  </p>
+                </div>
+              </div>
             </section>
 
             <section className="rounded-3xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-8 shadow-lg text-white">
@@ -419,6 +496,20 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                 </div>
                 <span className="text-xs text-slate-400">先做哪个 →</span>
               </div>
+              <div className="rounded-2xl border border-amber-100 bg-amber-50/80 px-4 py-3 text-sm text-amber-900">
+                <p className="font-semibold text-amber-900">
+                  为什么系统只让你先补这 3 个？
+                </p>
+                <p className="text-xs text-amber-800">这不是随机挑选，而是因为：</p>
+                <div className="space-y-1 text-xs text-amber-900">
+                  <p>• 它们属于 高频 / 常考考点</p>
+                  <p>• 错 1 题 ≈ 丢 2–4 分</p>
+                  <p>• 修复成本低，但回报最高</p>
+                </div>
+                <p className="pt-2 text-xs font-semibold text-amber-900">
+                  👉 先补这 3 个，比你刷 100 道随机题更有效
+                </p>
+              </div>
               <div className="grid gap-4 md:grid-cols-3">
                 {topWeaknesses.map((weak, index) => {
                   const correct = Math.max(weak.total - weak.wrong, 0);
@@ -426,14 +517,14 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                   const hint = COMMON_ERROR_HINTS[index % COMMON_ERROR_HINTS.length];
                   const importanceMeta = getImportanceBadge(weak.importance_level);
                   const learnModeMeta = getLearnModeBadge(weak.learn_mode);
-                  const titleText =
-                    weak.point_name ??
-                    weak.title ??
-                    "待分析";
+                  const unknownPoint = isUnknownWeakness(weak);
+                  const displayTitle = unknownPoint
+                    ? "⚠️ 尚未精确归类的综合考点"
+                    : weak.point_name ?? weak.title ?? "待分析";
                   const actions = buildWeaknessActions(weak, attemptId!);
                   return (
                     <div
-                      key={weak.code ?? `${index}-${titleText}`}
+                      key={weak.code ?? `${index}-${displayTitle}`}
                       className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4"
                     >
                       <div className="flex items-center justify-between text-xs text-slate-500">
@@ -442,18 +533,25 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                         </span>
                         <span>{weak.sectionTitle ?? "其他"}</span>
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        <p className="text-lg font-semibold text-slate-900">{titleText}</p>
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${importanceMeta.className}`}
-                        >
-                          {importanceMeta.symbol} {importanceMeta.label}
-                        </span>
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${learnModeMeta.className}`}
-                        >
-                          {learnModeMeta.label}
-                        </span>
+                      <div className="space-y-1">
+                        <p className="text-lg font-semibold text-slate-900">【{displayTitle}】</p>
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                          <span
+                            className={`px-2 py-0.5 rounded-full font-medium ${importanceMeta.className}`}
+                          >
+                            {importanceMeta.symbol} {importanceMeta.label}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 rounded-full font-medium ${learnModeMeta.className}`}
+                          >
+                            {learnModeMeta.label}
+                          </span>
+                        </div>
+                        {unknownPoint && (
+                          <p className="text-[11px] text-slate-500">
+                            该题涉及多个知识点，系统暂按“综合判断题”处理
+                          </p>
+                        )}
                       </div>
                       <p className="text-xs text-slate-500">
                         正确率：{accuracy}%（{correct}/{weak.total}）
@@ -461,15 +559,15 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                       <p className="text-xs text-slate-500">
                         常见错误类型：{hint}
                       </p>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="space-y-2">
                         {actions.map((action) => (
                           <Link
                             key={action.label}
                             href={action.href}
-                            className={`text-xs font-semibold rounded-lg border px-3 py-1 transition ${
+                            className={`block rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-700 transition ${
                               action.variant === "memorize"
-                                ? "border-amber-200 bg-amber-50 text-amber-700"
-                                : "border-blue-200 bg-blue-50 text-blue-700"
+                                ? "border-amber-200 bg-amber-50"
+                                : "border-blue-200 bg-blue-50"
                             }`}
                           >
                             {action.label}
@@ -486,6 +584,32 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                 )}
               </div>
             </section>
+
+            {hasFastFixTags && (
+              <section className="rounded-3xl border border-emerald-100 bg-emerald-50/60 px-6 py-5 space-y-3">
+                <p className="text-xs uppercase tracking-[0.3em] text-emerald-600">
+                  可恢复性提示
+                </p>
+                <h3 className="text-lg font-semibold text-slate-900">
+                  好消息：这是“可快速修复型错误”
+                </h3>
+                <div className="space-y-1 text-sm text-slate-600">
+                  <p>你的错误不是：</p>
+                  <div className="space-y-1 text-xs text-rose-600">
+                    <p>✘ 不会做题</p>
+                    <p>✘ 理解能力差</p>
+                  </div>
+                  <p className="pt-1">而是：</p>
+                  <div className="space-y-1 text-xs text-emerald-700">
+                    <p>✔ 记忆未固化</p>
+                    <p>✔ 判断条件未形成反射</p>
+                  </div>
+                  <p className="text-sm font-semibold text-slate-900">
+                    👉 这类问题，2–3 天可以明显改善
+                  </p>
+                </div>
+              </section>
+            )}
 
             <section className="rounded-3xl border border-slate-100 bg-white px-6 py-5">
               <h3 className="text-lg font-semibold text-slate-900">学习建议</h3>
