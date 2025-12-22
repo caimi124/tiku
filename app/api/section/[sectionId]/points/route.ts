@@ -159,7 +159,8 @@ export async function GET(
         tags: pointTags,
         exam_years: point.exam_years || [],
         importance: point.importance || 3,
-        importance_level: point.importance_level ?? point.importance || 3,
+        importance_level:
+          (point.importance_level ?? point.importance) || 3,
         learn_mode: point.learn_mode || 'BOTH',
         error_pattern_tags: point.error_pattern_tags || [],
         mastery_score: 0 // TODO: 从用户掌握度表获取
