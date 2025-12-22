@@ -22,6 +22,9 @@ interface KnowledgeRecord {
   point_type?: string
   drug_name?: string
   importance?: number
+  learn_mode?: 'MEMORIZE' | 'PRACTICE' | 'BOTH' | string
+  importance_level?: number
+  error_pattern_tags?: string[]
   memory_tips?: string
   parent_id: string | null
   subject_code: string
