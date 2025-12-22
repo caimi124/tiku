@@ -198,6 +198,12 @@ function buildWeaknessActions(
   return actions;
 }
 
+const HERO_BADGE_TONES: Record<RiskLevel, string> = {
+  high: "bg-rose-50 text-rose-600",
+  medium: "bg-orange-50 text-orange-600",
+  low: "bg-emerald-50 text-emerald-600",
+};
+
 const RISK_INFO = {
   high: {
     level: "high",
@@ -222,7 +228,19 @@ const RISK_INFO = {
   },
 } as const;
 
+const LOADING_STEPS = [
+  "分析答题",
+  "定位高频薄弱点",
+  "生成补救手术单",
+];
+
 type RiskLevel = keyof typeof RISK_INFO;
+
+const RISK_BADGE_STYLES: Record<RiskLevel, string> = {
+  high: "bg-rose-50 text-rose-700 border border-rose-100",
+  medium: "bg-amber-50 text-amber-700 border border-amber-100",
+  low: "bg-emerald-50 text-emerald-700 border border-emerald-100",
+};
 
 function getRiskLevel(score: number) {
   if (score < 0.4) {
@@ -328,6 +346,13 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
     () => isFastFixPattern(report?.summary.error_pattern_tags),
     [report],
   );
+  const showLoadingState =
+    !report || loading || (report && !report.ready);
+  const loadingSteps = [
+    "① 分析答题",
+    "② 定位高频薄弱点",
+    "③ 生成补救手术单",
+  ];
 
   const formatPercent = (value: number | null | undefined) =>
     value == null ? "0%" : `${Math.round(value * 100)}%`;
@@ -368,6 +393,7 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
       : currentRate < PASSING_SCORE
       ? "高风险边缘"
       : "处在边线，仍需稳住";
+  const heroBadgeTone = HERO_BADGE_TONES[riskLevel];
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -390,298 +416,325 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
           </div>
         )}
 
-        {(!report || loading) && (
-          <div className="rounded-2xl border border-dashed border-blue-200 bg-white p-5 text-center text-blue-600">
-            {pendingMessage || "报告生成中，请稍候..."}
-            <p className="text-xs text-slate-400 mt-2">
-              已尝试 {tries} / {MAX_RETRY} 次
+        {showLoadingState ? (
+            <section className="mx-auto max-w-2xl space-y-4 rounded-3xl border border-slate-200 bg-white px-6 py-8 text-center shadow-xl">
+            <p className="text-xl font-semibold text-slate-900">
+              正在生成你的个人判决书…
             </p>
-          </div>
-        )}
-
-        {report && (
-          <div className="space-y-6">
-            <section className="rounded-3xl border border-slate-100 bg-white px-6 py-8 shadow-sm space-y-3">
-              <p className="text-xs uppercase tracking-[0.4em] text-slate-400">
-                AI 诊断报告
-              </p>
-              <h1 className="text-3xl font-semibold text-slate-900">
-                本次诊断已完成
-              </h1>
-              <h2 className="text-2xl font-bold text-slate-800">
-                当前基础不稳，但属于非常典型情况，可快速补救
-              </h2>
-              <p className="text-sm text-slate-500">
-                首次诊断出现低分很常见，系统已根据你的答题情况为你生成学习路径
-              </p>
-            </section>
-
-            <section className="rounded-3xl border border-red-200 bg-white px-6 py-6 shadow-sm space-y-4">
-              <p className="text-xs uppercase tracking-[0.3em] text-red-500">
-                考试结果模拟（按当前水平）
-              </p>
-              <div className="space-y-1">
-                <p className="text-2xl font-semibold text-slate-900">
-                  ⚠️ 考试判决书 + 可抢救手术单
+            <p className="text-sm text-slate-500">
+              预计 30–60 秒完成（若超过 2 分钟可刷新）
+            </p>
+            <div className="relative mt-4 h-1.5 overflow-hidden rounded-full bg-slate-200">
+                <div className="absolute inset-0 w-[40%] animate-pulse rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500" />
+            </div>
+            <div className="space-y-2 text-sm text-slate-600">
+              {loadingSteps.map((step) => (
+                <p key={step} className="flex items-center justify-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-blue-500" />
+                  {step}
                 </p>
-                <p className="text-lg text-slate-800">
-                  你的预估得分 ≈ {predictedScore} 分 · 通过线：{PASS_LINE} 分
-                </p>
-                <div className="space-y-1 text-sm text-slate-600">
-                  <p>结论：</p>
-                  <p className="text-base font-semibold text-rose-600">
-                    当前状态：❌ {simulationStatus}
+              ))}
+            </div>
+            <p className="text-xs text-slate-400">
+              {pendingMessage || `已尝试 ${tries} / ${MAX_RETRY} 次`}
+            </p>
+          </section>
+        ) : (
+          report && (
+            <div className="space-y-6">
+              <section className="rounded-3xl bg-gradient-to-br from-rose-50 via-white to-slate-50 p-6 shadow-lg">
+                <div className="flex flex-col gap-6 md:flex-row">
+                  <div className="flex-1 space-y-4">
+                    <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
+                      考试结果模拟（按当前水平）
+                    </p>
+                    <div className="flex items-end gap-3">
+                      <p className="text-5xl font-bold text-slate-900">{predictedScore} 分</p>
+                      <div className="text-sm text-slate-500">
+                        <p>通过线：{PASS_LINE} 分</p>
+                        <p className="text-xs text-slate-400">按当前正确率模拟</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      <div className="flex-1 rounded-2xl bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-sm">
+                        <p className="text-xs text-slate-500">通过线</p>
+                        <p className="text-xl font-semibold text-slate-900">{PASS_LINE} 分</p>
+                      </div>
+                      <div className="flex-1 rounded-2xl bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-sm">
+                        <p className="text-xs text-slate-500">差距</p>
+                        <p className="text-xl font-semibold text-slate-900">
+                          {gapLabel}
+                        </p>
+                      </div>
+                      <div className="flex-1 rounded-2xl bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-sm">
+                        <p className="text-xs text-slate-500">当前正确率</p>
+                        <p className="text-xl font-semibold text-slate-900">
+                          {formatPercent(summary?.score)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-slate-200 bg-white/80 px-5 py-4">
+                    <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${heroBadgeTone}`}>
+                      {riskMeta.label}
+                    </span>
+                    <p className="text-base font-semibold text-slate-900">当前状态：{simulationStatus}</p>
+                    <p className="text-sm text-slate-600">
+                      原因：高频 / 常考考点未建立稳定判断
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm font-semibold text-rose-600">⚠️ 考试判决书 + 可抢救手术单</p>
+              </section>
+
+              <section className="rounded-3xl border border-slate-100 bg-white px-6 py-6 shadow-sm md:flex md:items-center md:justify-between md:gap-6">
+                <div className="space-y-2 text-sm text-slate-600">
+                  <p className="text-base font-semibold text-slate-900">
+                    {riskMeta.alert}
                   </p>
-                  <p className="text-base font-semibold text-slate-700">
-                    原因：高频 / 常考考点未建立稳定判断
-                  </p>
+                  <p>预计用时：15–20 分钟 · 不重复诊断题，全部来自薄弱考点</p>
                 </div>
-              </div>
-            </section>
+                <div className="space-y-3 md:space-y-0 md:flex md:items-center md:gap-6 md:w-full md:justify-between">
+                  <Link
+                    href={ctaHref}
+                    className="flex-1 rounded-2xl bg-slate-900 px-5 py-3 text-center text-base font-semibold text-white shadow-lg transition hover:bg-slate-800"
+                  >
+                    立即补强高频考点
+                  </Link>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-500">
+                      <span>当前正确率</span>
+                      <span>通过线 {PASS_LINE}%</span>
+                    </div>
+                    <div className="relative h-2 rounded-full bg-slate-200">
+                      <div
+                        className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400"
+                        style={{ width: `${Math.min(Math.max(currentRate * 100, 0), 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
 
-            <section className="rounded-3xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-8 shadow-lg text-white">
-              <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.4em] text-blue-100">
-                  行动重点
-                </p>
-                <Link
-                  href={ctaHref}
-                  className="flex items-center justify-center gap-2 rounded-2xl bg-white/90 px-6 py-4 text-center text-lg font-semibold text-blue-600 transition hover:bg-white/100"
-                >
-                  <span>🔵</span>
-                  <span>{riskMeta.cta}</span>
-                </Link>
-                <p className="text-xs text-white/80">
-                  当前正确率 {formatPercent(summary?.score)} · 通过线 60% · 差距 {gapLabel}
-                </p>
-                <p className="text-xs text-white/80">{riskMeta.alert}</p>
-                <p className="text-xs text-white/80">
-                  预计用时：15–20 分钟 · 不重复诊断题，全部来自薄弱考点
-                </p>
-              </div>
-            </section>
-
-            <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
-              <div className="grid grid-cols-2 gap-4 text-center text-slate-500 md:grid-cols-4">
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <p className="text-xs">本次题量</p>
-                  <p className="text-2xl font-semibold text-slate-900">{summary?.total ?? 0}</p>
-                  <p className="text-xs text-slate-400">题</p>
+              <section className="rounded-3xl border border-slate-100 bg-white px-6 py-6 shadow-sm">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs text-slate-500">薄弱点优先级（Top 3）</p>
+                    <h3 className="text-2xl font-semibold text-slate-900">
+                      当前手术单：先补哪几项
+                    </h3>
+                  </div>
+                  <span className="text-xs text-slate-400">先做哪个 →</span>
                 </div>
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <p className="text-xs">正确率</p>
-                  <p className="text-2xl font-semibold text-slate-900">{formatPercent(summary?.score)}</p>
-                  <p className="text-xs text-slate-400">平均得分</p>
-                </div>
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <p className="text-xs">错题数</p>
-                  <p className="text-2xl font-semibold text-slate-900">{wrongCount}</p>
-                  <p className="text-xs text-slate-400">待复盘</p>
-                </div>
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <p className="text-xs">覆盖章节</p>
-                  <p className="text-2xl font-semibold text-slate-900">全部章节</p>
-                  <p className="text-xs text-slate-400">核心考点</p>
-                </div>
-              </div>
-            </section>
-
-            <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
-              <div className="flex items-end justify-between">
-                <div>
-                  <p className="text-xs text-slate-500">薄弱点优先级（Top 3）</p>
-                  <h3 className="text-xl font-semibold text-slate-900">
-                    你当前最需要优先补强的考点
-                  </h3>
-                </div>
-                <span className="text-xs text-slate-400">先做哪个 →</span>
-              </div>
-              <div className="rounded-2xl border border-amber-100 bg-amber-50/80 px-4 py-3 text-sm text-amber-900">
-                <p className="font-semibold text-amber-900">
-                  为什么系统只让你先补这 3 个？
-                </p>
-                <p className="text-xs text-amber-800">这不是随机挑选，而是因为：</p>
-                <div className="space-y-1 text-xs text-amber-900">
-                  <p>• 它们属于 高频 / 常考考点</p>
-                  <p>• 错 1 题 ≈ 丢 2–4 分</p>
-                  <p>• 修复成本低，但回报最高</p>
-                </div>
-                <p className="pt-2 text-xs font-semibold text-amber-900">
-                  👉 先补这 3 个，比你刷 100 道随机题更有效
-                </p>
-              </div>
-              <div className="grid gap-4 md:grid-cols-3">
+                <details className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                  <summary className="flex items-center justify-between font-semibold text-slate-700">
+                    为什么系统只让你先补这 3 个？
+                    <span className="text-xs text-blue-500">展开</span>
+                  </summary>
+                  <div className="mt-2 space-y-1 text-xs text-slate-500">
+                    <p>• 它们属于 高频 / 常考考点</p>
+                    <p>• 错 1 题 ≈ 丢 2–4 分</p>
+                    <p>• 修复成本低，但回报最高</p>
+                    <p>👉 先补这 3 个，比你刷 100 道随机题更有效</p>
+                  </div>
+                </details>
+                <div className="mt-6 grid gap-4 md:grid-cols-3">
                 {topWeaknesses.map((weak, index) => {
                   const correct = Math.max(weak.total - weak.wrong, 0);
                   const accuracy = Math.round((weak.accuracy ?? 0) * 100);
                   const hint = COMMON_ERROR_HINTS[index % COMMON_ERROR_HINTS.length];
-                  const importanceMeta = getImportanceBadge(weak.importance_level);
-                  const learnModeMeta = getLearnModeBadge(weak.learn_mode);
-                  const unknownPoint = isUnknownWeakness(weak);
-                  const displayTitle = unknownPoint
-                    ? "⚠️ 尚未精确归类的综合考点"
-                    : weak.point_name ?? weak.title ?? "待分析";
-                  const actions = buildWeaknessActions(weak, attemptId!);
-                  return (
-                    <div
-                      key={weak.code ?? `${index}-${displayTitle}`}
-                      className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4"
-                    >
-                      <div className="flex items-center justify-between text-xs text-slate-500">
-                        <span className="font-semibold text-rose-600">
-                          薄弱点 {index + 1}
-                        </span>
-                        <span>{weak.sectionTitle ?? "其他"}</span>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-lg font-semibold text-slate-900">【{displayTitle}】</p>
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                    const importanceMeta = getImportanceBadge(weak.importance_level);
+                    const learnModeMeta = getLearnModeBadge(weak.learn_mode);
+                    const unknownPoint = isUnknownWeakness(weak);
+                    const displayTitle = unknownPoint
+                      ? "⚠️ 尚未精确归类的综合考点"
+                      : weak.point_name ?? weak.title ?? "待分析";
+                    const actions = buildWeaknessActions(weak, attemptId!);
+                    const errorTypes = hint.split(" / ").slice(0, 2);
+                    return (
+                      <div
+                        key={weak.code ?? `${weak.sectionTitle}-${displayTitle}`}
+                        className={`flex flex-col gap-4 rounded-2xl border px-4 py-5 shadow-sm transition ${
+                          unknownPoint
+                            ? "border-slate-300 bg-slate-100 text-slate-500"
+                            : "border-slate-200 bg-white"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <h4 className="flex-1 text-lg font-semibold text-slate-900">
+                            {displayTitle}
+                          </h4>
                           <span
-                            className={`px-2 py-0.5 rounded-full font-medium ${importanceMeta.className}`}
+                            className={`text-xs font-semibold ${importanceMeta.className}`}
                           >
                             {importanceMeta.symbol} {importanceMeta.label}
                           </span>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-xs">
                           <span
-                            className={`px-2 py-0.5 rounded-full font-medium ${learnModeMeta.className}`}
+                            className={`rounded-full px-3 py-1 font-semibold ${learnModeMeta.className}`}
                           >
                             {learnModeMeta.label}
                           </span>
+                          <span className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-500">
+                            {weak.sectionTitle ?? "未分组"}
+                          </span>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.3em] text-slate-500">
+                            <span>正确率</span>
+                            <span>{accuracy}%</span>
+                          </div>
+                          <div className="h-1.5 rounded-full bg-slate-200">
+                            <div
+                              className="h-full rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-rose-500"
+                              style={{ width: `${accuracy}%` }}
+                            />
+                          </div>
+                          <p className="text-[11px] text-slate-500">{correct}/{weak.total} 题</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {errorTypes.map((type) => (
+                            <span
+                              key={type}
+                              className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-500"
+                            >
+                              {type}
+                            </span>
+                          ))}
                         </div>
                         {unknownPoint && (
                           <p className="text-[11px] text-slate-500">
                             该题涉及多个知识点，系统暂按“综合判断题”处理
                           </p>
                         )}
+                        <div className="flex flex-wrap gap-3">
+                          {actions[0] && (
+                            <Link
+                              href={actions[0].href}
+                              className="flex-1 rounded-2xl bg-amber-500 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-amber-600"
+                            >
+                              {actions[0].label}
+                            </Link>
+                          )}
+                          {actions[1] && (
+                            <Link
+                              href={actions[1].href}
+                              className="flex-1 rounded-2xl border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                            >
+                              {actions[1].label}
+                            </Link>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-xs text-slate-500">
-                        正确率：{accuracy}%（{correct}/{weak.total}）
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        常见错误类型：{hint}
-                      </p>
-                      <div className="space-y-2">
-                        {actions.map((action) => (
-                          <Link
-                            key={action.label}
-                            href={action.href}
-                            className={`block rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-700 transition ${
-                              action.variant === "memorize"
-                                ? "border-amber-200 bg-amber-50"
-                                : "border-blue-200 bg-blue-50"
-                            }`}
-                          >
-                            {action.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-                {topWeaknesses.length === 0 && (
-                  <p className="text-sm text-slate-500">
-                    系统暂未识别出明显的薄弱点，先完成专项练习即可自动生成优先项。
-                  </p>
-                )}
-              </div>
-            </section>
-
-            {hasFastFixTags && (
-              <section className="rounded-3xl border border-emerald-100 bg-emerald-50/60 px-6 py-5 space-y-3">
-                <p className="text-xs uppercase tracking-[0.3em] text-emerald-600">
-                  可恢复性提示
-                </p>
-                <h3 className="text-lg font-semibold text-slate-900">
-                  好消息：这是“可快速修复型错误”
-                </h3>
-                <div className="space-y-1 text-sm text-slate-600">
-                  <p>你的错误不是：</p>
-                  <div className="space-y-1 text-xs text-rose-600">
-                    <p>✘ 不会做题</p>
-                    <p>✘ 理解能力差</p>
-                  </div>
-                  <p className="pt-1">而是：</p>
-                  <div className="space-y-1 text-xs text-emerald-700">
-                    <p>✔ 记忆未固化</p>
-                    <p>✔ 判断条件未形成反射</p>
-                  </div>
-                  <p className="text-sm font-semibold text-slate-900">
-                    👉 这类问题，2–3 天可以明显改善
-                  </p>
+                    );
+                  })}
+                  {topWeaknesses.length === 0 && (
+                    <p className="text-sm text-slate-500">
+                      系统暂未识别出明显的薄弱点，先完成专项练习即可自动生成优先项。
+                    </p>
+                  )}
                 </div>
               </section>
-            )}
 
-            <section className="rounded-3xl border border-slate-100 bg-white px-6 py-5">
-              <h3 className="text-lg font-semibold text-slate-900">学习建议</h3>
-              <p className="text-sm text-slate-600">
-                建议先完成薄弱点专项练习，再回顾错题解析，有助于快速建立基础判断能力。
-              </p>
-            </section>
-
-            <section className="rounded-3xl border border-slate-100 bg-white px-6 py-5 space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-slate-900">
-                  本次诊断错题（{wrongQuestions.length} 题）
-                </h3>
-                <button
-                  className="text-xs font-semibold text-blue-600"
-                  onClick={() => setShowWrongDetails((prev) => !prev)}
-                >
-                  {showWrongDetails ? "收起错题" : "展开错题"}
-                </button>
-              </div>
-              <p className="text-xs text-slate-500">
-                错题已加入你的复习队列，将在后续学习中自动再次出现
-              </p>
-              {showWrongDetails && (
-                <div className="space-y-4">
-                  {wrongQuestions.length === 0 && (
-                    <p className="text-sm text-slate-500">暂无错题需要复盘。</p>
-                  )}
-                  {wrongQuestions.map((question) => (
-                    <article
-                      key={question.question_uuid}
-                      className="space-y-2 rounded-2xl border border-slate-200 bg-slate-50 p-4"
-                    >
-                      <p className="text-xs text-slate-500">
-                        {question.section_title ?? "未分组"} · {question.knowledge_point_title ?? "未知"}
-                      </p>
-                      <p className="text-base font-semibold text-slate-900">
-                        {question.stem ?? "暂无题干"}
-                      </p>
-                      <div className="text-sm text-slate-700 space-y-1">
-                        <p>你的答案：{question.user_answer ?? "未作答"}</p>
-                        <p>正确答案：{question.correct_answer ?? "待补充"}</p>
-                        <p className="text-xs text-slate-500">
-                          解析：{question.explanation ?? "暂无解析"}
-                        </p>
-                      </div>
-                    </article>
-                  ))}
-                </div>
+              {hasFastFixTags && (
+                <section className="rounded-3xl border border-emerald-100 bg-emerald-50/60 px-6 py-5 space-y-3">
+                  <p className="text-xs uppercase tracking-[0.3em] text-emerald-600">
+                    可恢复性提示
+                  </p>
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    好消息：这是“可快速修复型错误”
+                  </h3>
+                  <div className="space-y-1 text-sm text-slate-600">
+                    <p>你的错误不是：</p>
+                    <div className="space-y-1 text-xs text-rose-600">
+                      <p>✘ 不会做题</p>
+                      <p>✘ 理解能力差</p>
+                    </div>
+                    <p className="pt-1">而是：</p>
+                    <div className="space-y-1 text-xs text-emerald-700">
+                      <p>✔ 记忆未固化</p>
+                      <p>✔ 判断条件未形成反射</p>
+                    </div>
+                    <p className="text-sm font-semibold text-slate-900">
+                      👉 这类问题，2–3 天可以明显改善
+                    </p>
+                  </div>
+                </section>
               )}
-            </section>
 
-            <section className="rounded-3xl border border-slate-100 bg-white px-6 py-5">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
-                次级操作
-              </h3>
-              <div className="mt-3 flex flex-wrap gap-3">
-                <Link
-                  href="/test/ch1/practice"
-                  className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
-                >
-                  练习模式重做错题
-                </Link>
-                <Link
-                  href="/diagnostic/questions"
-                  className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
-                >
-                  返回诊断做题
-                </Link>
-              </div>
-            </section>
-          </div>
+              <section className="rounded-3xl border border-slate-100 bg-white px-6 py-5">
+                <h3 className="text-lg font-semibold text-slate-900">学习建议</h3>
+                <p className="text-sm text-slate-600">
+                  建议先完成薄弱点专项练习，再回顾错题解析，有助于快速建立基础判断能力。
+                </p>
+              </section>
+
+              <section className="rounded-3xl border border-slate-100 bg-white px-6 py-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    本次诊断错题（{wrongQuestions.length} 题）
+                  </h3>
+                  <button
+                    className="text-xs font-semibold text-blue-600"
+                    onClick={() => setShowWrongDetails((prev) => !prev)}
+                  >
+                    {showWrongDetails ? "收起错题" : "展开错题"}
+                  </button>
+                </div>
+                <p className="text-xs text-slate-500">
+                  错题已加入你的复习队列，将在后续学习中自动再次出现
+                </p>
+                {showWrongDetails && (
+                  <div className="space-y-4">
+                    {wrongQuestions.length === 0 && (
+                      <p className="text-sm text-slate-500">暂无错题需要复盘。</p>
+                    )}
+                    {wrongQuestions.map((question) => (
+                      <article
+                        key={question.question_uuid}
+                        className="space-y-2 rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                      >
+                        <p className="text-xs text-slate-500">
+                          {question.section_title ?? "未分组"} · {question.knowledge_point_title ?? "未知"}
+                        </p>
+                        <p className="text-base font-semibold text-slate-900">
+                          {question.stem ?? "暂无题干"}
+                        </p>
+                        <div className="text-sm text-slate-700 space-y-1">
+                          <p>你的答案：{question.user_answer ?? "未作答"}</p>
+                          <p>正确答案：{question.correct_answer ?? "待补充"}</p>
+                          <p className="text-xs text-slate-500">
+                            解析：{question.explanation ?? "暂无解析"}
+                          </p>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </section>
+
+              <section className="rounded-3xl border border-slate-100 bg-white px-6 py-5">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                  次级操作
+                </h3>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  <Link
+                    href="/test/ch1/practice"
+                    className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
+                  >
+                    练习模式重做错题
+                  </Link>
+                  <Link
+                    href="/diagnostic/questions"
+                    className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
+                  >
+                    返回诊断做题
+                  </Link>
+                </div>
+              </section>
+            </div>
+          )
         )}
       </div>
     </div>
