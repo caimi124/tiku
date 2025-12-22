@@ -428,7 +428,6 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                   const learnModeMeta = getLearnModeBadge(weak.learn_mode);
                   const titleText =
                     weak.point_name ??
-                    weak.knowledge_point_name ??
                     weak.title ??
                     "待分析";
                   const actions = buildWeaknessActions(weak, attemptId!);
