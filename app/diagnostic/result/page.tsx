@@ -153,8 +153,8 @@ function sortWeaknesses(list: Report["weaknesses"]) {
 }
 
 const WEAKNESS_PLAN_COPY: Record<keyof typeof ACTION_VARIANTS, string> = {
-  memorize: "👉 先背 5 分钟（防止再错）",
-  practice: "👉 再练 3 题（形成条件反射）",
+  memorize: "先背 5 分钟",
+  practice: "再练 3 题",
 };
 
 function buildWeaknessActions(
@@ -394,6 +394,24 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
       ? "高风险边缘"
       : "处在边线，仍需稳住";
   const heroBadgeTone = HERO_BADGE_TONES[riskLevel];
+  const normalizedScore = Math.min(Math.max(predictedScore, 0), 100);
+  const statCards = [
+    {
+      label: "总题量",
+      value: summary?.total ?? 0,
+      helper: "题",
+    },
+    {
+      label: "错题数",
+      value: wrongCount,
+      helper: "待复盘",
+    },
+    {
+      label: "完成时间",
+      value: summary?.duration ? `${Math.round(summary.duration / 60)} 分钟` : "未知",
+      helper: "用时",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -417,7 +435,7 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
         )}
 
         {showLoadingState ? (
-            <section className="mx-auto max-w-2xl space-y-4 rounded-3xl border border-slate-200 bg-white px-6 py-8 text-center shadow-xl">
+          <section className="mx-auto max-w-2xl space-y-4 rounded-3xl border border-slate-200 bg-white px-6 py-8 text-center shadow-xl">
             <p className="text-xl font-semibold text-slate-900">
               正在生成你的个人判决书…
             </p>
@@ -425,7 +443,7 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
               预计 30–60 秒完成（若超过 2 分钟可刷新）
             </p>
             <div className="relative mt-4 h-1.5 overflow-hidden rounded-full bg-slate-200">
-                <div className="absolute inset-0 w-[40%] animate-pulse rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500" />
+              <div className="absolute inset-0 w-[40%] animate-pulse rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500" />
             </div>
             <div className="space-y-2 text-sm text-slate-600">
               {loadingSteps.map((step) => (
@@ -441,93 +459,74 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
           </section>
         ) : (
           report && (
-            <div className="space-y-6">
-              <section className="rounded-3xl bg-gradient-to-br from-rose-50 via-white to-slate-50 p-6 shadow-lg">
-                <div className="flex flex-col gap-6 md:flex-row">
-                  <div className="flex-1 space-y-4">
-                    <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
-                      考试结果模拟（按当前水平）
-                    </p>
-                    <div className="flex items-end gap-3">
-                      <p className="text-5xl font-bold text-slate-900">{predictedScore} 分</p>
-                      <div className="text-sm text-slate-500">
-                        <p>通过线：{PASS_LINE} 分</p>
-                        <p className="text-xs text-slate-400">按当前正确率模拟</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      <div className="flex-1 rounded-2xl bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-sm">
-                        <p className="text-xs text-slate-500">通过线</p>
-                        <p className="text-xl font-semibold text-slate-900">{PASS_LINE} 分</p>
-                      </div>
-                      <div className="flex-1 rounded-2xl bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-sm">
-                        <p className="text-xs text-slate-500">差距</p>
-                        <p className="text-xl font-semibold text-slate-900">
-                          {gapLabel}
-                        </p>
-                      </div>
-                      <div className="flex-1 rounded-2xl bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-sm">
-                        <p className="text-xs text-slate-500">当前正确率</p>
-                        <p className="text-xl font-semibold text-slate-900">
-                          {formatPercent(summary?.score)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-slate-200 bg-white/80 px-5 py-4">
-                    <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${heroBadgeTone}`}>
-                      {riskMeta.label}
-                    </span>
-                    <p className="text-base font-semibold text-slate-900">当前状态：{simulationStatus}</p>
-                    <p className="text-sm text-slate-600">
-                      原因：高频 / 常考考点未建立稳定判断
-                    </p>
-                  </div>
-                </div>
-                <p className="mt-4 text-sm font-semibold text-rose-600">⚠️ 考试判决书 + 可抢救手术单</p>
-              </section>
-
-              <section className="rounded-3xl border border-slate-100 bg-white px-6 py-6 shadow-sm md:flex md:items-center md:justify-between md:gap-6">
-                <div className="space-y-2 text-sm text-slate-600">
-                  <p className="text-base font-semibold text-slate-900">
-                    {riskMeta.alert}
-                  </p>
-                  <p>预计用时：15–20 分钟 · 不重复诊断题，全部来自薄弱考点</p>
-                </div>
-                <div className="space-y-3 md:space-y-0 md:flex md:items-center md:gap-6 md:w-full md:justify-between">
-                  <Link
-                    href={ctaHref}
-                    className="flex-1 rounded-2xl bg-slate-900 px-5 py-3 text-center text-base font-semibold text-white shadow-lg transition hover:bg-slate-800"
+            <>
+              <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${RISK_BADGE_STYLES[riskLevel]}`}
                   >
-                    立即补强高频考点
-                  </Link>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs text-slate-500">
-                      <span>当前正确率</span>
-                      <span>通过线 {PASS_LINE}%</span>
-                    </div>
-                    <div className="relative h-2 rounded-full bg-slate-200">
-                      <div
-                        className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400"
-                        style={{ width: `${Math.min(Math.max(currentRate * 100, 0), 100)}%` }}
-                      />
-                    </div>
+                    {riskMeta.label}
+                  </span>
+                  <span className="text-xs font-semibold text-slate-500">{simulationStatus}</span>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-5xl font-bold text-slate-900">{predictedScore} / 100</p>
+                  <p className="text-sm text-slate-500">未达通过线 · 当前得分不足</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.4em] text-slate-500">
+                    <span>当前得分</span>
+                    <span>通过线 {PASS_LINE}</span>
+                  </div>
+                  <div className="relative h-2 rounded-full bg-slate-200">
+                    <div
+                      className="absolute inset-0 rounded-full bg-blue-500"
+                      style={{ width: `${normalizedScore}%` }}
+                    />
+                    <div
+                      className="pointer-events-none absolute inset-y-0 right-0 w-px bg-slate-400"
+                      style={{ marginRight: "-1px" }}
+                    />
                   </div>
                 </div>
+                <Link
+                  href={ctaHref}
+                  className="rounded-2xl bg-blue-600 px-4 py-3 text-center text-base font-semibold text-white transition hover:bg-blue-500"
+                >
+                  立即补强高频考点
+                </Link>
               </section>
 
-              <section className="rounded-3xl border border-slate-100 bg-white px-6 py-6 shadow-sm">
+              <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+                <div className="grid gap-4 md:grid-cols-3">
+                  {statCards.map((stat) => (
+                    <div
+                      key={stat.label}
+                      className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 text-center"
+                    >
+                      <p className="text-xs uppercase tracking-[0.3em] text-slate-500">{stat.label}</p>
+                      <p className="mt-2 text-2xl font-semibold text-slate-900">{stat.value}</p>
+                      <p className="text-xs text-slate-500">{stat.helper}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-sm text-slate-600">
+                  {riskMeta.alert} 本诊断题目已自动按高频答案梳理，不重复抽题，节省时间。
+                </p>
+              </section>
+
+              <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="text-xs text-slate-500">薄弱点优先级（Top 3）</p>
-                    <h3 className="text-2xl font-semibold text-slate-900">
-                      当前手术单：先补哪几项
-                    </h3>
+                    <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">
+                      薄弱点优先级（Top 3）
+                    </p>
+                    <h3 className="text-xl font-semibold text-slate-900">当前手术单：先补哪几个</h3>
                   </div>
                   <span className="text-xs text-slate-400">先做哪个 →</span>
                 </div>
-                <details className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                  <summary className="flex items-center justify-between font-semibold text-slate-700">
+                <details className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                  <summary className="flex cursor-pointer items-center justify-between font-semibold text-slate-700">
                     为什么系统只让你先补这 3 个？
                     <span className="text-xs text-blue-500">展开</span>
                   </summary>
@@ -535,14 +534,14 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                     <p>• 它们属于 高频 / 常考考点</p>
                     <p>• 错 1 题 ≈ 丢 2–4 分</p>
                     <p>• 修复成本低，但回报最高</p>
-                    <p>👉 先补这 3 个，比你刷 100 道随机题更有效</p>
+                    <p>• 先修复这 3 个，更快回血</p>
                   </div>
                 </details>
-                <div className="mt-6 grid gap-4 md:grid-cols-3">
-                {topWeaknesses.map((weak, index) => {
-                  const correct = Math.max(weak.total - weak.wrong, 0);
-                  const accuracy = Math.round((weak.accuracy ?? 0) * 100);
-                  const hint = COMMON_ERROR_HINTS[index % COMMON_ERROR_HINTS.length];
+                <div className="grid gap-4 md:grid-cols-3">
+                  {topWeaknesses.map((weak, index) => {
+                    const correct = Math.max(weak.total - weak.wrong, 0);
+                    const accuracy = Math.round((weak.accuracy ?? 0) * 100);
+                    const hint = COMMON_ERROR_HINTS[index % COMMON_ERROR_HINTS.length];
                     const importanceMeta = getImportanceBadge(weak.importance_level);
                     const learnModeMeta = getLearnModeBadge(weak.learn_mode);
                     const unknownPoint = isUnknownWeakness(weak);
@@ -550,30 +549,25 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                       ? "⚠️ 尚未精确归类的综合考点"
                       : weak.point_name ?? weak.title ?? "待分析";
                     const actions = buildWeaknessActions(weak, attemptId!);
-                    const errorTypes = hint.split(" / ").slice(0, 2);
+                    const errorTypes = hint.split(" / ").slice(0, 3);
+                    const baseCardClass =
+                      index === 0
+                        ? "border-rose-200 bg-rose-50/60 pl-3 border-l-4 border-rose-500"
+                        : "border-slate-200 bg-white";
+                    const unknownClass = unknownPoint ? "border-slate-300 bg-slate-100 text-slate-500" : "";
                     return (
                       <div
-                        key={weak.code ?? `${weak.sectionTitle}-${displayTitle}`}
-                        className={`flex flex-col gap-4 rounded-2xl border px-4 py-5 shadow-sm transition ${
-                          unknownPoint
-                            ? "border-slate-300 bg-slate-100 text-slate-500"
-                            : "border-slate-200 bg-white"
-                        }`}
+                        key={weak.code ?? `${weak.sectionTitle}-${displayTitle}` + index}
+                        className={`flex flex-col gap-4 rounded-2xl border px-4 py-5 shadow-sm transition ${baseCardClass} ${unknownClass}`}
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <h4 className="flex-1 text-lg font-semibold text-slate-900">
-                            {displayTitle}
-                          </h4>
-                          <span
-                            className={`text-xs font-semibold ${importanceMeta.className}`}
-                          >
+                        <div className="flex items-center justify-between gap-3">
+                          <h4 className="flex-1 text-lg font-semibold text-slate-900">{displayTitle}</h4>
+                          <span className={`text-xs font-semibold ${importanceMeta.className}`}>
                             {importanceMeta.symbol} {importanceMeta.label}
                           </span>
                         </div>
                         <div className="flex flex-wrap gap-2 text-xs">
-                          <span
-                            className={`rounded-full px-3 py-1 font-semibold ${learnModeMeta.className}`}
-                          >
+                          <span className={`rounded-full px-3 py-1 font-semibold ${learnModeMeta.className}`}>
                             {learnModeMeta.label}
                           </span>
                           <span className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-500">
@@ -581,13 +575,11 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                           </span>
                         </div>
                         <div className="space-y-1">
-                          <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.3em] text-slate-500">
-                            <span>正确率</span>
-                            <span>{accuracy}%</span>
-                          </div>
-                          <div className="h-1.5 rounded-full bg-slate-200">
+                          <p className="text-sm font-semibold text-slate-900">高频陷阱 · 错 1 题 ≈ 丢 2–4 分</p>
+                          <p className="text-xs text-slate-500">主要问题：{hint}</p>
+                          <div className="relative h-1.5 rounded-full bg-slate-200">
                             <div
-                              className="h-full rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-rose-500"
+                              className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-rose-500"
                               style={{ width: `${accuracy}%` }}
                             />
                           </div>
@@ -612,7 +604,7 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                           {actions[0] && (
                             <Link
                               href={actions[0].href}
-                              className="flex-1 rounded-2xl bg-amber-500 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-amber-600"
+                              className="flex-1 rounded-2xl bg-blue-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-blue-500"
                             >
                               {actions[0].label}
                             </Link>
@@ -638,7 +630,7 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
               </section>
 
               {hasFastFixTags && (
-                <section className="rounded-3xl border border-emerald-100 bg-emerald-50/60 px-6 py-5 space-y-3">
+                <section className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-6 shadow-sm space-y-3">
                   <p className="text-xs uppercase tracking-[0.3em] text-emerald-600">
                     可恢复性提示
                   </p>
@@ -663,14 +655,14 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                 </section>
               )}
 
-              <section className="rounded-3xl border border-slate-100 bg-white px-6 py-5">
+              <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h3 className="text-lg font-semibold text-slate-900">学习建议</h3>
                 <p className="text-sm text-slate-600">
                   建议先完成薄弱点专项练习，再回顾错题解析，有助于快速建立基础判断能力。
                 </p>
               </section>
 
-              <section className="rounded-3xl border border-slate-100 bg-white px-6 py-5 space-y-3">
+              <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-slate-900">
                     本次诊断错题（{wrongQuestions.length} 题）
@@ -714,7 +706,7 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                 )}
               </section>
 
-              <section className="rounded-3xl border border-slate-100 bg-white px-6 py-5">
+              <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
                   次级操作
                 </h3>
@@ -733,7 +725,7 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                   </Link>
                 </div>
               </section>
-            </div>
+            </>
           )
         )}
       </div>
