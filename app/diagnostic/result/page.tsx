@@ -52,42 +52,73 @@ type DiagnosticResultPageProps = {
   searchParams?: { attempt_id?: string };
 };
 
-const MAX_RETRY = 10;
-const PASS_LINE = 60;
-const COMMON_ERROR_HINTS = [
-  "概念混淆 / 首选药记忆不清",
-  "适应证判断错误",
-  "题干关键信息遗漏",
-  "审题信息抓取不全",
-  "重要细节未抓住",
-];
-
-const IMPORTANCE_BADGES = [
-  { minLevel: 4, symbol: "🔥", label: "高频", className: "bg-red-100 text-red-600" },
-  { minLevel: 3, symbol: "🟡", label: "常考", className: "bg-amber-100 text-amber-600" },
-  { minLevel: 1, symbol: "⚪", label: "低频", className: "bg-slate-100 text-slate-500" },
-];
-
-const LEARN_MODE_BADGES: Record<LearnMode, { label: string; className: string }> = {
-  MEMORIZE: { label: "必背 · 不背必错", className: "bg-amber-100 text-amber-700" },
-  PRACTICE: { label: "多练 · 题型固定", className: "bg-emerald-100 text-emerald-700" },
-  BOTH: { label: "背+练 · 高频陷阱型", className: "bg-slate-100 text-slate-700" },
+type StageRule = {
+  max: number;
+  label: string;
+  description: string;
 };
 
-const RISK_INFO = {
-  high: {
-    label: "🔴 高风险",
-    alert: "当前水平与通过线差距较大，需立即补强高频考点。",
+type Recommendation = {
+  id: string;
+  title: string;
+  weightLabel: string;
+  reason: string;
+  duration: string;
+  goal: string;
+  href: string;
+  mode: "study" | "practice";
+  emphasis?: boolean;
+  accuracy?: number;
+};
+
+const MAX_RETRY = 10;
+const PASS_LINE = 60;
+
+const STAGE_RULES: StageRule[] = [
+  {
+    max: 0.4,
+    label: "基础建立期",
+    description: "当前任务是先把权重最高的章节过一遍，搭建记忆框架。",
   },
-  medium: {
-    label: "🟠 中风险",
-    alert: "接近通过线但还有薄弱点，建议优先复盘重点题型。",
+  {
+    max: 0.75,
+    label: "查漏补缺期",
+    description: "基础已成型，集中补救低正确率 × 高权重章节即可稳住分数。",
   },
-  low: {
-    label: "🟢 相对安全",
-    alert: "基础稳定，巩固薄弱点可提升通过稳定性。",
+  {
+    max: 1,
+    label: "冲刺刷题期",
+    description: "距离通过线很近，保持做题节奏与稳定性就能守住成绩。",
   },
-} as const;
+];
+
+const AI_SUMMARY_RULES = [
+  {
+    max: 0.25,
+    text: "本次成绩主要反映对题型和考点还不熟悉。先按考试权重逐个过一遍，分数会很快拉回来。",
+  },
+  {
+    max: 0.5,
+    text: "你已掌握基础概念，但在多个核心章节存在缺口。补齐记忆盲点后，正确率会明显提升。",
+  },
+  {
+    max: 0.75,
+    text: "整体理解良好。针对错题涉及的章节做专项训练，可迅速提升稳定性。",
+  },
+  {
+    max: 1,
+    text: "处于高分段。继续用真题与随机练习保持手感，同时盯紧错题，避免重复失分。",
+  },
+];
+
+const IMPORTANCE_WEIGHT_MAP: Record<number, string> = {
+  5: "18%",
+  4: "15%",
+  3: "10%",
+  2: "7%",
+  1: "4%",
+  0: "2%",
+};
 
 function clamp01(value: number) {
   if (Number.isNaN(value)) return 0;
@@ -96,96 +127,197 @@ function clamp01(value: number) {
   return value;
 }
 
-const RISK_BADGE_STYLES: Record<keyof typeof RISK_INFO, string> = {
-  high: "border border-[#EBAFA9] bg-[#FFF1EF] text-[#8B2E2E]",
-  medium: "border border-[#E6D7C4] bg-[#FAF7F1] text-[#7A6A5F]",
-  low: "border border-[#D1E7D7] bg-[#F4FFF5] text-[#4C6F5E]",
-};
+function formatDurationLabel(duration: number | null) {
+  if (!duration || Number.isNaN(duration) || duration <= 0) return "—";
+  const minutes = Math.floor(duration / 60);
+  const seconds = Math.max(Math.round(duration % 60), 0);
+  if (minutes === 0) return `${seconds} 秒`;
+  if (seconds === 0) return `${minutes} 分钟`;
+  return `${minutes} 分 ${seconds} 秒`;
+}
 
-const PRIORITY_TIERS = [
-  { threshold: 0.4, label: "紧急补救", className: "text-[#8B2E2E] border border-[#8B2E2E] bg-[#8B2E2E]/10" },
-  { threshold: 0.75, label: "重点巩固", className: "text-[#7A6A5F] border border-[#DCCFC6] bg-[#FAF9F6]" },
-  { threshold: 1, label: "已掌握", className: "text-[#7A6A5F] border border-[#E6DED6] bg-[#F6F1EC]" },
-];
-
-const FAST_FIX_TAGS = ["概念混淆", "首选药不清", "适应证判断"];
-
-const LOADING_STEPS = [
-  "分析答题",
-  "定位高频薄弱点",
-  "生成补救手术单",
-];
-
-const ACTION_VARIANTS = {
-  memorize: "MEMORIZE",
-  practice: "PRACTICE",
-} as const;
-
-const WEAKNESS_PLAN_COPY: Record<keyof typeof ACTION_VARIANTS, string> = {
-  memorize: "先背 5 分钟",
-  practice: "再练 3 题",
-};
-
-function getImportanceBadge(level?: number) {
+function getLearningStageMeta(rate: number) {
+  const normalized = clamp01(rate);
   return (
-    IMPORTANCE_BADGES.find((item) => (level ?? 0) >= item.minLevel) ?? IMPORTANCE_BADGES[2]
+    STAGE_RULES.find((rule) => normalized <= rule.max) ?? STAGE_RULES[STAGE_RULES.length - 1]
   );
 }
 
-function getLearnModeBadge(mode?: LearnMode) {
-  return (mode && LEARN_MODE_BADGES[mode]) || LEARN_MODE_BADGES.BOTH;
+function getAiConclusionText(rate: number) {
+  const normalized = clamp01(rate);
+  return (
+    AI_SUMMARY_RULES.find((rule) => normalized <= rule.max)?.text ??
+    AI_SUMMARY_RULES[AI_SUMMARY_RULES.length - 1].text
+  );
 }
 
-function buildWeaknessActions(weakness: Report["weaknesses"][number], attemptId: string) {
-  const pointCode = weakness.knowledge_point_code;
-  const baseHref = pointCode
-    ? `/practice/by-point?code=${pointCode}&source=diagnostic&attempt_id=${attemptId}`
+function getExamWeightLabel(level?: number) {
+  if (level == null) return "5%";
+  return IMPORTANCE_WEIGHT_MAP[level] ?? "5%";
+}
+
+function getRecommendationGoal(mode?: LearnMode) {
+  if (mode === "MEMORIZE") return "建立记忆框架";
+  if (mode === "PRACTICE") return "提升做题正确率";
+  return "记忆 + 练习结合";
+}
+
+function getRecommendationDuration(mode?: LearnMode) {
+  if (mode === "MEMORIZE") return "≈20 分钟";
+  if (mode === "PRACTICE") return "≈25 分钟";
+  return "≈22 分钟";
+}
+
+function extractWeaknessTitle(weakness: Report["weaknesses"][number]) {
+  return weakness.point_name ?? weakness.title ?? weakness.sectionTitle ?? "未命名章节";
+}
+
+function buildWeaknessRecommendation(
+  weakness: Report["weaknesses"][number],
+  attemptId: string,
+  logic: "weight-first" | "balanced",
+  emphasis = false,
+): Recommendation {
+  const weightLabel = getExamWeightLabel(weakness.importance_level);
+  const accuracy = Math.round((weakness.accuracy ?? 0) * 100);
+  const href = weakness.knowledge_point_code
+    ? `/practice/by-point?code=${weakness.knowledge_point_code}&source=diagnostic&attempt_id=${attemptId}`
     : `/practice/diagnostic-special?attempt_id=${attemptId}`;
+  const mode =
+    weakness.learn_mode === "PRACTICE"
+      ? "practice"
+      : weakness.learn_mode === "MEMORIZE"
+      ? "study"
+      : "study";
+  const duration = getRecommendationDuration(weakness.learn_mode);
+  const goal = getRecommendationGoal(weakness.learn_mode);
+  const reason =
+    logic === "weight-first"
+      ? `该章节占比约 ${weightLabel}，先抢回高权重分数最划算。`
+      : `正确率仅 ${accuracy}% 且章节占比约 ${weightLabel}，提分效率最高。`;
 
-  if (!pointCode) {
-    return [
-      {
-        label: "👉 立即专项练习（护住分数）",
-        href: baseHref,
-        variant: "practice",
-      },
-    ];
+  return {
+    id: weakness.code ?? `${extractWeaknessTitle(weakness)}-${accuracy}`,
+    title: extractWeaknessTitle(weakness),
+    weightLabel,
+    reason,
+    duration,
+    goal,
+    href,
+    mode,
+    emphasis,
+    accuracy,
+  };
+}
+
+function buildHighScoreActions(attemptId: string): Recommendation[] {
+  return [
+    {
+      id: "random-20",
+      title: "随机 20 题混合练习",
+      weightLabel: "保持考试手感",
+      reason: "高分阶段以维持速度与准确率为主。",
+      duration: "≈20 分钟",
+      goal: "维持正确率",
+      href: `/practice/random?source=diagnostic&attempt_id=${attemptId}`,
+      mode: "practice",
+      emphasis: true,
+    },
+    {
+      id: "past-paper",
+      title: "历年真题 1 套",
+      weightLabel: "贴近真实考场",
+      reason: "复刻正式体验，检视易错点。",
+      duration: "≈45 分钟",
+      goal: "模拟实战",
+      href: `/practice/past-paper?attempt_id=${attemptId}`,
+      mode: "practice",
+    },
+    {
+      id: "error-focus",
+      title: "错题专项巩固",
+      weightLabel: "定位易混考点",
+      reason: "避免旧错反复出现，稳定发挥。",
+      duration: "≈18 分钟",
+      goal: "消除隐患",
+      href: `/practice/wrong-book?attempt_id=${attemptId}`,
+      mode: "study",
+    },
+  ];
+}
+
+function buildFoundationFallback(attemptId: string): Recommendation[] {
+  return [
+    {
+      id: "outline",
+      title: "高频章节串讲",
+      weightLabel: "≈40% 总分",
+      reason: "缺少题目数据时，先把大纲前 3 章梳理完。",
+      duration: "≈30 分钟",
+      goal: "搭建知识骨架",
+      href: `/knowledge/tree?source=diagnostic&attempt_id=${attemptId}`,
+      mode: "study",
+      emphasis: true,
+    },
+    {
+      id: "memory",
+      title: "核心概念快背",
+      weightLabel: "≈20% 总分",
+      reason: "首选药、适应证记牢即可快速抬分。",
+      duration: "≈15 分钟",
+      goal: "建立记忆框架",
+      href: `/practice/memorize?source=diagnostic&attempt_id=${attemptId}`,
+      mode: "study",
+    },
+  ];
+}
+
+function buildPriorityRecommendations(
+  rate: number,
+  weaknesses: Report["weaknesses"],
+  attemptId: string,
+) {
+  const normalized = clamp01(rate);
+  if (!weaknesses.length) {
+    if (normalized >= 0.85) {
+      return buildHighScoreActions(attemptId);
+    }
+    return buildFoundationFallback(attemptId);
   }
 
-  const mode = weakness.learn_mode ?? "BOTH";
-  const actions: { label: string; href: string; variant: keyof typeof ACTION_VARIANTS }[] = [];
+  if (normalized < 0.4) {
+    return weaknesses.slice(0, 5).map((weakness, index) =>
+      buildWeaknessRecommendation(weakness, attemptId, "weight-first", index === 0),
+    );
+  }
 
-  if (mode === "MEMORIZE" || mode === "BOTH") {
-    actions.push({
-      label: WEAKNESS_PLAN_COPY.memorize,
-      href: `${baseHref}&focus=memorize`,
-      variant: "memorize",
+  if (normalized < 0.85) {
+    const scored = [...weaknesses].sort((a, b) => {
+      const scoreA = (1 - (a.accuracy ?? 0)) * ((a.importance_level ?? 1) + 1);
+      const scoreB = (1 - (b.accuracy ?? 0)) * ((b.importance_level ?? 1) + 1);
+      return scoreB - scoreA;
     });
+    return scored.slice(0, 5).map((weakness, index) =>
+      buildWeaknessRecommendation(weakness, attemptId, "balanced", index === 0),
+    );
   }
 
-  if (mode === "PRACTICE" || mode === "BOTH") {
-    actions.push({
-      label: WEAKNESS_PLAN_COPY.practice,
-      href: `${baseHref}&focus=practice`,
-      variant: "practice",
-    });
-  }
-
-  return actions;
+  return buildHighScoreActions(attemptId);
 }
 
-function getPriorityTier(accuracy: number) {
-  return PRIORITY_TIERS.find((tier) => accuracy < tier.threshold) ?? PRIORITY_TIERS[2];
+function truncateStem(content: string | null, limit = 72) {
+  if (!content) return "题干内容加载中...";
+  const trimmed = content.replace(/\s+/g, " ").trim();
+  if (trimmed.length <= limit) return trimmed;
+  return `${trimmed.slice(0, limit)}…`;
 }
 
-function isFastFixPattern(tags?: string[]) {
-  if (!tags || tags.length === 0) return false;
-  return tags.some((tag) => FAST_FIX_TAGS.includes(tag));
+function formatDateTime(value: string | null | undefined) {
+  return value ? new Date(value).toLocaleString("zh-CN") : "未知";
 }
 
-function isUnknownWeakness(point?: Report["weaknesses"][number]) {
-  const name = point?.point_name?.trim();
-  return !name || name === "其他";
+function buildAttemptReviewLink(attemptId: string) {
+  return `/practice/diagnostic-special?attempt_id=${attemptId}`;
 }
 
 function sortWeaknesses(list: Report["weaknesses"]) {
@@ -195,24 +327,17 @@ function sortWeaknesses(list: Report["weaknesses"]) {
     if (importanceA !== importanceB) {
       return importanceB - importanceA;
     }
-    const isUnknownA = isUnknownWeakness(a);
-    const isUnknownB = isUnknownWeakness(b);
-    if (isUnknownA !== isUnknownB) {
-      return isUnknownA ? 1 : -1;
-    }
-    return (b.accuracy ?? 0) - (a.accuracy ?? 0);
+    return (a.accuracy ?? 0) - (b.accuracy ?? 0);
   });
 }
 
-function getRiskLevel(score: number): keyof typeof RISK_INFO {
-  if (score < 0.4) {
-    return "high";
-  }
-  if (score < PASS_LINE / 100) {
-    return "medium";
-  }
-  return "low";
-}
+const PRACTICE_MODES: { label: string; href: string }[] = [
+  { label: "按章节练题", href: "/practice/by-chapter" },
+  { label: "历年真题", href: "/practice/history" },
+  { label: "考前押题 / 模拟", href: "/predictions" },
+  { label: "错题巩固", href: "/wrong-questions" },
+  { label: "随机练题", href: "/practice/random" },
+];
 
 export default function DiagnosticResultPage({ searchParams }: DiagnosticResultPageProps) {
   const attemptId = searchParams?.attempt_id;
@@ -221,7 +346,6 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
   const [error, setError] = useState<string | null>(null);
   const [tries, setTries] = useState(0);
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
-  const [showWrongDetails, setShowWrongDetails] = useState(false);
 
   const fetchReport = useCallback(async () => {
     if (!attemptId) return;
@@ -231,22 +355,19 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
       const resp = await fetch(`/api/diagnostic/results/${attemptId}`);
       if (!resp.ok) {
         const body = await resp.json().catch(() => null);
-        throw new Error(
-          body?.error?.message ?? `报告加载失败 (${resp.status})`,
-        );
+        throw new Error(body?.error?.message ?? `报告加载失败 (${resp.status})`);
       }
       const payload = (await resp.json()) as Report;
       setReport(payload);
       if (!payload.ready) {
-        setPendingMessage("报告尚在生成，正在等待...");
+        setPendingMessage("报告生成中，请稍后...");
       } else {
         setPendingMessage(null);
       }
       setLoading(false);
       return payload;
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "报告加载失败，请稍后重试";
+      const message = err instanceof Error ? err.message : "报告加载失败，请稍后重试";
       setError(message);
       setLoading(false);
       return null;
@@ -284,7 +405,8 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
     const duration =
       report.summary.started_at && report.summary.completed_at
         ? (new Date(report.summary.completed_at).getTime() -
-            new Date(report.summary.started_at).getTime()) / 1000
+            new Date(report.summary.started_at).getTime()) /
+          1000
         : null;
     return {
       ...report.summary,
@@ -292,39 +414,22 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
     };
   }, [report]);
 
-  const wrongQuestions = useMemo(
-    () => report?.questions.filter((q) => !q.is_correct) ?? [],
-    [report],
-  );
-
   const sortedWeaknesses = useMemo(
     () => (report ? sortWeaknesses(report.weaknesses) : []),
     [report],
   );
-  const simulatedWeaknesses = sortedWeaknesses.slice(0, 5);
 
-  const wrongCount = summary ? Math.max(summary.total - summary.correct, 0) : 0;
-  const hasFastFixTags = useMemo(
-    () => isFastFixPattern(report?.summary.error_pattern_tags),
-    [report],
-  );
-  const showLoadingState =
-    !report || loading || (report && !report.ready);
-
-  const formatDateTime = (value: string | null | undefined) =>
-    value ? new Date(value).toLocaleString("zh-CN") : "未知";
+  const showLoadingState = !report || loading || (report && !report.ready);
 
   if (!attemptId) {
     return (
-      <div className="min-h-screen bg-[#F6F1EC] py-24">
-        <div className="mx-auto max-w-3xl rounded-2xl border border-[#E6DED6] bg-[#FAF9F6] p-8 text-center shadow-sm">
-          <p className="text-lg font-semibold text-[#3A2F28]">未提供 attempt_id</p>
-          <p className="mt-2 text-sm text-[#7A6A5F]">
-            请先完成一次诊断再查看报告。
-          </p>
+      <div className="min-h-screen bg-slate-50 py-24">
+        <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <p className="text-lg font-semibold text-slate-900">未提供 attempt_id</p>
+          <p className="mt-2 text-sm text-slate-600">请先完成一次诊断再查看报告。</p>
           <Link
             href="/diagnostic"
-            className="mt-4 inline-flex items-center justify-center rounded-full border border-[#8B2E2E] px-6 py-2 text-sm font-semibold text-[#8B2E2E]"
+            className="mt-4 inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-2 text-sm font-semibold text-slate-700"
           >
             返回诊断设置
           </Link>
@@ -333,10 +438,6 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
     );
   }
 
-  const riskScore = summary?.score ?? 0;
-  const riskLevel = getRiskLevel(riskScore);
-  const riskMeta = RISK_INFO[riskLevel];
-  const ctaHref = `/practice/diagnostic-special?attempt_id=${attemptId}&risk_level=${riskLevel}`;
   const totalAnswered = summary?.total ?? 0;
   const correctCount = summary?.correct ?? 0;
   const derivedRate =
@@ -345,41 +446,43 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
       : totalAnswered > 0
       ? correctCount / totalAnswered
       : 0;
-  const currentRate = derivedRate ?? 0;
-  const clampedRate = clamp01(currentRate);
+  const wrongCount = Math.max(totalAnswered - correctCount, 0);
+  const clampedRate = clamp01(derivedRate ?? 0);
   const predictedScore = Math.round(clampedRate * 100);
-  const simulationStatus =
-    clampedRate < 0.3
-      ? "几乎必挂"
-      : clampedRate < PASS_LINE / 100
-      ? "高风险边缘"
-      : "处在边线，仍需稳住";
   const normalizedScore = Math.min(Math.max(predictedScore, 0), 100);
   const summaryMeta = [
     `Attempt：${attemptId}`,
-    `证书：${report?.scope.certificate ?? "未知"}`,
-    `科目：${report?.scope.subject ?? "未知"}`,
-    `章节：${report?.scope.chapter_title ?? report?.scope.chapter_code ?? "未知"}`,
-    `时间：${formatDateTime(report?.summary.started_at)} ~ ${formatDateTime(report?.summary.completed_at)}`,
+    `证书：${report?.scope.certificate ?? "未设置"}`,
+    `科目：${report?.scope.subject ?? "未设置"}`,
+    `章节：${report?.scope.chapter_title ?? report?.scope.chapter_code ?? "全卷"}`,
+    `时间：${formatDateTime(report?.summary.started_at)} ~ ${formatDateTime(
+      report?.summary.completed_at,
+    )}`,
   ];
 
+  const recommendations = buildPriorityRecommendations(clampedRate, sortedWeaknesses, attemptId);
+  const primaryRecommendation = recommendations[0];
+
   return (
-    <main className="min-h-screen bg-[#F6F1EC]">
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:py-10 space-y-6">
+    <main className="min-h-screen bg-slate-50">
+      <div className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:py-10">
         <header className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.5em] text-[#7A6A5F]">AI 诊断判决书</p>
-          <h1 className="text-3xl font-semibold text-[#3A2F28]">你的考试状态一目了然</h1>
-          <p className="text-sm text-[#7A6A5F] flex flex-wrap gap-2">
+          <p className="text-xs uppercase tracking-[0.5em] text-slate-500">AI 诊断判决书</p>
+          <h1 className="text-3xl font-semibold text-slate-900">你的考试状态一目了然</h1>
+          <p className="flex flex-wrap gap-2 text-sm text-slate-500">
             {summaryMeta.map((item) => (
               <span key={item}>{item}</span>
             ))}
           </p>
+          {pendingMessage && (
+            <p className="text-xs text-amber-600">{pendingMessage}（已尝试 {tries} 次）</p>
+          )}
         </header>
 
         {error && (
-          <div className="rounded-2xl border border-[#E6DED6] bg-[#FAF9F6] p-5 text-[#8B2E2E]">
-            <p className="font-semibold">错误：{error}</p>
-            <p className="text-sm text-[#7A6A5F]">请重试或联系管理员。</p>
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-900">
+            <p className="font-semibold">报告加载失败</p>
+            <p className="text-sm">原因：{error}</p>
           </div>
         )}
 
@@ -389,199 +492,242 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
               {[1, 2, 3].map((card) => (
                 <div
                   key={card}
-                  className="rounded-2xl border border-[#E6DED6] bg-[#FAF9F6] p-6 shadow-sm"
+                  className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
                 >
-                  <div className="h-5 w-24 rounded-full bg-[#E6DED6]" />
-                  <div className="mt-4 h-12 w-3/4 rounded-full bg-[#E6DED6]" />
+                  <div className="h-5 w-24 rounded-full bg-slate-100" />
+                  <div className="mt-4 h-12 w-3/4 rounded-full bg-slate-100" />
                   <div className="mt-3 flex gap-2">
-                    <div className="h-3 w-14 rounded-full bg-[#E6DED6]" />
-                    <div className="h-3 w-10 rounded-full bg-[#E6DED6]" />
+                    <div className="h-3 w-14 rounded-full bg-slate-100" />
+                    <div className="h-3 w-10 rounded-full bg-slate-100" />
                   </div>
                 </div>
               ))}
             </section>
-
-            <section className="rounded-2xl border border-[#E6DED6] bg-[#FAF9F6] p-6 shadow-sm space-y-4">
+            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
               {[1, 2, 3, 4].map((row) => (
                 <div key={row} className="space-y-2">
-                  <div className="h-4 w-1/2 rounded-full bg-[#E6DED6]" />
-                  <div className="h-3 w-full rounded-full bg-[#E6DED6]" />
+                  <div className="h-4 w-1/2 rounded-full bg-slate-100" />
+                  <div className="h-3 w-full rounded-full bg-slate-100" />
                 </div>
               ))}
             </section>
-
-            <section className="rounded-2xl border border-[#E6DED6] bg-[#FAF9F6] p-6 shadow-sm space-y-3">
+            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-3">
               {[1, 2, 3].map((step) => (
-                <div key={step} className="h-10 w-full rounded-2xl bg-[#E6DED6]" />
+                <div key={step} className="h-10 w-full rounded-2xl bg-slate-100" />
               ))}
             </section>
           </>
         ) : (
           report && (
             <>
-              <section className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-2xl border border-[#E6DED6] bg-[#FAF9F6] p-6 shadow-sm space-y-2">
-                  <p className="text-xs uppercase tracking-[0.4em] text-[#7A6A5F]">当前得分</p>
-                  <p className="text-4xl font-semibold text-[#3A2F28]">{predictedScore} / 100</p>
-                  <p className="text-sm text-[#7A6A5F]">仍在通过线下 · {simulationStatus}</p>
-                  <div className="relative h-2 rounded-full bg-[#E6DED6]">
+              <section className="grid gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:grid-cols-2">
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                    成绩单
+                  </p>
+                  <div className="flex items-end gap-3">
+                    <p className="text-5xl font-semibold text-slate-900">
+                      {predictedScore}
+                      <span className="text-2xl text-slate-500"> / 100</span>
+                    </p>
+                    <div className="text-sm text-slate-600">
+                      <p>
+                        正确 {correctCount} / {totalAnswered} 题
+                      </p>
+                      <p>诊断类型 · 诊断测验</p>
+                    </div>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                     <div
-                      className="absolute inset-0 rounded-full bg-[#8B2E2E]"
+                      className="h-full rounded-full bg-sky-500 transition-all"
                       style={{ width: `${normalizedScore}%` }}
                     />
                   </div>
-                  <p className="text-xs text-[#7A6A5F]">通过线 {PASS_LINE} 分</p>
-                <p className="text-sm text-[#7A6A5F]">
-                  结论：从高频弱点入手，逐步追回分数，保持节奏即可拉近线。
-                </p>
-                </div>
-
-                <div className="rounded-2xl border border-[#E6DED6] bg-[#FAF9F6] p-6 shadow-sm space-y-2">
-                  <p className="text-xs uppercase tracking-[0.4em] text-[#7A6A5F]">破点数量</p>
-                  <p className="text-4xl font-semibold text-[#3A2F28]">
-                    {report.weaknesses.length} 个
+                  <p className="text-xs text-slate-500">
+                    通过线 {PASS_LINE} 分 · 当前差距 {Math.max(PASS_LINE - predictedScore, 0)} 分
                   </p>
-                  <p className="text-sm text-[#7A6A5F]">高频 / 常考页顺序呈现</p>
-                  <p className="text-xs text-[#7A6A5F]">从弱点入手，逐步追回分数。</p>
+                  <p className="text-sm text-slate-500">
+                    当前成绩主要受高权重章节影响，优先补强关键模块即可显著改善结果。
+                  </p>
                 </div>
-
-                <div className="rounded-2xl border border-[#E6DED6] bg-[#FAF9F6] p-6 shadow-sm flex flex-col justify-between gap-4">
+                <div className="grid gap-4 text-sm text-slate-700 sm:grid-cols-2">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.4em] text-[#7A6A5F]">建议行动</p>
-                    <p className="text-lg font-semibold text-[#3A2F28]">以高频弱点为主线</p>
-                    <p className="text-sm text-[#7A6A5F]">
-                      先背 5 分钟，再练 3 题，按顺序缓解风险。
+                    <p className="text-xs text-slate-500">科目</p>
+                    <p className="font-semibold">{report.scope.subject ?? "未设置"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">证书</p>
+                    <p className="font-semibold">{report.scope.certificate ?? "未设置"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">用时</p>
+                    <p className="font-semibold">{formatDurationLabel(summary?.duration ?? null)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">测验时间</p>
+                    <p className="font-semibold">{formatDateTime(report.summary.completed_at)}</p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-4 rounded-3xl border border-blue-100 bg-blue-50/70 p-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
+                      AI 总结判断
+                    </p>
+                    <p className="text-base leading-relaxed text-slate-800">
+                      {getAiConclusionText(clampedRate)}
                     </p>
                   </div>
-                  <Link
-                    href={ctaHref}
-                    className="rounded-2xl bg-[#8B2E2E] px-4 py-3 text-center text-base font-semibold text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#8B2E2E]"
-                  >
-                    立即补强高频考点
-                  </Link>
+                  <span className="rounded-full bg-white px-4 py-1 text-xs font-semibold text-blue-700 shadow-sm">
+                    AI 说明
+                  </span>
                 </div>
               </section>
 
-              <section className="space-y-4 mt-6 border-t border-[#E6DED6] pt-6">
-                <div className="flex items-center justify-between rounded-2xl border border-[#E6DED6] bg-[#FAF9F6] p-5 shadow-sm">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-[#7A6A5F]">Top 薄弱点</p>
-                    <h3 className="text-xl font-semibold text-[#3A2F28] tracking-tight">优先修复顺序</h3>
-                  </div>
-                  <span className="text-xs text-[#7A6A5F]">优先级 · 节奏排列</span>
-                </div>
-
-                {simulatedWeaknesses.map((weak, index) => {
-                  const accuracy = Math.round((weak.accuracy ?? 0) * 100);
-                  const importanceMeta = getImportanceBadge(weak.importance_level);
-                  const learnModeMeta = getLearnModeBadge(weak.learn_mode);
-                  const unknownPoint = isUnknownWeakness(weak);
-                  const priorityVariant = getPriorityTier(accuracy / 100);
-                    const cardBase =
-                      index === 0
-                        ? "border border-[#8B2E2E]/40 bg-[#FFF7F6]"
-                        : unknownPoint
-                        ? "border border-[#EDE6DF] bg-[#FBFAF8]"
-                        : "border border-[#E6DED6] bg-white";
-                  const title = unknownPoint
-                    ? "⚠️ 尚未精确归类的综合考点"
-                    : weak.point_name ?? weak.title ?? "待分析";
-                  const actions = buildWeaknessActions(weak, attemptId!);
-                    const heroPadding = index === 0 ? "pl-6" : "";
+              <section className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">
+                  当前学习阶段
+                </p>
+                {(() => {
+                  const stageMeta = getLearningStageMeta(clampedRate);
                   return (
-                    <article
-                      key={weak.code ?? `${weak.sectionTitle}-${title}-${index}`}
-                        className={`relative flex flex-col gap-3 rounded-2xl border px-4 py-4 shadow-sm transition ${cardBase} ${heroPadding}`}
-                    >
-                        {index === 0 && (
-                          <span className="absolute left-2 top-3 bottom-3 w-1 rounded-full bg-[#8B2E2E]" />
-                        )}
-                      <div className="flex items-center justify-between gap-3">
-                        <h4 className="flex-1 text-lg font-semibold text-[#3A2F28]">{title}</h4>
-                        <span
-                          className={`rounded-full px-3 py-1 text-[11px] font-semibold ${priorityVariant.className}`}
-                        >
-                          {priorityVariant.label}
-                        </span>
-                      </div>
-                      {index === 0 && (
-                        <p className="text-xs text-[#7A6A5F]">优先修复 · 先从这里开始</p>
-                      )}
-                      <div className="flex flex-wrap gap-2 text-xs">
-                        <span className={`rounded-full px-3 py-1 font-semibold ${importanceMeta.className}`}>
-                          {importanceMeta.symbol} {importanceMeta.label}
-                        </span>
-                        <span className={`rounded-full px-3 py-1 font-semibold ${learnModeMeta.className}`}>
-                          {learnModeMeta.label}
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-2 text-xs text-[#7A6A5F]">
-                        <span>常见错误：{COMMON_ERROR_HINTS[index % COMMON_ERROR_HINTS.length]}</span>
-                        <span>正确率 {accuracy}%</span>
-                      </div>
-                      <div className="relative h-1.5 rounded-full bg-[#E6DED6]">
-                        <div
-                          className={`absolute inset-0 rounded-full ${index === 0 ? "bg-[#8B2E2E]" : "bg-[#7A6A5F]/60"}`}
-                          style={{ width: `${accuracy}%` }}
-                        />
-                      </div>
-                      <div className="flex flex-wrap gap-3">
-                        {actions[0] && (
-                          <Link
-                            href={actions[0].href}
-                            className={`flex-1 rounded-2xl px-4 py-2 text-center text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
-                              index === 0
-                                ? "bg-[#8B2E2E] text-white focus-visible:ring-[#8B2E2E]"
-                                : "border border-[#E6DED6] text-[#3A2F28] focus-visible:ring-[#7A6A5F]"
-                            }`}
-                          >
-                            {actions[0].label}
-                          </Link>
-                        )}
-                        {actions[1] && index === 0 && (
-                          <Link
-                            href={actions[1].href}
-                            className="flex-1 rounded-2xl border border-[#E6DED6] px-4 py-2 text-center text-sm font-semibold text-[#3A2F28] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#7A6A5F]"
-                          >
-                            {actions[1].label}
-                          </Link>
-                        )}
-                      </div>
-                      {unknownPoint && (
-                        <p className="text-xs text-[#7A6A5F]">
-                          该题涉及多个知识点，系统暂按“综合判断题”处理
-                        </p>
-                      )}
-                    </article>
+                    <div className="mt-3 flex flex-wrap items-center gap-4">
+                      <span className="rounded-full bg-slate-100 px-4 py-1 text-sm font-semibold text-amber-700">
+                        {stageMeta.label}
+                      </span>
+                      <p className="text-sm text-slate-600">{stageMeta.description}</p>
+                    </div>
                   );
-                })}
+                })()}
               </section>
 
-              <section className="rounded-2xl border border-[#E6DED6] bg-[#FAF9F6] p-6 shadow-sm space-y-3 mt-6">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs uppercase tracking-[0.4em] text-[#7A6A5F]">下一步怎么做</p>
-                  <span className="text-xs text-[#7A6A5F]">行动计划</span>
+              {primaryRecommendation && (
+                <section className="relative space-y-3 rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50/70 to-white p-6 shadow-sm">
+                  <span className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-blue-600" aria-hidden />
+                  <div className="flex flex-col gap-1 pl-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
+                      当前最高优先任务
+                    </p>
+                    <h2 className="text-2xl font-semibold text-slate-900">直接照做即可提分</h2>
+                    <p className="text-sm text-slate-600">
+                      本次评估最佳提分方向，直接进入对应章节模块。
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-blue-200 bg-white/80 p-4 shadow-sm">
+                    <div className="flex flex-col gap-2">
+                      <p className="text-lg font-semibold text-slate-900">{primaryRecommendation.title}</p>
+                      <div className="flex flex-wrap gap-3 text-xs font-semibold">
+                        <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
+                          权重约 {primaryRecommendation.weightLabel}
+                        </span>
+                        <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+                          目标：{primaryRecommendation.goal}
+                        </span>
+                      </div>
+                      <p className="text-sm text-slate-600">{primaryRecommendation.reason}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-slate-500">⏱ {primaryRecommendation.duration}</span>
+                        <Link
+                          href={primaryRecommendation.href}
+                          className="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
+                        >
+                          开始补强这一模块
+                        </Link>
+                      </div>
+                      <p className="text-xs text-slate-500">完成后系统将重新计算你的薄弱点。</p>
+                    </div>
+                  </div>
+                  <div className="pl-3">
+                    <Link href="/dashboard" className="text-sm font-semibold text-blue-600 underline decoration-dotted underline-offset-4">
+                      查看章节掌握情况
+                    </Link>
+                  </div>
+                </section>
+              )}
+
+              <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm">
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                    练题入口
+                  </p>
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    通过练题巩固与提分
+                  </h3>
+                  <p className="text-sm text-slate-500">直达练题模块，保持答题节奏。</p>
                 </div>
-                <div className="flex flex-wrap gap-3">
+                <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {PRACTICE_MODES.map((mode) => (
+                    <Link
+                      key={mode.label}
+                      href={mode.href}
+                      className="flex items-center justify-center rounded-2xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-900 transition hover:border-slate-400"
+                    >
+                      {mode.label}
+                    </Link>
+                  ))}
+                </div>
+              </section>
+
+              <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                    即时复盘
+                  </p>
+                  <h3 className="text-lg font-semibold text-slate-900">回看本次作答解析</h3>
+                  <p className="text-sm text-slate-500">
+                    本次共完成 {totalAnswered} 题，错题 {wrongCount} 题
+                  </p>
+                </div>
+                <div className="mt-4">
                   <Link
-                    href="/practice/by-point?source=diagnostic"
-                    className="flex-1 rounded-2xl bg-[#8B2E2E] px-4 py-3 text-center text-sm font-semibold text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#8B2E2E]"
+                    href={attemptId ? buildAttemptReviewLink(attemptId) : "/practice/diagnostic-special"}
+                    className="inline-flex items-center justify-center rounded-full border border-blue-200 px-5 py-2 text-sm font-semibold text-blue-700 transition hover:border-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2"
                   >
-                    启动学习计划
-                  </Link>
-                  <Link
-                    href="/test/ch1/practice"
-                    className="flex-1 rounded-2xl border border-[#E6DED6] px-4 py-3 text-center text-sm font-semibold text-[#3A2F28] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#7A6A5F]"
-                  >
-                    继续练习题
-                  </Link>
-                  <Link
-                    href="/diagnostic/questions"
-                    className="flex-1 rounded-2xl border border-[#E6DED6] px-4 py-3 text-center text-sm font-semibold text-[#3A2F28] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#7A6A5F]"
-                  >
-                    返回诊断首页
+                    查看本次解析
                   </Link>
                 </div>
+              </section>
+
+              <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+                <details className="group">
+                  <summary className="flex cursor-pointer items-center justify-between text-sm font-semibold text-slate-900">
+                    了解诊断依据
+                    <span className="text-xs text-slate-500">展开</span>
+                  </summary>
+                  <div className="mt-3 space-y-2 text-sm text-slate-600">
+                    <p>本报告综合以下维度生成：</p>
+                    <ul className="list-disc space-y-1 pl-5">
+                      <li>答题数量、正确率与漏题情况</li>
+                      <li>覆盖章节与考试大纲权重</li>
+                      <li>题目难度、错误类型与时间消耗</li>
+                      <li>历年真题分布与高频考点</li>
+                    </ul>
+                  </div>
+                </details>
+              </section>
+
+              <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+                <details className="group">
+                  <summary className="flex cursor-pointer items-center justify-between text-sm font-semibold text-slate-900">
+                    查看学习档案
+                    <span className="text-xs text-slate-500">展开</span>
+                  </summary>
+                  <div className="mt-3 text-sm text-slate-600">
+                    <p>系统会记住你的阶段特征，在后续练习里自动调节题量与难度。</p>
+                    <div className="mt-3 grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+                        <p className="font-semibold">基础：记忆框架</p>
+                        <p className="text-xs text-slate-500">优先推送核心定义、首选药、关键数字。</p>
+                      </div>
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+                        <p className="font-semibold">实践：速度与准确性</p>
+                        <p className="text-xs text-slate-500">根据错题类型动态调整题量，保持手感。</p>
+                      </div>
+                    </div>
+                  </div>
+                </details>
               </section>
             </>
           )
