@@ -109,6 +109,7 @@ function KnowledgePageContent() {
   // 数据状态
   const [chapters, setChapters] = useState<ChapterStructure[]>([])
   const [sectionPoints, setSectionPoints] = useState<Record<string, PointRowData[]>>({})
+  const [sectionErrors, setSectionErrors] = useState<Record<string, string>>({})
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null)
   const [recentLearning, setRecentLearning] = useState<RecentPoint[]>([])
   const [loading, setLoading] = useState(true)
@@ -260,9 +261,22 @@ function KnowledgePageContent() {
           ...prev,
           [sectionId]: data.data.points || []
         }))
+        setSectionErrors(prev => {
+          if (!prev[sectionId]) return prev
+          const copy = { ...prev }
+          delete copy[sectionId]
+          return copy
+        })
+        return
       }
+      throw new Error(data.error?.message || '考点加载失败')
     } catch (error) {
       console.error('加载考点失败:', error)
+      const message = error instanceof Error ? error.message : '考点加载失败，请稍后重试'
+      setSectionErrors(prev => ({
+        ...prev,
+        [sectionId]: message
+      }))
     } finally {
       setLoadingSections(prev => {
         const next = new Set(prev)
@@ -575,6 +589,8 @@ function KnowledgePageContent() {
                         onToggle={handleSectionToggle}
                         onExpand={handleSectionExpand}
                         loading={loadingSections.has(section.id)}
+                      errorMessage={sectionErrors[section.id]}
+                      onRetry={() => handleSectionExpand(section.id)}
                       >
                         {/* 考点列表 */}
                         {sectionPoints[section.id] && filterPoints(sectionPoints[section.id]).map(point => (

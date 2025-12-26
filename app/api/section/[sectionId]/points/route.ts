@@ -64,6 +64,23 @@ export interface PointOverview {
 }
 
 
+function isMissingColumn(error: any) {
+  return error?.code === '42703'
+}
+
+function buildMissingColumnResponse(detail?: string) {
+  return NextResponse.json(
+    {
+      success: false,
+      error: {
+        code: 'INCOMPLETE_SCHEMA',
+        message: `知识图谱字段缺失（${detail || 'missing column'}），请运行 migrations/006-knowledge-mode-guard.sql`
+      }
+    },
+    { status: 500 }
+  )
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ sectionId: string }> }
@@ -79,7 +96,17 @@ export async function GET(
       .eq('node_type', 'section')
       .single()
 
-    if (sectionError || !section) {
+    if (sectionError) {
+      if (isMissingColumn(sectionError)) {
+        return buildMissingColumnResponse(sectionError.message)
+      }
+      return NextResponse.json({
+        success: false,
+        error: { code: 'SECTION_QUERY_ERROR', message: '小节查询失败' }
+      }, { status: 500 })
+    }
+
+    if (!section) {
       return NextResponse.json({
         success: false,
         error: { code: 'SECTION_NOT_FOUND', message: '小节不存在' }
@@ -103,6 +130,9 @@ export async function GET(
       .order('code')
 
     if (pointsError) {
+      if (isMissingColumn(pointsError)) {
+        return buildMissingColumnResponse(pointsError.message)
+      }
       return NextResponse.json({
         success: false,
         error: { code: 'DATABASE_ERROR', message: pointsError.message }
@@ -217,9 +247,12 @@ export async function GET(
 
   } catch (error) {
     console.error('获取考点列表失败:', error)
+    if (isMissingColumn(error)) {
+      return buildMissingColumnResponse((error as any)?.message)
+    }
     return NextResponse.json({
       success: false,
-      error: { code: 'INTERNAL_ERROR', message: '服务器内部错误' }
+      error: { code: 'INTERNAL_SERVER_ERROR', message: '获取考点列表失败' }
     }, { status: 500 })
   }
 }

@@ -171,6 +171,23 @@ npx prisma migrate dev --name your_migration_name
 npx prisma migrate deploy
 ```
 
+### 手动应用 SQL 迁移（Supabase / psql）
+如果你使用 Supabase，或者在生产/备份数据库直接运行 SQL，可以手动执行如下命令：
+
+```bash
+# 确保 knowledge_tree / knowledge_points 中新增的 importance_level、learn_mode、error_pattern_tags 字段存在
+psql "$DATABASE_URL" -f migrations/006-knowledge-mode-guard.sql
+
+# 或者用 Supabase CLI 运行同一份脚本
+supabase db query --file migrations/006-knowledge-mode-guard.sql
+```
+
+该 SQL 脚本会：
+
+- 增加缺失的 `importance_level`、`learn_mode`、`error_pattern_tags` 列（如已存在不会重复）
+- 回填老数据并设置默认值 (`importance_level` 默认 3、`learn_mode` 默认 `BOTH`)
+- 强制非空约束并避免未来再因 42703 缺列导致 `/api/section/[sectionId]/points` 与 `/api/knowledge-point/[id]` 500
+
 ---
 
 ## 🎨 使用 Cursor AI 开发

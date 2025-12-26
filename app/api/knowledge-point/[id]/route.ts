@@ -25,6 +25,24 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 })
 
+function buildKnowledgeMissingColumnResponse(detail?: string) {
+  const message = detail
+    ? `数据库结构缺失：${detail}`
+    : '数据库结构缺失，请执行 migrations/006-knowledge-mode-guard.sql 后重试'
+
+  return NextResponse.json({
+    success: false,
+    error: {
+      code: 'MISSING_COLUMN',
+      message
+    }
+  }, { status: 500 })
+}
+
+function isMissingColumnError(error: any) {
+  return error?.code === '42703'
+}
+
 // 标签定义
 const TAG_DEFINITIONS = {
   high_frequency: { label: '高频', color: '#EF4444' },
@@ -242,6 +260,9 @@ export async function GET(
     
   } catch (error) {
     console.error('获取知识点详情失败:', error)
+    if (isMissingColumnError(error)) {
+      return buildKnowledgeMissingColumnResponse(error.message)
+    }
     return NextResponse.json(
       { success: false, error: '获取知识点详情失败', details: String(error) },
       { status: 500 }

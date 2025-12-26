@@ -28,6 +28,8 @@ export interface SectionAccordionProps {
   onExpand?: (sectionId: string) => void
   loading?: boolean
   children?: React.ReactNode
+  errorMessage?: string
+  onRetry?: () => void
 }
 
 export function SectionAccordion({
@@ -42,6 +44,8 @@ export function SectionAccordion({
   onExpand,
   loading = false,
   children
+  errorMessage,
+  onRetry
 }: SectionAccordionProps) {
   // 使用外部控制的展开状态
   const expanded = isExpanded
@@ -118,6 +122,21 @@ export function SectionAccordion({
             <div className="flex items-center justify-center py-4 text-gray-400">
               <Loader2 className="w-5 h-5 animate-spin mr-2" />
               <span className="text-sm">加载考点...</span>
+            </div>
+          ) : errorMessage ? (
+            <div className="space-y-3">
+              <p className="text-center text-sm text-red-500">{errorMessage}</p>
+              {onRetry && (
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    onClick={onRetry}
+                    className="px-4 py-1.5 text-xs font-medium rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
+                  >
+                    重试加载
+                  </button>
+                </div>
+              )}
             </div>
           ) : children ? (
             <div className="space-y-1">
