@@ -28,7 +28,7 @@ export interface SectionAccordionProps {
   onExpand?: (sectionId: string) => void
   loading?: boolean
   children?: React.ReactNode
-  errorMessage?: string
+  errorMessage?: string | null
   onRetry?: () => void
 }
 
@@ -43,7 +43,7 @@ export function SectionAccordion({
   onToggle,
   onExpand,
   loading = false,
-  children
+  children,
   errorMessage,
   onRetry
 }: SectionAccordionProps) {

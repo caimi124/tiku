@@ -261,7 +261,9 @@ export async function GET(
   } catch (error) {
     console.error('获取知识点详情失败:', error)
     if (isMissingColumnError(error)) {
-      return buildKnowledgeMissingColumnResponse(error.message)
+      const message =
+        error instanceof Error ? error.message : String(error)
+      return buildKnowledgeMissingColumnResponse(message)
     }
     return NextResponse.json(
       { success: false, error: '获取知识点详情失败', details: String(error) },
