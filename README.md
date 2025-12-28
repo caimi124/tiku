@@ -188,6 +188,16 @@ supabase db query --file migrations/006-knowledge-mode-guard.sql
 - 回填老数据并设置默认值 (`importance_level` 默认 3、`learn_mode` 默认 `BOTH`)
 - 强制非空约束并避免未来再因 42703 缺列导致 `/api/section/[sectionId]/points` 与 `/api/knowledge-point/[id]` 500
 
+### 补齐缺失的小节
+
+`scripts/add-missing-sections.ts` 中列举了 C1.2、C1.3、C6.5、C7.1、C7.2、C9.5~C9.8、C11.2、C11.3 等目前数据库缺失的小节。运行：
+
+```bash
+npx tsx scripts/add-missing-sections.ts
+```
+
+即可自动检测是否已经存在相应 `code`，若不存在会给出新 `id` 并上插入表 `knowledge_tree`（只需设置 Supabase Service Key，脚本会用 `parentCode` 映射到对应章节）。
+
 ---
 
 ## 🎨 使用 Cursor AI 开发
