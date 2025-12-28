@@ -317,7 +317,7 @@ function formatDateTime(value: string | null | undefined) {
 }
 
 function buildAttemptReviewLink(attemptId: string) {
-  return `/practice/diagnostic-special?attempt_id=${attemptId}`;
+  return `/diagnostic/result?attempt_id=${attemptId}#analysis`;
 }
 
 function sortWeaknesses(list: Report["weaknesses"]) {
@@ -682,12 +682,97 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                 </div>
                 <div className="mt-4">
                   <Link
-                    href={attemptId ? buildAttemptReviewLink(attemptId) : "/practice/diagnostic-special"}
+                    href={attemptId ? buildAttemptReviewLink(attemptId) : "/diagnostic/result#analysis"}
                     className="inline-flex items-center justify-center rounded-full border border-blue-200 px-5 py-2 text-sm font-semibold text-blue-700 transition hover:border-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2"
                   >
                     查看本次解析
                   </Link>
                 </div>
+              </section>
+
+              <section
+                id="analysis"
+                className="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+              >
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                    答题详情
+                  </p>
+                  <h3 className="text-lg font-semibold text-slate-900">逐题解析列表</h3>
+                  <p className="text-sm text-slate-500">
+                    展示本次诊断的全部题目、作答记录与解析，方便对照薄弱知识点。
+                  </p>
+                </div>
+                {!report.questions.length ? (
+                  <p className="text-sm text-slate-500">当前暂无题目记录，稍后可刷新此页面。</p>
+                ) : (
+                  <div className="space-y-4">
+                    {report.questions.map((question, index) => {
+                      const userAnswer = question.user_answer ?? "未作答";
+                      const correctAnswer = question.correct_answer ?? "待补充";
+                      return (
+                        <article
+                          key={question.question_uuid ?? `${index}-${userAnswer}`}
+                          className="rounded-3xl border border-slate-100 bg-slate-50/70 p-5"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+                            <p className="font-semibold text-slate-900">
+                              第 {index + 1} 题 · {question.is_correct ? "✅ 作答正确" : "⚠️ 答错"}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {question.section_title ?? "未分章节"} · {question.knowledge_point_title ?? "未标注考点"}
+                            </p>
+                          </div>
+                          <p className="mt-3 whitespace-pre-line text-base leading-relaxed text-slate-800">
+                            {question.stem ?? "题干内容暂缺"}
+                          </p>
+                          <div className="mt-4 space-y-2">
+                            {Object.entries(question.options ?? {}).map(([key, value]) => {
+                              const isUser = question.user_answer === key;
+                              const isCorrect = question.correct_answer === key;
+                              const stateClass = isCorrect
+                                ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                                : isUser
+                                ? "border-rose-300 bg-rose-50 text-rose-700"
+                                : "border-slate-200 bg-white text-slate-700";
+                              return (
+                                <div
+                                  key={key}
+                                  className={`rounded-2xl border px-4 py-2 text-sm font-medium ${stateClass}`}
+                                >
+                                  <span className="mr-2 font-semibold">{key}.</span>
+                                  <span className="whitespace-pre-line">{value}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <div className="mt-4 grid gap-2 text-sm text-slate-600 sm:grid-cols-3">
+                            <p>
+                              你的选择：<span className="font-semibold text-slate-900">{userAnswer}</span>
+                            </p>
+                            <p>
+                              正确答案：<span className="font-semibold text-emerald-600">{correctAnswer}</span>
+                            </p>
+                            <p className="sm:text-right">
+                              判定结果：{" "}
+                              <span
+                                className={`font-semibold ${question.is_correct ? "text-emerald-600" : "text-rose-600"}`}
+                              >
+                                {question.is_correct ? "正确" : "错误"}
+                              </span>
+                            </p>
+                          </div>
+                          <div className="mt-4 rounded-2xl bg-white/90 p-4 text-sm text-slate-700">
+                            <p className="font-semibold text-slate-900">解析</p>
+                            <p className="mt-2 whitespace-pre-line">
+                              {question.explanation?.trim() ? question.explanation : "解析待补充，稍后将自动更新。"}
+                            </p>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                )}
               </section>
 
               <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
