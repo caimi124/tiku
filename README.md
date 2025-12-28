@@ -198,6 +198,32 @@ npx tsx scripts/add-missing-sections.ts
 
 即可自动检测是否已经存在相应 `code`，若不存在会给出新 `id` 并上插入表 `knowledge_tree`（只需设置 Supabase Service Key，脚本会用 `parentCode` 映射到对应章节）。
 
+### 补充小节考点内容
+
+1. 先给 `knowledge_points` 建立唯一约束，然后再执行导入脚本：
+
+```sql
+-- Supabase SQL Editor 执行
+psql "$DATABASE_URL" -f migrations/007-knowledge-points-unique.sql
+```
+
+2. 运行脚本填充考点（需配置 Supabase Key）：
+
+```powershell
+$Env:NEXT_PUBLIC_SUPABASE_URL="https://tparjdkxxtnentsdazfw.supabase.co"
+$Env:SUPABASE_SERVICE_ROLE_KEY="xxx"
+npx tsx scripts/import-supplement-points.ts
+```
+
+3. 脚本运行完成后，会打印 `inserted / updated / skipped`，并验证 `knowledge_points` 中 `subject='xiyao_yaoxue_er'` 的数量与 `section='C1.2'` 的样例。确保控制台输出中含有 `C1.2` 的几条记录。
+
+4. 若需要手动检查：
+
+```sql
+select count(*) from knowledge_points where subject='xiyao_yaoxue_er';
+select * from knowledge_points where subject='xiyao_yaoxue_er' and section='C1.2' limit 5;
+```
+
 ---
 
 ## 🎨 使用 Cursor AI 开发
