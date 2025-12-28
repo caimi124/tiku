@@ -24,6 +24,13 @@ interface ChapterStructure {
   point_count: number
   high_frequency_count: number
   mastery_score: number
+  parent_id?: string | null
+  node_type?: string
+  level?: number | null
+  sort_order?: number | null
+  importance_level?: number | null
+  learn_mode?: string | null
+  error_pattern_tags?: string[] | null
   sections: SectionStructure[]
 }
 
@@ -34,6 +41,13 @@ interface SectionStructure {
   point_count: number
   high_frequency_count: number
   mastery_score: number
+  parent_id?: string | null
+  node_type?: string
+  level?: number | null
+  sort_order?: number | null
+  importance_level?: number | null
+  learn_mode?: string | null
+  error_pattern_tags?: string[] | null
 }
 
 interface StructureStats {
@@ -46,7 +60,9 @@ interface StructureStats {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const subject = searchParams.get('subject') || 'xiyao_yaoxue_er'
+    const subjectParam = searchParams.get('subject_code') || searchParams.get('subject')
+    const subjectCode = subjectParam || 'xiyao_yaoxue_er'
+    const debugEnabled = process.env.NODE_ENV !== 'production' || searchParams.get('debug') === '1'
     
     const supabase = createClient(supabaseUrl, supabaseKey)
     
@@ -55,20 +71,20 @@ export async function GET(request: NextRequest) {
     const [chaptersRes, sectionsRes, pointsRes] = await Promise.all([
       supabase
         .from('knowledge_tree')
-        .select('id, code, title, parent_id, node_type, importance, sort_order')
-        .eq('subject_code', subject)
+        .select('id, code, title, parent_id, node_type, level, importance, importance_level, learn_mode, error_pattern_tags, sort_order')
+        .eq('subject_code', subjectCode)
         .eq('node_type', 'chapter')
         .order('sort_order', { ascending: true }),
       supabase
         .from('knowledge_tree')
-        .select('id, code, title, parent_id, node_type, importance, sort_order')
-        .eq('subject_code', subject)
+        .select('id, code, title, parent_id, node_type, level, importance, importance_level, learn_mode, error_pattern_tags, sort_order')
+        .eq('subject_code', subjectCode)
         .eq('node_type', 'section')
         .order('sort_order', { ascending: true }),
       supabase
         .from('knowledge_tree')
-        .select('id, code, title, parent_id, node_type, importance, sort_order')
-        .eq('subject_code', subject)
+        .select('id, code, title, parent_id, node_type, level, importance, importance_level, learn_mode, error_pattern_tags, sort_order')
+        .eq('subject_code', subjectCode)
         .in('node_type', ['point', 'knowledge_point'])
         .order('sort_order', { ascending: true })
     ])
@@ -115,7 +131,14 @@ export async function GET(request: NextRequest) {
           title: section.title,
           point_count: sectionPoints.length,
           high_frequency_count: highFreqPoints.length,
-          mastery_score: 0 // TODO: 从用户掌握度数据计算
+          mastery_score: 0, // TODO: 从用户掌握度数据计算
+          parent_id: section.parent_id,
+          node_type: section.node_type,
+          level: section.level,
+          sort_order: section.sort_order,
+          importance_level: section.importance_level,
+          learn_mode: section.learn_mode,
+          error_pattern_tags: section.error_pattern_tags
         }
       })
       
@@ -126,18 +149,37 @@ export async function GET(request: NextRequest) {
         point_count: chapterPointCount,
         high_frequency_count: chapterHighFreqCount,
         mastery_score: 0, // TODO: 从用户掌握度数据计算
+        parent_id: chapter.parent_id,
+        node_type: chapter.node_type,
+        level: chapter.level,
+        sort_order: chapter.sort_order,
+        importance_level: chapter.importance_level,
+        learn_mode: chapter.learn_mode,
+        error_pattern_tags: chapter.error_pattern_tags,
         sections
       }
     })
     
-    const response = NextResponse.json({
+    const responsePayload: Record<string, any> = {
       success: true,
       data: {
         structure,
         chapters: structure, // 向后兼容，同时提供 chapters 字段
         stats
       }
-    })
+    }
+
+    if (debugEnabled) {
+      responsePayload.debug = {
+        counts: {
+          chapters: chapterNodes.length,
+          sections: sectionNodes.length
+        },
+        sampleSections: sectionNodes.slice(0, 5).map(section => section.code)
+      }
+    }
+
+    const response = NextResponse.json(responsePayload)
     
     // 禁用缓存，确保每次都从数据库获取最新数据
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
