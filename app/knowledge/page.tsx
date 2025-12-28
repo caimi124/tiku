@@ -582,7 +582,7 @@ function KnowledgePageContent() {
                         id={section.id}
                         code={section.code}
                         title={section.title}
-                        pointCount={section.point_count}
+                        pointCount={(sectionPoints[section.id]?.length ?? section.point_count)}
                         highFrequencyCount={section.high_frequency_count}
                         masteryScore={section.mastery_score || 0}
                         isExpanded={expandedSections.has(section.id)}
