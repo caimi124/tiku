@@ -196,7 +196,7 @@ function NoResults({ query, suggestions }: NoResultsProps) {
         未找到相关内容
       </h3>
       <p className="text-gray-500 mb-4">
-        没有找到与 "{query}" 相关的结果
+        没有找到与 &quot;{query}&quot; 相关的结果
       </p>
       {suggestions && suggestions.length > 0 && (
         <div className="mt-4">

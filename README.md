@@ -207,13 +207,16 @@ npx tsx scripts/add-missing-sections.ts
 psql "$DATABASE_URL" -f migrations/007-knowledge-points-unique.sql
 ```
 
-2. 运行脚本填充考点（需配置 Supabase Key）：
+2. 将原 `.json` 规范化并导入 `knowledge_tree`：
 
 ```powershell
+npx tsx scripts/normalize-supplement.ts
 $Env:NEXT_PUBLIC_SUPABASE_URL="https://tparjdkxxtnentsdazfw.supabase.co"
 $Env:SUPABASE_SERVICE_ROLE_KEY="xxx"
-npx tsx scripts/import-supplement-points.ts
+npx tsx scripts/import-supplement-points-to-tree.ts
 ```
+
+第一条会在 `shuju/执业药师西药二补充.normalized.json` 生成标准数组，第二条会从该 normalized 文件读取 `chapter/section/points` 字段，生成 `C?.?.N` 格式的 `knowledge_tree` point 节点。
 
 3. 脚本运行完成后，会打印 `inserted / updated / skipped`，并验证 `knowledge_points` 中 `subject='xiyao_yaoxue_er'` 的数量与 `section='C1.2'` 的样例。确保控制台输出中含有 `C1.2` 的几条记录。
 

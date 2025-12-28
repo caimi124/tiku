@@ -321,7 +321,7 @@ function MockExamContent() {
                 </h3>
                 <ul className="text-xs md:text-sm text-gray-700 space-y-1">
                   <li>• 本试卷共 {totalQuestions} 题，满分 100 分，及格分数 72 分</li>
-                  <li>• 请在作答完成后点击"提交试卷"查看成绩</li>
+                  <li>• 请在作答完成后点击 &quot;提交试卷&quot; 查看成绩</li>
                   <li>• 提交后将显示正确答案和详细解析</li>
                 </ul>
               </div>

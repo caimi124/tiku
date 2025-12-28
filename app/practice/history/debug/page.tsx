@@ -159,7 +159,7 @@ export default function HistoryDebugPage() {
             <div className="flex items-center space-x-2">
               <span className={`w-4 h-4 rounded-full ${loading ? 'bg-yellow-500' : 'bg-gray-300'}`}></span>
               <span>loading === true</span>
-              <span className="text-gray-500">(应该显示"加载中...")</span>
+              <span className="text-gray-500">(应该显示 &quot;加载中...&quot;)</span>
             </div>
             
             <div className="flex items-center space-x-2">
@@ -171,7 +171,7 @@ export default function HistoryDebugPage() {
             <div className="flex items-center space-x-2">
               <span className={`w-4 h-4 rounded-full ${!loading && yearData.length === 0 ? 'bg-red-500' : 'bg-gray-300'}`}></span>
               <span>!loading && yearData.length === 0</span>
-              <span className="text-gray-500">(应该显示"暂无数据")</span>
+              <span className="text-gray-500">(应该显示 &quot;暂无数据&quot;)</span>
             </div>
           </div>
         </div>

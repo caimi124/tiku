@@ -296,7 +296,7 @@ export default function WrongQuestionsPage() {
               <ul className="space-y-2 text-sm text-gray-700">
                 <li className="flex items-start">
                   <span className="text-primary-500 mr-2">•</span>
-                  <span>建议重点复习"β-内酰胺类抗生素"相关知识</span>
+                  <span>建议重点复习 &quot;β-内酰胺类抗生素&quot; 相关知识</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary-500 mr-2">•</span>
