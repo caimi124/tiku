@@ -121,12 +121,11 @@ export async function GET(
       .single()
 
     // 获取该小节下的所有考点（仅入口页需要的字段）
-    // 注意：包含 'subsection' 类型，因为导入脚本将level 3的节点标记为 'subsection'
     const { data: points, error: pointsError } = await supabase
       .from('knowledge_tree')
       .select('id, code, title, key_takeaway, importance, importance_level, learn_mode, error_pattern_tags, exam_years, exam_frequency')
       .eq('parent_id', sectionId)
-      .in('node_type', ['point', 'knowledge_point', 'subsection'])
+      .eq('node_type', 'point')
       .order('code')
 
     if (pointsError) {
@@ -226,6 +225,8 @@ export async function GET(
         : '本节考点分布均匀，建议全面学习',
       recommended_points: recommendedPoints
     }
+
+    console.log('[SectionPoints]', { sectionId, pointsCount: pointSummaries.length })
 
     return NextResponse.json({
       success: true,
