@@ -2,6 +2,8 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
+import { calculateRecommendationPriority } from "@/lib/recommendationPriority";
+import { recoLogger } from "@/lib/logger";
 
 const pool = new Pool({
   connectionString:
@@ -41,6 +43,7 @@ type AnswerRow = {
   point_name: string | null;
   importance_level: number | null;
   learn_mode: "MEMORIZE" | "PRACTICE" | "BOTH" | null;
+  point_type: string | null;
 };
 
 const LEVELS = {
@@ -77,7 +80,27 @@ type PointStat = {
   point_name?: string;
   importance_level?: number;
   learn_mode?: "MEMORIZE" | "PRACTICE" | "BOTH";
+  chapterId?: number | null;
+  chapterWeight?: number;
+  pointType?: string | null;
+  pointTypeWeight?: number;
+  baseWeaknessScore?: number;
+  priority?: number;
+  knowledge_point_code?: string;
 };
+
+function extractChapterId(code?: string | null) {
+  if (!code) return null;
+  const normalized = code.trim();
+  const match = normalized.match(/C?(\d+)/i);
+  if (match && match[1]) {
+    const parsed = Number.parseInt(match[1], 10);
+    return Number.isNaN(parsed) ? null : parsed;
+  }
+  const firstSegment = normalized.split(".")[0];
+  const parsedSegment = Number.parseInt(firstSegment, 10);
+  return Number.isNaN(parsedSegment) ? null : parsedSegment;
+}
 
 export async function GET(
   _request: NextRequest,
@@ -138,7 +161,8 @@ export async function GET(
           kt.title AS point_name,
           kt.title AS knowledge_point_name,
           kt.importance AS importance_level,
-          'BOTH' AS learn_mode
+          'BOTH' AS learn_mode,
+          kt.point_type
         FROM public.diagnostic_attempt_answers a
         JOIN public.diagnostic_questions q
           ON q.id::text = a.question_id
@@ -195,6 +219,11 @@ export async function GET(
         knowledge_point_code: row.knowledge_point_code ?? pointKey,
         importance_level: row.importance_level ?? undefined,
         learn_mode: row.learn_mode ?? "BOTH",
+        chapterId:
+          extractChapterId(row.chapter_code) ??
+          extractChapterId(row.knowledge_point_code) ??
+          extractChapterId(sectionKey),
+        pointType: row.point_type ?? null,
       };
       point.total += 1;
       if (row.is_correct) {
@@ -202,24 +231,97 @@ export async function GET(
       } else {
         point.wrong += 1;
       }
+      if (!point.pointType && row.point_type) {
+        point.pointType = row.point_type;
+      }
+      if (!point.chapterId) {
+        point.chapterId =
+          extractChapterId(row.chapter_code) ??
+          extractChapterId(row.knowledge_point_code) ??
+          extractChapterId(sectionKey) ??
+          extractChapterId(point.code);
+      }
       pointsMap.set(pointKey, point);
     });
+
+    // Feature flag: 是否启用权重推荐
+    const WEIGHTED_ENABLED = process.env.RECO_WEIGHTED_ENABLED !== "false";
 
     pointsMap.forEach((point) => {
       point.accuracy = point.total > 0 ? point.correct / point.total : 0;
       point.level = classifyLevel(point.accuracy);
+      point.chapterId =
+        point.chapterId ??
+        extractChapterId(point.sectionCode) ??
+        extractChapterId(point.code);
+      const baseWeaknessScore = 1 - (point.accuracy ?? 0);
+      point.baseWeaknessScore = Number.isNaN(baseWeaknessScore) ? 0 : baseWeaknessScore;
+
+      if (WEIGHTED_ENABLED) {
+        const { priority, chapterWeight, pointTypeWeight } = calculateRecommendationPriority(
+          point.baseWeaknessScore ?? 0,
+          point.chapterId,
+          point.pointType,
+        );
+        point.priority = priority;
+        point.chapterWeight = chapterWeight;
+        point.pointTypeWeight = pointTypeWeight;
+      } else {
+        // 回退旧排序：仅使用 baseWeaknessScore
+        point.priority = point.baseWeaknessScore ?? 0;
+        point.chapterWeight = 1;
+        point.pointTypeWeight = 1;
+      }
     });
 
     const sections = Array.from(sectionsMap.values()).sort((a, b) =>
       (a.code ?? "").localeCompare(b.code ?? "", "zh-CN"),
     );
-    const points = Array.from(pointsMap.values()).sort((a, b) =>
-      (a.wrong - b.wrong) !== 0
-        ? b.wrong - a.wrong
-        : a.code.localeCompare(b.code, "zh-CN"),
-    );
+    const points = Array.from(pointsMap.values()).sort((a, b) => {
+      const priorityDiff = (b.priority ?? 0) - (a.priority ?? 0);
+      if (priorityDiff !== 0) {
+        return priorityDiff;
+      }
+      if ((b.wrong ?? 0) - (a.wrong ?? 0) !== 0) {
+        return (b.wrong ?? 0) - (a.wrong ?? 0);
+      }
+      return a.code.localeCompare(b.code, "zh-CN");
+    });
 
-    const weaknesses = points.slice(0, 5);
+    const weaknesses = points.slice(0, 3);
+
+    // 监控统计：Top3 数据质量（仅服务端日志，不返回前端）
+    const stats = {
+      total: weaknesses.length,
+      pointTypeWeightOne: weaknesses.filter((w) => (w.pointTypeWeight ?? 1) === 1).length,
+      chapterWeightOne: weaknesses.filter((w) => (w.chapterWeight ?? 1) === 1).length,
+    };
+    recoLogger.stats("Top3 推荐项数据质量", {
+      pointType缺失比例: stats.total > 0 ? `${Math.round((stats.pointTypeWeightOne / stats.total) * 100)}%` : "0%",
+      chapterId提取失败比例: stats.total > 0 ? `${Math.round((stats.chapterWeightOne / stats.total) * 100)}%` : "0%",
+      pointTypeWeightOne数量: stats.pointTypeWeightOne,
+      chapterWeightOne数量: stats.chapterWeightOne,
+    });
+
+    // 移除敏感字段：不返回 chapterWeight 和 pointTypeWeight 给前端
+    const weaknessesForFrontend = weaknesses.map((w) => ({
+      code: w.code,
+      title: w.title,
+      sectionTitle: w.sectionTitle,
+      total: w.total,
+      wrong: w.wrong,
+      accuracy: w.accuracy,
+      knowledge_point_code: w.knowledge_point_code,
+      point_name: w.point_name,
+      importance_level: w.importance_level,
+      learn_mode: w.learn_mode,
+      chapter_code: w.chapterId ? `C${w.chapterId}` : undefined,
+      chapterId: w.chapterId,
+      pointType: w.pointType,
+      baseWeaknessScore: w.baseWeaknessScore,
+      priority: w.priority,
+      // 注意：chapterWeight 和 pointTypeWeight 不返回
+    }));
 
     const questions = answers.map((row) => ({
       question_uuid: row.question_uuid,
@@ -252,13 +354,13 @@ export async function GET(
       },
       sections,
       points,
-      weaknesses,
+      weaknesses: weaknessesForFrontend,
       questions,
     };
 
     return NextResponse.json(report);
   } catch (error) {
-    console.error("diagnostic results failed", {
+    recoLogger.error("diagnostic results failed", {
       attemptId,
       message: error instanceof Error ? error.message : undefined,
       stack: error instanceof Error ? error.stack : undefined,

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { CHAPTER_WEIGHT } from "@/lib/recommendationPriority";
 
 type LearnMode = "MEMORIZE" | "PRACTICE" | "BOTH";
 
@@ -34,6 +35,13 @@ type Report = {
     point_name?: string;
     importance_level?: number;
     learn_mode?: LearnMode;
+    chapter_code?: string;
+    chapterId?: number;
+    chapterWeight?: number;
+    pointType?: string | null;
+    pointTypeWeight?: number;
+    baseWeaknessScore?: number;
+    priority?: number;
   }[];
   questions: {
     question_uuid: string;
@@ -111,15 +119,6 @@ const AI_SUMMARY_RULES = [
   },
 ];
 
-const IMPORTANCE_WEIGHT_MAP: Record<number, string> = {
-  5: "18%",
-  4: "15%",
-  3: "10%",
-  2: "7%",
-  1: "4%",
-  0: "2%",
-};
-
 function clamp01(value: number) {
   if (Number.isNaN(value)) return 0;
   if (value < 0) return 0;
@@ -151,9 +150,50 @@ function getAiConclusionText(rate: number) {
   );
 }
 
-function getExamWeightLabel(level?: number) {
-  if (level == null) return "5%";
-  return IMPORTANCE_WEIGHT_MAP[level] ?? "5%";
+function extractChapterIdFromCode(code?: string | null) {
+  if (!code) return null;
+  const normalized = code.trim();
+  const match = normalized.match(/C?(\d+)/i);
+  if (match?.[1]) {
+    const parsed = Number.parseInt(match[1], 10);
+    return Number.isNaN(parsed) ? null : parsed;
+  }
+  const firstSegment = normalized.split(".")[0];
+  const parsedSegment = Number.parseInt(firstSegment, 10);
+  return Number.isNaN(parsedSegment) ? null : parsedSegment;
+}
+
+function resolveChapterWeight(weakness: Report["weaknesses"][number]) {
+  if (weakness.chapterWeight && weakness.chapterWeight > 0) {
+    return weakness.chapterWeight;
+  }
+  const derivedChapterId =
+    weakness.chapterId ??
+    extractChapterIdFromCode(weakness.chapter_code ?? weakness.code) ??
+    null;
+  if (derivedChapterId && CHAPTER_WEIGHT[derivedChapterId]) {
+    return CHAPTER_WEIGHT[derivedChapterId];
+  }
+  const level = weakness.importance_level ?? 3;
+  if (level >= 4) return 4;
+  if (level === 3) return 3;
+  return 2;
+}
+
+function getExamWeightLabel(weightValue: number) {
+  if (weightValue >= 5) return "核心章节";
+  if (weightValue >= 4) return "常考章节";
+  return "基础巩固";
+}
+
+function getRecommendationReason(weightValue: number) {
+  if (weightValue >= 5) {
+    return "该内容属于历年高频核心章节，优先补强可显著提升整体得分。";
+  }
+  if (weightValue >= 4) {
+    return "该内容为常考章节重点考点，掌握后性价比较高。";
+  }
+  return "该内容为基础或边角考点，建议在核心内容掌握后完善。";
 }
 
 function getRecommendationGoal(mode?: LearnMode) {
@@ -178,7 +218,8 @@ function buildWeaknessRecommendation(
   logic: "weight-first" | "balanced",
   emphasis = false,
 ): Recommendation {
-  const weightLabel = getExamWeightLabel(weakness.importance_level);
+  const resolvedWeight = resolveChapterWeight(weakness);
+  const weightLabel = getExamWeightLabel(resolvedWeight);
   const accuracy = Math.round((weakness.accuracy ?? 0) * 100);
   const href = weakness.knowledge_point_code
     ? `/practice/by-point?code=${weakness.knowledge_point_code}&source=diagnostic&attempt_id=${attemptId}`
@@ -193,8 +234,8 @@ function buildWeaknessRecommendation(
   const goal = getRecommendationGoal(weakness.learn_mode);
   const reason =
     logic === "weight-first"
-      ? `该章节占比约 ${weightLabel}，先抢回高权重分数最划算。`
-      : `正确率仅 ${accuracy}% 且章节占比约 ${weightLabel}，提分效率最高。`;
+      ? getRecommendationReason(resolvedWeight)
+      : getRecommendationReason(resolvedWeight);
 
   return {
     id: weakness.code ?? `${extractWeaknessTitle(weakness)}-${accuracy}`,
@@ -251,7 +292,7 @@ function buildFoundationFallback(attemptId: string): Recommendation[] {
     {
       id: "outline",
       title: "高频章节串讲",
-      weightLabel: "≈40% 总分",
+      weightLabel: "高频章节优先",
       reason: "缺少题目数据时，先把大纲前 3 章梳理完。",
       duration: "≈30 分钟",
       goal: "搭建知识骨架",
@@ -262,7 +303,7 @@ function buildFoundationFallback(attemptId: string): Recommendation[] {
     {
       id: "memory",
       title: "核心概念快背",
-      weightLabel: "≈20% 总分",
+      weightLabel: "基础概念夯实",
       reason: "首选药、适应证记牢即可快速抬分。",
       duration: "≈15 分钟",
       goal: "建立记忆框架",
@@ -285,20 +326,18 @@ function buildPriorityRecommendations(
     return buildFoundationFallback(attemptId);
   }
 
-  if (normalized < 0.4) {
-    return weaknesses.slice(0, 5).map((weakness, index) =>
-      buildWeaknessRecommendation(weakness, attemptId, "weight-first", index === 0),
-    );
-  }
-
   if (normalized < 0.85) {
-    const scored = [...weaknesses].sort((a, b) => {
-      const scoreA = (1 - (a.accuracy ?? 0)) * ((a.importance_level ?? 1) + 1);
-      const scoreB = (1 - (b.accuracy ?? 0)) * ((b.importance_level ?? 1) + 1);
-      return scoreB - scoreA;
+    const logicMode: "weight-first" | "balanced" = normalized < 0.4 ? "weight-first" : "balanced";
+    const prioritized = [...weaknesses].sort((a, b) => {
+      const priorityA = a.priority ?? a.baseWeaknessScore ?? 0;
+      const priorityB = b.priority ?? b.baseWeaknessScore ?? 0;
+      if (priorityA === priorityB) {
+        return (b.accuracy ?? 0) - (a.accuracy ?? 0);
+      }
+      return priorityB - priorityA;
     });
-    return scored.slice(0, 5).map((weakness, index) =>
-      buildWeaknessRecommendation(weakness, attemptId, "balanced", index === 0),
+    return prioritized.slice(0, 3).map((weakness, index) =>
+      buildWeaknessRecommendation(weakness, attemptId, logicMode, index === 0),
     );
   }
 
@@ -322,10 +361,10 @@ function buildAttemptReviewLink(attemptId: string) {
 
 function sortWeaknesses(list: Report["weaknesses"]) {
   return [...list].sort((a, b) => {
-    const importanceA = a.importance_level ?? 0;
-    const importanceB = b.importance_level ?? 0;
-    if (importanceA !== importanceB) {
-      return importanceB - importanceA;
+    const priorityA = a.priority ?? a.baseWeaknessScore ?? 0;
+    const priorityB = b.priority ?? b.baseWeaknessScore ?? 0;
+    if (priorityA !== priorityB) {
+      return priorityB - priorityA;
     }
     return (a.accuracy ?? 0) - (b.accuracy ?? 0);
   });
@@ -461,7 +500,9 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
   ];
 
   const recommendations = buildPriorityRecommendations(clampedRate, sortedWeaknesses, attemptId);
-  const primaryRecommendation = recommendations[0];
+  const topRecommendations = recommendations.slice(0, 3);
+  const primaryRecommendation = topRecommendations[0];
+  const secondaryRecommendations = topRecommendations.slice(1);
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -606,13 +647,18 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
               {primaryRecommendation && (
                 <section className="relative space-y-3 rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50/70 to-white p-6 shadow-sm">
                   <span className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-blue-600" aria-hidden />
-                  <div className="flex flex-col gap-1 pl-3">
-                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
-                      当前最高优先任务
-                    </p>
+                  <div className="flex flex-col gap-2 pl-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+                        TOP 1
+                      </span>
+                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
+                        当前最高优先任务
+                      </p>
+                    </div>
                     <h2 className="text-2xl font-semibold text-slate-900">直接照做即可提分</h2>
                     <p className="text-sm text-slate-600">
-                      本次评估最佳提分方向，直接进入对应章节模块。
+                      结合你的薄弱点与历年高频占比，建议你优先从这里补强。
                     </p>
                   </div>
                   <div className="rounded-2xl border border-blue-200 bg-white/80 p-4 shadow-sm">
@@ -620,22 +666,33 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                       <p className="text-lg font-semibold text-slate-900">{primaryRecommendation.title}</p>
                       <div className="flex flex-wrap gap-3 text-xs font-semibold">
                         <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
-                          权重约 {primaryRecommendation.weightLabel}
+                          章节定位：{primaryRecommendation.weightLabel}
                         </span>
                         <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">
                           目标：{primaryRecommendation.goal}
                         </span>
                       </div>
                       <p className="text-sm text-slate-600">{primaryRecommendation.reason}</p>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-3">
                         <span className="text-xs font-semibold text-slate-500">⏱ {primaryRecommendation.duration}</span>
                         <Link
                           href={primaryRecommendation.href}
                           className="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
                         >
-                          开始补强这一模块
+                          立即开始
                         </Link>
                       </div>
+                      <details className="mt-3 rounded-xl border border-blue-100 bg-blue-50/50 p-3">
+                        <summary className="cursor-pointer text-sm font-semibold text-blue-700 hover:text-blue-800">
+                          为什么推荐我学这个？
+                        </summary>
+                        <div className="mt-2 space-y-2 text-sm text-slate-700">
+                          <p>{primaryRecommendation.reason}</p>
+                          <p className="font-medium text-blue-700">
+                            这是高权重章节里的核心考点，优先补上最划算。
+                          </p>
+                        </div>
+                      </details>
                       <p className="text-xs text-slate-500">完成后系统将重新计算你的薄弱点。</p>
                     </div>
                   </div>
@@ -643,6 +700,51 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                     <Link href="/dashboard" className="text-sm font-semibold text-blue-600 underline decoration-dotted underline-offset-4">
                       查看章节掌握情况
                     </Link>
+                  </div>
+                </section>
+              )}
+
+              {secondaryRecommendations.length > 0 && (
+                <section className="space-y-4 rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm">
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                      后续巩固任务
+                    </p>
+                    <h3 className="text-lg font-semibold text-slate-900">紧随其后的 Top 2 - Top 3</h3>
+                    <p className="text-sm text-slate-500">
+                      根据章节与考点类型权重综合排序，按顺序补完以下任务即可稳定提升。
+                    </p>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {secondaryRecommendations.map((recommendation, index) => (
+                      <article
+                        key={recommendation.id}
+                        className="flex h-full flex-col justify-between rounded-2xl border border-slate-100 bg-slate-50/80 p-4 shadow-sm"
+                      >
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap items-center justify-between text-xs font-semibold text-slate-500">
+                            <span className="rounded-full bg-white px-3 py-1 text-slate-700">
+                              TOP {index + 2}
+                            </span>
+                            <span className="rounded-full bg-white px-3 py-1 text-slate-600">
+                              章节定位：{recommendation.weightLabel}
+                            </span>
+                          </div>
+                          <p className="text-base font-semibold text-slate-900">{recommendation.title}</p>
+                          <p className="text-sm text-slate-600">{recommendation.reason}</p>
+                        </div>
+                        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                          <span>目标：{recommendation.goal}</span>
+                          <span>⏱ {recommendation.duration}</span>
+                        </div>
+                        <Link
+                          href={recommendation.href}
+                          className="mt-4 inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:border-slate-400"
+                        >
+                          立即进入
+                        </Link>
+                      </article>
+                    ))}
                   </div>
                 </section>
               )}
