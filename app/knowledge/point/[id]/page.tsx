@@ -83,6 +83,7 @@ export default function KnowledgePointPage() {
   const [error, setError] = useState<string | null>(null)
   const [showMobileTOC, setShowMobileTOC] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [pointCompleted, setPointCompleted] = useState(false)
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024)
@@ -106,6 +107,11 @@ export default function KnowledgePointPage() {
       .finally(() => setLoading(false))
   }, [pointId])
 
+  useEffect(() => {
+    if (!point) return
+    setPointCompleted(isPointCompleted(point.id))
+  }, [point])
+
   if (loading) return <div className="p-8">加载中…</div>
   if (error || !point) {
     return (
@@ -128,13 +134,6 @@ export default function KnowledgePointPage() {
 
   const importanceBadge = getImportanceBadge(effectiveImportanceLevel)
   const learnModeBadge = getLearnModeBadge(effectiveLearnMode)
-
-  const [pointCompleted, setPointCompleted] = useState(false)
-
-  useEffect(() => {
-    if (!point) return
-    setPointCompleted(isPointCompleted(point.id))
-  }, [point])
 
   const handleMarkComplete = () => {
     if (!point || pointCompleted) return
