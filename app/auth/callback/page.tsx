@@ -11,18 +11,54 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const supabase = getSupabaseClient()
-    supabase.auth.getSessionFromUrl({ storeSession: true }).then(({ error }) => {
-      if (error) {
+    
+    const handleCallback = async () => {
+      try {
+        // 检查 URL hash 中是否有 access_token（Magic Link 回调）
+        const hashParams = new URLSearchParams(window.location.hash.substring(1))
+        const accessToken = hashParams.get('access_token')
+        const refreshToken = hashParams.get('refresh_token')
+        
+        if (accessToken && refreshToken) {
+          // 设置会话
+          const { error: setError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          })
+          
+          if (setError) {
+            setStatus('error')
+            setMessage('登录失败，请重试')
+            return
+          }
+        }
+        
+        // 验证会话是否已建立
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error || !session) {
+          setStatus('error')
+          setMessage('登录失败，请重试')
+          return
+        }
+        
+        setStatus('success')
+        setMessage('登录完成，正在返回...')
+        
+        // 清除 URL hash
+        window.history.replaceState(null, '', window.location.pathname)
+        
+        setTimeout(() => {
+          router.replace('/')
+        }, 1200)
+      } catch (err) {
+        console.error('Auth callback error:', err)
         setStatus('error')
         setMessage('登录失败，请重试')
-        return
       }
-      setStatus('success')
-      setMessage('登录完成，正在返回...')
-      setTimeout(() => {
-        router.replace('/')
-      }, 1200)
-    })
+    }
+    
+    handleCallback()
   }, [router])
 
   return (
