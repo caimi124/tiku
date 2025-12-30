@@ -222,6 +222,30 @@ export default function Navbar() {
     return () => window.clearTimeout(timer);
   }, [syncNotice]);
 
+  useEffect(() => {
+    const navSummary = {
+      primaryDesktop: ["首页", "诊断", "学习", "做题"],
+      dropdownCounts: {
+        diagnostic: diagnosticItems.length,
+        learning: learningItems.length,
+        practice: practiceItems.length,
+      },
+    };
+    fetch("/api/debug-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: "debug-session",
+        runId: "pre-fix",
+        hypothesisId: "H1",
+        location: "components/Navbar.tsx:navSummary",
+        message: "Navbar mounted with new IA nav items",
+        data: navSummary,
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+  }, [diagnosticItems.length, learningItems.length, practiceItems.length]);
+
   const handleMagicLinkSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!loginEmail.trim()) {
@@ -258,29 +282,6 @@ export default function Navbar() {
     setMagicLinkMessage(null);
     setMagicLinkStatus("idle");
   };
-    const navSummary = {
-      primaryDesktop: ["首页", "诊断", "学习", "做题"],
-      dropdownCounts: {
-        diagnostic: diagnosticItems.length,
-        learning: learningItems.length,
-        practice: practiceItems.length,
-      },
-    };
-    // #region agent log
-    fetch("/api/debug-log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId: "debug-session",
-        runId: "pre-fix",
-        hypothesisId: "H1",
-        location: "components/Navbar.tsx:navSummary",
-        message: "Navbar mounted with new IA nav items",
-        data: navSummary,
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
   }, [diagnosticItems.length, learningItems.length, practiceItems.length]);
 
   return (

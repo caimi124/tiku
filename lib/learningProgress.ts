@@ -117,37 +117,3 @@ export function clearLearningProgress() {
   dispatchUpdateEvent()
 }
 
-export function getCompletedPoints() {
-  const snapshot = readSnapshot()
-  return snapshot.completedPoints
-}
-
-export async function migrateLocalProgressToServer() {
-  if (!isClient()) return { syncedCount: 0 }
-  const completedPoints = getCompletedPoints()
-  if (completedPoints.length === 0) {
-    return { syncedCount: 0 }
-  }
-
-  try {
-    const res = await fetch('/api/user/progress/batch-sync', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify({ completedPoints }),
-    })
-
-    const payload = await res.json().catch(() => null)
-
-    if (res.ok && payload?.syncedCount) {
-      clearLearningProgress()
-      return { syncedCount: payload.syncedCount }
-    }
-
-    return { syncedCount: 0 }
-  } catch (error) {
-    console.error('同步本地进度失败', error)
-    return { syncedCount: 0 }
-  }
-}
-
