@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
 import { calculateRecommendationPriority } from "@/lib/recommendationPriority";
+import { getChapterDisplayName } from "@/lib/chapterNames";
 import { recoLogger } from "@/lib/logger";
 
 const pool = new Pool({
@@ -58,6 +59,23 @@ function classifyLevel(score: number) {
   return LEVELS.weak;
 }
 
+function resolvePointTitle(point: PointStat, isDev: boolean) {
+  const candidates = [
+    point.point_name,
+    point.knowledge_point_name,
+    point.title,
+    point.knowledge_point_code,
+    point.code,
+  ];
+  for (const candidate of candidates) {
+    if (candidate && candidate.trim()) {
+      return candidate.trim();
+    }
+  }
+  const fallbackCode = point.code ?? point.knowledge_point_code ?? "未命名";
+  return isDev ? `未命名考点(${fallbackCode})` : fallbackCode;
+}
+
 type SectionStat = {
   code: string;
   title: string;
@@ -80,10 +98,13 @@ type PointStat = {
   point_name?: string;
   importance_level?: number;
   learn_mode?: "MEMORIZE" | "PRACTICE" | "BOTH";
+  chapterName?: string;
   chapterId?: number | null;
   chapterWeight?: number;
   pointType?: string | null;
   pointTypeWeight?: number;
+  pointTitle?: string;
+  displayTitle?: string;
   baseWeaknessScore?: number;
   priority?: number;
   knowledge_point_code?: string;
@@ -179,8 +200,9 @@ export async function GET(
     const correctAnswered = answers.filter((row) => row.is_correct).length;
     const overallScore = totalAnswered > 0 ? correctAnswered / totalAnswered : 0;
 
-    const sectionsMap = new Map<string, SectionStat>();
-    const pointsMap = new Map<string, PointStat>();
+  const sectionsMap = new Map<string, SectionStat>();
+  const pointsMap = new Map<string, PointStat>();
+  const isDevelopment = process.env.NODE_ENV !== "production";
 
     answers.forEach((row) => {
       const sectionKey = row.section_code ?? "unknown-section";
