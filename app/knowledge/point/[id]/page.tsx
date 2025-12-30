@@ -16,6 +16,7 @@ import { ExpertTipsPanel, ExpertTips } from '@/components/ui/ExpertTipsPanel'
 import { SectionTOC, MobileTOCDrawer, TOCPoint } from '@/components/ui/SectionTOC'
 import { PointNavigation, MobileBottomNav, NavPoint } from '@/components/ui/PointNavigation'
 import { SmartContentRenderer } from '@/components/ui/SmartContentRenderer'
+import { isPointCompleted, markPointCompleted } from '@/lib/learningProgress'
 
 /* =========================
    类型（宽松版，避免 build 卡死）
@@ -128,6 +129,22 @@ export default function KnowledgePointPage() {
   const importanceBadge = getImportanceBadge(effectiveImportanceLevel)
   const learnModeBadge = getLearnModeBadge(effectiveLearnMode)
 
+  const [pointCompleted, setPointCompleted] = useState(false)
+
+  useEffect(() => {
+    if (!point) return
+    setPointCompleted(isPointCompleted(point.id))
+  }, [point])
+
+  const handleMarkComplete = () => {
+    if (!point || pointCompleted) return
+    const chapterCode = point.chapter?.code
+    const updated = markPointCompleted(point.id, chapterCode)
+    if (updated) {
+      setPointCompleted(true)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -155,7 +172,7 @@ export default function KnowledgePointPage() {
           }
         </div>
 
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href={`/practice/by-point?pointId=${point.id}`}
             className="px-4 py-2 bg-blue-600 text-white rounded"
@@ -168,6 +185,14 @@ export default function KnowledgePointPage() {
           >
             返回知识图谱
           </Link>
+          <button
+            type="button"
+            onClick={handleMarkComplete}
+            disabled={pointCompleted}
+            className="px-4 py-2 bg-emerald-600 text-white rounded disabled:bg-emerald-300 disabled:cursor-not-allowed"
+          >
+            {pointCompleted ? '已完成' : '✅ 我已学习完成'}
+          </button>
         </div>
       </div>
     </div>

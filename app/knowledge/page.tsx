@@ -34,6 +34,7 @@ import {
   parseChapterCode,
   type ChapterWeightUI,
 } from '@/lib/chapterWeight'
+import { getChapterCompletedCount } from '@/lib/learningProgress'
 
 // 章节结构类型
 interface ChapterStructure {
@@ -172,6 +173,7 @@ function KnowledgePageContent() {
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set())
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
   const [highlightedPointId, setHighlightedPointId] = useState<string | null>(null)
+  const [progressTick, setProgressTick] = useState(0)
   const [filters, setFilters] = useState<FilterPanelOptions>(DEFAULT_FILTER_PANEL_OPTIONS)
   const [previewData, setPreviewData] = useState<PreviewData | null>(null)
 
@@ -254,14 +256,20 @@ function KnowledgePageContent() {
     return chapters.map(chapter => {
       const identifier = chapter.code || chapter.id
       const chapterWeight = getChapterWeight(identifier)
+      const totalPoints = chapter.point_count || 0
+      const completed = getChapterCompletedCount(chapter.code || chapter.id)
+      const localMastery = totalPoints > 0 ? Math.round((completed / totalPoints) * 100) : 0
+      const displayedMastery = Math.max(chapter.mastery_score || 0, localMastery)
+
       return {
         ...chapter,
         chapterWeight,
         weightInfo: getChapterWeightUI(chapterWeight),
+        mastery_score: displayedMastery,
         numericOrder: parseChapterCode(identifier),
       }
     })
-  }, [chapters])
+  }, [chapters, progressTick])
 
   const sortedChapters = useMemo(() => {
     const list = [...chaptersWithWeight]
@@ -284,6 +292,14 @@ function KnowledgePageContent() {
     loadInitialData()
     restoreAccordionState()
   }, [loadInitialData])
+
+  useEffect(() => {
+    const handler = () => setProgressTick((prev) => prev + 1)
+    window.addEventListener('learning-progress-updated', handler)
+    return () => {
+      window.removeEventListener('learning-progress-updated', handler)
+    }
+  }, [])
 
   useEffect(() => {
     if (!chapterParam || chaptersWithWeight.length === 0) return
