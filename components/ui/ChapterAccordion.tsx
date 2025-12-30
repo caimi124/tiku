@@ -16,6 +16,7 @@
 import React, { useCallback } from 'react'
 import { ChevronDown, ChevronRight, BookOpen, CheckCircle, Clock, Circle } from 'lucide-react'
 import { MasteryProgressBar } from './MasteryProgressBar'
+import type { ChapterWeightLevel, ChapterWeightUI } from '@/lib/chapterWeight'
 
 export interface ChapterAccordionProps {
   id: string
@@ -26,6 +27,7 @@ export interface ChapterAccordionProps {
   masteryScore: number
   isExpanded?: boolean
   onToggle?: (id: string, expanded: boolean) => void
+  weightInfo?: ChapterWeightUI
   children?: React.ReactNode
 }
 
@@ -51,6 +53,12 @@ function getProgressText(masteryScore: number): string {
   return '未开始'
 }
 
+const BADGE_STYLES: Record<ChapterWeightLevel, string> = {
+  core: 'bg-red-50 text-red-600 border-red-100',
+  common: 'bg-orange-50 text-orange-600 border-orange-200',
+  auxiliary: 'bg-slate-50 text-slate-600 border-slate-200',
+}
+
 export function ChapterAccordion({
   id,
   code,
@@ -60,6 +68,7 @@ export function ChapterAccordion({
   masteryScore,
   isExpanded = false,
   onToggle,
+  weightInfo,
   children
 }: ChapterAccordionProps) {
   // 使用外部控制的展开状态，不再使用内部状态
@@ -95,9 +104,24 @@ export function ChapterAccordion({
         
         {/* 章节信息 */}
         <div className="flex-1 text-left">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">第{code}章</span>
-            <h3 className="font-semibold text-gray-800 line-clamp-1">{title}</h3>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">第{code}章</span>
+              <h3 className="font-semibold text-gray-800 line-clamp-1">{title}</h3>
+            </div>
+            {weightInfo && (
+              <div className="flex items-center gap-2">
+                <span
+                  className={`border ${BADGE_STYLES[weightInfo.badgeVariant]} px-2 py-0.5 text-xs font-semibold rounded-full`}
+                  title={weightInfo.shortHint}
+                >
+                  {weightInfo.label}
+                </span>
+                <span className="text-sm font-semibold text-amber-600 tracking-wide" title={weightInfo.starLabel}>
+                  {weightInfo.starLabel}
+                </span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
             <span className="flex items-center gap-1">
@@ -105,7 +129,7 @@ export function ChapterAccordion({
               {pointCount}考点
             </span>
             {highFrequencyCount > 0 && (
-              <span className="text-red-500 font-medium">
+              <span className="text-gray-500">
                 {highFrequencyCount}高频
               </span>
             )}

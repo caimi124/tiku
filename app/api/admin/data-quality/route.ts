@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
-import { getChapterWeight } from "@/lib/recommendationPriority";
+import { getChapterWeight } from "@/lib/chapterWeight";
 
 const pool = new Pool({
   connectionString:
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
         extractChapterId(p.chapter_code) ??
         extractChapterId(p.section_code) ??
         extractChapterId(p.code);
-      const chapterWeight = getChapterWeight(chapterId);
+      const chapterWeight = getChapterWeight(chapterId, { fallback: 1 });
 
       if (!chapterId || chapterWeight === 1) {
         chapterIdExtractFailed++;

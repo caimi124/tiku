@@ -1,18 +1,9 @@
-export const CHAPTER_WEIGHT: Record<number, number> = {
-  9: 5, // 抗感染
-  8: 5, // 内分泌
-  5: 5, // 心血管
-  4: 4, // 消化
-  3: 4, // 呼吸
-  2: 4, // 解热镇痛
-  7: 4, // 泌尿
-  1: 3, // 中枢神经
-  6: 3, // 血液
-  10: 3, // 抗肿瘤
-  11: 2, // 水电解质/营养
-  12: 2, // 眼科/耳鼻喉/口腔
-  13: 2, // 皮肤/抗过敏
-};
+import {
+  CHAPTER_WEIGHT as SHARED_CHAPTER_WEIGHT,
+  getChapterWeight as resolveChapterWeight,
+} from '@/lib/chapterWeight';
+
+export const CHAPTER_WEIGHT = SHARED_CHAPTER_WEIGHT;
 
 export const POINT_TYPE_WEIGHT: Record<string, number> = {
   mechanism: 5, // 分类&作用机制
@@ -24,8 +15,7 @@ export const POINT_TYPE_WEIGHT: Record<string, number> = {
 };
 
 export function getChapterWeight(chapterId?: number | null) {
-  if (!chapterId) return 1;
-  return CHAPTER_WEIGHT[chapterId] ?? 1;
+  return resolveChapterWeight(chapterId, { fallback: 1 });
 }
 
 export function getPointTypeWeight(pointType?: string | null) {

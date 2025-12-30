@@ -15,7 +15,7 @@
 
 import { useState, useEffect, useCallback, useMemo, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { 
   BookOpen, Brain, TrendingUp, Zap, Clock,
   ChevronRight, RefreshCw
@@ -28,6 +28,12 @@ import { FilterPanel, FilterPanelOptions, DEFAULT_FILTER_PANEL_OPTIONS, hasActiv
 import { SearchEnhanced, SearchResultItem } from '@/components/ui/SearchEnhanced'
 import { MasteryProgressBar } from '@/components/ui/MasteryProgressBar'
 import { SequentialLearning } from '@/components/ui/SequentialLearning'
+import {
+  getChapterWeight,
+  getChapterWeightUI,
+  parseChapterCode,
+  type ChapterWeightUI,
+} from '@/lib/chapterWeight'
 
 // 章节结构类型
 interface ChapterStructure {
@@ -48,6 +54,28 @@ interface SectionStructure {
   high_frequency_count: number
   completed_count: number
   mastery_score?: number
+}
+
+type ChapterOrderMode = 'priority' | 'syllabus'
+
+type WeightedChapter = ChapterStructure & {
+  chapterWeight: number
+  weightInfo: ChapterWeightUI
+  numericOrder: number | null
+}
+
+const ORDER_OPTIONS: { mode: ChapterOrderMode; label: string }[] = [
+  { mode: 'priority', label: '按学习优先级（默认）' },
+  { mode: 'syllabus', label: '按教材顺序' },
+]
+
+function compareChaptersByOrder(a: WeightedChapter, b: WeightedChapter) {
+  if (a.numericOrder != null && b.numericOrder != null) {
+    return a.numericOrder - b.numericOrder
+  }
+  if (a.numericOrder != null) return -1
+  if (b.numericOrder != null) return 1
+  return a.code.localeCompare(b.code)
 }
 
 // 考点行数据
@@ -105,6 +133,25 @@ const ACCORDION_STATE_KEY = 'knowledge_accordion_state'
 
 function KnowledgePageContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const pathname = usePathname() ?? '/knowledge'
+  const currentOrder: ChapterOrderMode = searchParams.get('order') === 'syllabus' ? 'syllabus' : 'priority'
+
+  const handleOrderChange = useCallback(
+    (mode: ChapterOrderMode) => {
+      if (mode === currentOrder) return
+      const nextParams = new URLSearchParams(searchParams)
+      if (mode === 'priority') {
+        nextParams.delete('order')
+      } else {
+        nextParams.set('order', 'syllabus')
+      }
+      const query = nextParams.toString()
+      const targetUrl = query ? `${pathname}?${query}` : pathname
+      router.replace(targetUrl)
+    },
+    [currentOrder, pathname, router, searchParams],
+  )
   
   // 数据状态
   const [chapters, setChapters] = useState<ChapterStructure[]>([])
@@ -132,6 +179,35 @@ function KnowledgePageContent() {
       high_frequency_count: highFrequency
     }
   }, [chapters])
+
+  const chaptersWithWeight = useMemo<WeightedChapter[]>(() => {
+    return chapters.map(chapter => {
+      const identifier = chapter.code || chapter.id
+      const chapterWeight = getChapterWeight(identifier)
+      return {
+        ...chapter,
+        chapterWeight,
+        weightInfo: getChapterWeightUI(chapterWeight),
+        numericOrder: parseChapterCode(identifier),
+      }
+    })
+  }, [chapters])
+
+  const sortedChapters = useMemo(() => {
+    const list = [...chaptersWithWeight]
+    if (currentOrder === 'priority') {
+      list.sort((a, b) => {
+        if (b.chapterWeight !== a.chapterWeight) {
+          return b.chapterWeight - a.chapterWeight
+        }
+        return compareChaptersByOrder(a, b)
+      })
+      return list
+    }
+
+    list.sort(compareChaptersByOrder)
+    return list
+  }, [chaptersWithWeight, currentOrder])
 
   // 初始化加载
   useEffect(() => {
@@ -563,7 +639,25 @@ function KnowledgePageContent() {
           
           {/* 右侧手风琴列表 */}
           <div className="lg:col-span-3 space-y-3">
-            {chapters.map(chapter => (
+            <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+              <span className="text-sm font-medium text-gray-700">排序方式</span>
+              <div className="flex flex-wrap items-center gap-2">
+                {ORDER_OPTIONS.map(option => {
+                  const isActive = option.mode === currentOrder
+                  return (
+                    <button
+                      key={option.mode}
+                      type="button"
+                      className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition ${isActive ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'}`}
+                      onClick={() => handleOrderChange(option.mode)}
+                    >
+                      {option.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            {sortedChapters.map(chapter => (
               <div key={chapter.id} id={`chapter-${chapter.id}`}>
                 <ChapterAccordion
                   id={chapter.id}
@@ -574,6 +668,7 @@ function KnowledgePageContent() {
                   masteryScore={chapter.mastery_score}
                   isExpanded={expandedChapters.has(chapter.id)}
                   onToggle={handleChapterToggle}
+                  weightInfo={chapter.weightInfo}
                 >
                   {/* 小节列表 */}
                   {chapter.sections.map(section => (
