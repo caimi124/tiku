@@ -5,6 +5,11 @@ export interface LearningProgressSnapshot {
   completedChapters: Record<string, number>
 }
 
+interface LocalProgressRaw {
+  completedPoints?: unknown
+  completedChapters?: unknown
+}
+
 function createDefault(): LearningProgressSnapshot {
   return {
     completedPoints: [],
@@ -16,16 +21,38 @@ function isClient() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
 }
 
+function normalizeCompletedPoints(input: unknown): string[] {
+  if (!Array.isArray(input)) return []
+  return Array.from(
+    new Set(
+      input.filter((item): item is string => typeof item === 'string' && item.trim().length > 0),
+    ),
+  )
+}
+
+function normalizeCompletedChapters(input: unknown): Record<string, number> {
+  if (typeof input !== 'object' || input === null) return {}
+
+  const result: Record<string, number> = {}
+  for (const [key, value] of Object.entries(input)) {
+    if (typeof key === 'string' && typeof value === 'number' && Number.isFinite(value)) {
+      result[key.trim().toUpperCase()] = value
+    }
+  }
+  return result
+}
+
 function readSnapshot(): LearningProgressSnapshot {
   if (!isClient()) return createDefault()
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
     if (!raw) return createDefault()
-    const parsed = JSON.parse(raw)
+
+    const parsed = JSON.parse(raw) as LocalProgressRaw
     return {
-      completedPoints: Array.isArray(parsed.completedPoints) ? [...new Set(parsed.completedPoints)] : [],
-      completedChapters: parsed.completedChapters ?? {},
+      completedPoints: normalizeCompletedPoints(parsed.completedPoints),
+      completedChapters: normalizeCompletedChapters(parsed.completedChapters),
     }
   } catch (error) {
     console.warn('读取本地学习进度失败', error)
