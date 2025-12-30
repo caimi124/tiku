@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CHAPTER_WEIGHT } from "@/lib/recommendationPriority";
+import { getChapterDisplayName } from "@/lib/chapterNames";
 
 type LearnMode = "MEMORIZE" | "PRACTICE" | "BOTH";
 
@@ -42,17 +43,9 @@ type Report = {
     pointTypeWeight?: number;
     baseWeaknessScore?: number;
     priority?: number;
-  }[];
-  questions: {
-    question_uuid: string;
-    stem: string | null;
-    options: Record<string, string>;
-    user_answer: string | null;
-    correct_answer: string | null;
-    explanation: string | null;
-    section_title: string | null;
-    knowledge_point_title: string | null;
-    is_correct: boolean;
+    chapterName?: string | null;
+    pointTitle?: string | null;
+    pointTypeLabel?: string | null;
   }[];
 };
 
@@ -77,6 +70,9 @@ type Recommendation = {
   mode: "study" | "practice";
   emphasis?: boolean;
   accuracy?: number;
+  chapterName?: string | null;
+  pointTitle?: string | null;
+  pointTypeLabel?: string | null;
 };
 
 const MAX_RETRY = 10;
@@ -209,7 +205,13 @@ function getRecommendationDuration(mode?: LearnMode) {
 }
 
 function extractWeaknessTitle(weakness: Report["weaknesses"][number]) {
-  return weakness.point_name ?? weakness.title ?? weakness.sectionTitle ?? "未命名章节";
+  return (
+    weakness.pointTitle ??
+    weakness.point_name ??
+    weakness.title ??
+    weakness.sectionTitle ??
+    "未命名章节"
+  );
 }
 
 function buildWeaknessRecommendation(
@@ -221,6 +223,12 @@ function buildWeaknessRecommendation(
   const resolvedWeight = resolveChapterWeight(weakness);
   const weightLabel = getExamWeightLabel(resolvedWeight);
   const accuracy = Math.round((weakness.accuracy ?? 0) * 100);
+  const chapterName = getChapterDisplayName(
+    weakness.chapterId ?? undefined,
+    weakness.chapterName ?? weakness.sectionTitle,
+  );
+  const pointTitle = weakness.pointTitle ?? extractWeaknessTitle(weakness);
+  const pointTypeLabel = weakness.pointTypeLabel ?? weakness.pointType ?? undefined;
   const href = weakness.knowledge_point_code
     ? `/practice/by-point?code=${weakness.knowledge_point_code}&source=diagnostic&attempt_id=${attemptId}`
     : `/practice/diagnostic-special?attempt_id=${attemptId}`;
@@ -239,7 +247,7 @@ function buildWeaknessRecommendation(
 
   return {
     id: weakness.code ?? `${extractWeaknessTitle(weakness)}-${accuracy}`,
-    title: extractWeaknessTitle(weakness),
+    title: pointTitle,
     weightLabel,
     reason,
     duration,
@@ -248,6 +256,9 @@ function buildWeaknessRecommendation(
     mode,
     emphasis,
     accuracy,
+    chapterName,
+    pointTitle,
+    pointTypeLabel,
   };
 }
 
@@ -356,7 +367,7 @@ function formatDateTime(value: string | null | undefined) {
 }
 
 function buildAttemptReviewLink(attemptId: string) {
-  return `/diagnostic/result?attempt_id=${attemptId}#analysis`;
+  return `/diagnostic/review?attempt_id=${attemptId}`;
 }
 
 function sortWeaknesses(list: Report["weaknesses"]) {
@@ -663,7 +674,19 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                   </div>
                   <div className="rounded-2xl border border-blue-200 bg-white/80 p-4 shadow-sm">
                     <div className="flex flex-col gap-2">
-                      <p className="text-lg font-semibold text-slate-900">{primaryRecommendation.title}</p>
+                      <div className="space-y-1">
+                        <p className="text-lg font-semibold text-slate-900">
+                          {primaryRecommendation.chapterName ?? primaryRecommendation.title}
+                        </p>
+                        <p className="text-sm font-medium text-slate-600">
+                          {primaryRecommendation.pointTitle ?? primaryRecommendation.title}
+                        </p>
+                        {primaryRecommendation.pointTypeLabel && (
+                          <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                            {primaryRecommendation.pointTypeLabel}
+                          </span>
+                        )}
+                      </div>
                       <div className="flex flex-wrap gap-3 text-xs font-semibold">
                         <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
                           章节定位：{primaryRecommendation.weightLabel}
@@ -730,7 +753,19 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                               章节定位：{recommendation.weightLabel}
                             </span>
                           </div>
-                          <p className="text-base font-semibold text-slate-900">{recommendation.title}</p>
+                          <div className="space-y-1">
+                            <p className="text-base font-semibold text-slate-900">
+                              {recommendation.chapterName ?? recommendation.title}
+                            </p>
+                            <p className="text-sm font-medium text-slate-600">
+                              {recommendation.pointTitle ?? recommendation.title}
+                            </p>
+                            {recommendation.pointTypeLabel && (
+                              <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                                {recommendation.pointTypeLabel}
+                              </span>
+                            )}
+                          </div>
                           <p className="text-sm text-slate-600">{recommendation.reason}</p>
                         </div>
                         <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
@@ -781,6 +816,7 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                   <p className="text-sm text-slate-500">
                     本次共完成 {totalAnswered} 题，错题 {wrongCount} 题
                   </p>
+                  <p className="text-xs text-slate-500">逐题解析将在新页面打开，便于专注查看。</p>
                 </div>
                 <div className="mt-4">
                   <Link
@@ -790,91 +826,6 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                     查看本次解析
                   </Link>
                 </div>
-              </section>
-
-              <section
-                id="analysis"
-                className="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
-              >
-                <div className="flex flex-col gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
-                    答题详情
-                  </p>
-                  <h3 className="text-lg font-semibold text-slate-900">逐题解析列表</h3>
-                  <p className="text-sm text-slate-500">
-                    展示本次诊断的全部题目、作答记录与解析，方便对照薄弱知识点。
-                  </p>
-                </div>
-                {!report.questions.length ? (
-                  <p className="text-sm text-slate-500">当前暂无题目记录，稍后可刷新此页面。</p>
-                ) : (
-                  <div className="space-y-4">
-                    {report.questions.map((question, index) => {
-                      const userAnswer = question.user_answer ?? "未作答";
-                      const correctAnswer = question.correct_answer ?? "待补充";
-                      return (
-                        <article
-                          key={question.question_uuid ?? `${index}-${userAnswer}`}
-                          className="rounded-3xl border border-slate-100 bg-slate-50/70 p-5"
-                        >
-                          <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-                            <p className="font-semibold text-slate-900">
-                              第 {index + 1} 题 · {question.is_correct ? "✅ 作答正确" : "⚠️ 答错"}
-                            </p>
-                            <p className="text-xs text-slate-500">
-                              {question.section_title ?? "未分章节"} · {question.knowledge_point_title ?? "未标注考点"}
-                            </p>
-                          </div>
-                          <p className="mt-3 whitespace-pre-line text-base leading-relaxed text-slate-800">
-                            {question.stem ?? "题干内容暂缺"}
-                          </p>
-                          <div className="mt-4 space-y-2">
-                            {Object.entries(question.options ?? {}).map(([key, value]) => {
-                              const isUser = question.user_answer === key;
-                              const isCorrect = question.correct_answer === key;
-                              const stateClass = isCorrect
-                                ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                                : isUser
-                                ? "border-rose-300 bg-rose-50 text-rose-700"
-                                : "border-slate-200 bg-white text-slate-700";
-                              return (
-                                <div
-                                  key={key}
-                                  className={`rounded-2xl border px-4 py-2 text-sm font-medium ${stateClass}`}
-                                >
-                                  <span className="mr-2 font-semibold">{key}.</span>
-                                  <span className="whitespace-pre-line">{value}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                          <div className="mt-4 grid gap-2 text-sm text-slate-600 sm:grid-cols-3">
-                            <p>
-                              你的选择：<span className="font-semibold text-slate-900">{userAnswer}</span>
-                            </p>
-                            <p>
-                              正确答案：<span className="font-semibold text-emerald-600">{correctAnswer}</span>
-                            </p>
-                            <p className="sm:text-right">
-                              判定结果：{" "}
-                              <span
-                                className={`font-semibold ${question.is_correct ? "text-emerald-600" : "text-rose-600"}`}
-                              >
-                                {question.is_correct ? "正确" : "错误"}
-                              </span>
-                            </p>
-                          </div>
-                          <div className="mt-4 rounded-2xl bg-white/90 p-4 text-sm text-slate-700">
-                            <p className="font-semibold text-slate-900">解析</p>
-                            <p className="mt-2 whitespace-pre-line">
-                              {question.explanation?.trim() ? question.explanation : "解析待补充，稍后将自动更新。"}
-                            </p>
-                          </div>
-                        </article>
-                      );
-                    })}
-                  </div>
-                )}
               </section>
 
               <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">

@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
 import { calculateRecommendationPriority } from "@/lib/recommendationPriority";
-import { getChapterDisplayName } from "@/lib/chapterNames";
+import { extractChapterId, resolveChapterName } from "@/lib/chapterUtils";
 import { recoLogger } from "@/lib/logger";
 
 const pool = new Pool({
@@ -27,7 +27,6 @@ type AttemptRow = {
 type AnswerRow = {
   question_uuid: string;
   chapter_code: string | null;
-  chapter_title: string | null;
   section_code: string | null;
   section_title: string | null;
   knowledge_point_code: string | null;
@@ -76,6 +75,37 @@ function resolvePointTitle(point: PointStat, isDev: boolean) {
   return isDev ? `未命名考点(${fallbackCode})` : fallbackCode;
 }
 
+function resolveAnswerPointTitle(row: AnswerRow, isDev: boolean) {
+  const candidates = [
+    row.point_name,
+    row.knowledge_point_name,
+    row.knowledge_point_title,
+    row.knowledge_point_code,
+    row.section_title,
+  ];
+  for (const candidate of candidates) {
+    if (candidate && candidate.trim()) {
+      return candidate.trim();
+    }
+  }
+  const fallbackCode = row.knowledge_point_code ?? row.section_code ?? row.question_uuid;
+  if (!fallbackCode) {
+    return isDev ? "未命名考点(unknown)" : "考点待匹配";
+  }
+  return isDev ? `未命名考点(${fallbackCode})` : fallbackCode;
+}
+
+function deriveChapterMeta(row: AnswerRow) {
+  const chapterId =
+    extractChapterId(row.chapter_code) ??
+    extractChapterId(row.section_code) ??
+    extractChapterId(row.knowledge_point_code) ??
+    null;
+  const fallbackLabel = row.section_title ?? row.knowledge_point_title ?? null;
+  const chapterName = resolveChapterName(chapterId, fallbackLabel);
+  return { chapterId, chapterName };
+}
+
 type SectionStat = {
   code: string;
   title: string;
@@ -105,23 +135,11 @@ type PointStat = {
   pointTypeWeight?: number;
   pointTitle?: string;
   displayTitle?: string;
+  pointTypeLabel?: string;
   baseWeaknessScore?: number;
   priority?: number;
   knowledge_point_code?: string;
 };
-
-function extractChapterId(code?: string | null) {
-  if (!code) return null;
-  const normalized = code.trim();
-  const match = normalized.match(/C?(\d+)/i);
-  if (match && match[1]) {
-    const parsed = Number.parseInt(match[1], 10);
-    return Number.isNaN(parsed) ? null : parsed;
-  }
-  const firstSegment = normalized.split(".")[0];
-  const parsedSegment = Number.parseInt(firstSegment, 10);
-  return Number.isNaN(parsedSegment) ? null : parsedSegment;
-}
 
 export async function GET(
   _request: NextRequest,
@@ -207,10 +225,12 @@ export async function GET(
     answers.forEach((row) => {
       const sectionKey = row.section_code ?? "unknown-section";
       const pointKey = row.knowledge_point_code ?? row.question_uuid;
+      const { chapterId, chapterName } = deriveChapterMeta(row);
+      const resolvedPointTitle = resolveAnswerPointTitle(row, isDevelopment);
 
       const section = sectionsMap.get(sectionKey) ?? {
         code: sectionKey,
-        title: row.section_title ?? "其他",
+        title: row.section_title ?? "章节待匹配",
         total: 0,
         correct: 0,
       };
@@ -220,14 +240,9 @@ export async function GET(
       }
       sectionsMap.set(sectionKey, section);
 
-      const pointTitle =
-        row.point_name ??
-        row.knowledge_point_name ??
-        row.knowledge_point_title ??
-        "其他";
       const point = pointsMap.get(pointKey) ?? {
         code: pointKey,
-        title: pointTitle,
+        title: resolvedPointTitle,
         sectionCode: sectionKey,
         sectionTitle: section.title,
         total: 0,
@@ -236,16 +251,21 @@ export async function GET(
         accuracy: 0,
         level: LEVELS.weak,
         knowledge_point_id: row.knowledge_point_id ?? undefined,
-        knowledge_point_name: pointTitle,
-        point_name: pointTitle,
+        knowledge_point_name: resolvedPointTitle,
+        point_name: resolvedPointTitle,
         knowledge_point_code: row.knowledge_point_code ?? pointKey,
         importance_level: row.importance_level ?? undefined,
         learn_mode: row.learn_mode ?? "BOTH",
         chapterId:
-          extractChapterId(row.chapter_code) ??
+          chapterId ??
+          extractChapterId(sectionKey) ??
           extractChapterId(row.knowledge_point_code) ??
-          extractChapterId(sectionKey),
+          null,
+        chapterName: chapterName ?? section.title,
         pointType: row.point_type ?? null,
+        pointTypeLabel: row.point_type ?? undefined,
+        pointTitle: resolvedPointTitle,
+        displayTitle: resolvedPointTitle,
       };
       point.total += 1;
       if (row.is_correct) {
@@ -256,12 +276,21 @@ export async function GET(
       if (!point.pointType && row.point_type) {
         point.pointType = row.point_type;
       }
+      if (!point.pointTypeLabel && row.point_type) {
+        point.pointTypeLabel = row.point_type;
+      }
       if (!point.chapterId) {
         point.chapterId =
-          extractChapterId(row.chapter_code) ??
+          chapterId ??
           extractChapterId(row.knowledge_point_code) ??
           extractChapterId(sectionKey) ??
           extractChapterId(point.code);
+      }
+      if (!point.chapterName) {
+        point.chapterName = chapterName ?? section.title;
+      }
+      if (!point.pointTitle) {
+        point.pointTitle = resolvedPointTitle;
       }
       pointsMap.set(pointKey, point);
     });
@@ -276,6 +305,15 @@ export async function GET(
         point.chapterId ??
         extractChapterId(point.sectionCode) ??
         extractChapterId(point.code);
+      if (!point.chapterName) {
+        point.chapterName = resolveChapterName(point.chapterId, point.sectionTitle);
+      }
+      const resolvedPointTitle = point.pointTitle ?? resolvePointTitle(point, isDevelopment);
+      point.pointTitle = resolvedPointTitle;
+      point.displayTitle = resolvedPointTitle;
+      if (!point.pointTypeLabel && point.pointType) {
+        point.pointTypeLabel = point.pointType;
+      }
       const baseWeaknessScore = 1 - (point.accuracy ?? 0);
       point.baseWeaknessScore = Number.isNaN(baseWeaknessScore) ? 0 : baseWeaknessScore;
 
@@ -340,22 +378,35 @@ export async function GET(
       chapter_code: w.chapterId ? `C${w.chapterId}` : undefined,
       chapterId: w.chapterId,
       pointType: w.pointType,
+      chapterName: w.chapterName ?? resolveChapterName(w.chapterId, w.sectionTitle),
+      pointTitle: w.pointTitle ?? w.displayTitle ?? w.point_name ?? w.title,
+      pointTypeLabel: w.pointTypeLabel ?? w.pointType ?? undefined,
       baseWeaknessScore: w.baseWeaknessScore,
       priority: w.priority,
       // 注意：chapterWeight 和 pointTypeWeight 不返回
     }));
 
-    const questions = answers.map((row) => ({
-      question_uuid: row.question_uuid,
-      stem: row.stem,
-      options: row.options ?? {},
-      user_answer: row.user_answer,
-      correct_answer: row.correct_answer,
-      explanation: row.explanation,
-      section_title: row.section_title,
-      knowledge_point_title: row.knowledge_point_title,
-      is_correct: Boolean(row.is_correct),
-    }));
+    const questions = answers.map((row) => {
+      const { chapterId, chapterName } = deriveChapterMeta(row);
+      const pointTitle = resolveAnswerPointTitle(row, isDevelopment);
+      return {
+        question_uuid: row.question_uuid,
+        stem: row.stem,
+        options: row.options ?? {},
+        user_answer: row.user_answer,
+        correct_answer: row.correct_answer,
+        explanation: row.explanation,
+        section_title: row.section_title ?? chapterName ?? "章节待匹配",
+        knowledge_point_title: pointTitle,
+        chapter_id: chapterId,
+        chapter_title: chapterName,
+        chapter_code: row.chapter_code,
+        knowledge_point_code: row.knowledge_point_code,
+        point_type: row.point_type,
+        point_title: pointTitle,
+        is_correct: Boolean(row.is_correct),
+      };
+    });
 
     const report = {
       attempt_id: attempt.id,
