@@ -1,7 +1,7 @@
-"use client";
+ "use client";
 
 import Link from "next/link";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type FormEvent } from "react";
 import {
   BookOpen,
   Sparkles,
@@ -17,6 +17,8 @@ import {
   Zap,
   Home,
 } from "lucide-react";
+import { getSupabaseClient, getCurrentUser } from "@/lib/auth";
+import { migrateLocalProgressToServer } from "@/lib/learningProgress";
 
 interface NavDropdownItem {
   href: string;
@@ -85,6 +87,15 @@ function NavDropdown({ label, icon, items, isOpen, onToggle, onClose }: NavDropd
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [magicLinkStatus, setMagicLinkStatus] = useState<
+    "idle" | "sending" | "sent" | "error"
+  >("idle");
+  const [magicLinkMessage, setMagicLinkMessage] = useState<string | null>(null);
+  const [user, setUser] = useState<{ email?: string | null; id: string } | null>(null);
+  const [syncNotice, setSyncNotice] = useState<string | null>(null);
+  const lastSyncedUserId = useRef<string | null>(null);
 
   const diagnosticItems: NavDropdownItem[] = [
     {
@@ -170,6 +181,83 @@ export default function Navbar() {
   };
 
   useEffect(() => {
+    let mounted = true;
+    getCurrentUser().then((user) => {
+      if (mounted) setUser(user ?? null);
+    });
+    const { data: listener } = getSupabaseClient().auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      },
+    );
+    return () => {
+      mounted = false;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!user?.id) {
+      lastSyncedUserId.current = null;
+      setSyncNotice(null);
+      return;
+    }
+    if (lastSyncedUserId.current === user.id) return;
+    lastSyncedUserId.current = user.id;
+
+    migrateLocalProgressToServer()
+      .then(({ syncedCount }) => {
+        if (syncedCount && syncedCount > 0) {
+          setSyncNotice(`已为你同步 ${syncedCount} 个考点`);
+        }
+      })
+      .catch((error) => {
+        console.error("同步本地进度失败", error);
+      });
+  }, [user]);
+
+  useEffect(() => {
+    if (!syncNotice) return;
+    const timer = window.setTimeout(() => setSyncNotice(null), 5000);
+    return () => window.clearTimeout(timer);
+  }, [syncNotice]);
+
+  const handleMagicLinkSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!loginEmail.trim()) {
+      setMagicLinkMessage("请输入有效邮箱");
+      setMagicLinkStatus("error");
+      return;
+    }
+    setMagicLinkStatus("sending");
+    setMagicLinkMessage(null);
+    try {
+      const res = await fetch("/api/auth/magic-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: loginEmail.trim() }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        setMagicLinkStatus("sent");
+        setMagicLinkMessage("登录链接已发送，请查看邮箱");
+      } else {
+        setMagicLinkStatus("error");
+        setMagicLinkMessage(result.error || "发送失败");
+      }
+    } catch (error) {
+      console.error("发送 Magic Link 失败", error);
+      setMagicLinkStatus("error");
+      setMagicLinkMessage("网络异常，请稍后重试");
+    }
+  };
+
+  const handleSignOut = async () => {
+    await getSupabaseClient().auth.signOut();
+    setUser(null);
+    setMagicLinkMessage(null);
+    setMagicLinkStatus("idle");
+  };
     const navSummary = {
       primaryDesktop: ["首页", "诊断", "学习", "做题"],
       dropdownCounts: {
@@ -251,6 +339,63 @@ export default function Navbar() {
             >
               开始诊断
             </Link>
+            {user ? (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-gray-700">{user.email || "已登录"}</span>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="px-3 py-1 rounded-full border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition"
+                >
+                  退出
+                </button>
+              </div>
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={() => setShowLoginForm((prev) => !prev)}
+                  className="px-3 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold transition hover:bg-blue-100"
+                >
+                  同步进度
+                </button>
+                {showLoginForm && (
+                  <form
+                    onSubmit={handleMagicLinkSubmit}
+                    className="absolute right-0 mt-2 w-60 rounded-xl border border-gray-200 bg-white p-3 shadow-lg space-y-2 z-50"
+                  >
+                    <label className="text-xs font-medium text-gray-500">
+                      输入邮箱，发送 Magic Link
+                    </label>
+                    <input
+                      type="email"
+                      className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:border-blue-400 focus:outline-none"
+                      placeholder="name@example.com"
+                      value={loginEmail}
+                      onChange={(event) => setLoginEmail(event.target.value)}
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className="w-full rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
+                    >
+                      {magicLinkStatus === "sending" ? "发送中..." : "发送链接"}
+                    </button>
+                    {magicLinkMessage && (
+                      <p
+                        className={`text-xs ${
+                          magicLinkStatus === "error" ? "text-red-500" : "text-green-600"
+                        }`}
+                      >
+                        {magicLinkMessage}
+                      </p>
+                    )}
+                  </form>
+                )}
+                {syncNotice && (
+                  <p className="mt-2 text-xs text-emerald-600">{syncNotice}</p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* 移动端菜单按钮 */}

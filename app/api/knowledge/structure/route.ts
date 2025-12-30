@@ -64,27 +64,45 @@ export async function GET(request: NextRequest) {
     const subjectParam = searchParams.get('subject_code') || searchParams.get('subject')
     const subjectCode = subjectParam || 'xiyao_yaoxue_er'
     const debugEnabled = process.env.NODE_ENV !== 'production' || searchParams.get('debug') === '1'
-    
-  const supabase = createClient(supabaseUrl, supabaseKey)
-  const cookieStore = cookies()
-  const accessToken = cookieStore.get('sb-access-token')?.value
-  const learningStatuses = ['in_progress', 'completed', 'mastered']
-  let learnedPointIds: Set<string> | null = null
 
-  if (accessToken) {
-    const { data: session } = await supabase.auth.getUser(accessToken)
-    const userId = session?.user?.id
-    if (userId) {
-      const { data: progressData, error: progressError } = await supabase
-        .from('user_learning_progress')
-        .select('point_id')
-        .eq('user_id', userId)
-        .in('status', learningStatuses)
-      if (!progressError && progressData) {
-        learnedPointIds = new Set(progressData.map((entry) => entry.point_id))
+    const supabase = createClient(supabaseUrl, supabaseKey)
+    const cookieStore = cookies()
+    const accessToken = cookieStore.get('sb-access-token')?.value
+    const learningStatuses = ['in_progress', 'completed', 'mastered']
+    let learnedPointIds: Set<string> | null = null
+
+    if (accessToken) {
+      const { data: session } = await supabase.auth.getUser(accessToken)
+      const userId = session?.user?.id
+      if (userId) {
+        const [progressData, completionData] = await Promise.all([
+          supabase
+            .from('user_learning_progress')
+            .select('point_id')
+            .eq('user_id', userId)
+            .in('status', learningStatuses),
+          supabase
+            .from('user_point_completion')
+            .select('point_id')
+            .eq('user_id', userId),
+        ])
+
+        const pointIds = new Set<string>()
+        if (!progressData.error && progressData.data) {
+          progressData.data.forEach((entry) => {
+            if (entry.point_id) pointIds.add(entry.point_id)
+          })
+        }
+        if (!completionData.error && completionData.data) {
+          completionData.data.forEach((entry) => {
+            if (entry.point_id) pointIds.add(entry.point_id)
+          })
+        }
+        if (pointIds.size > 0) {
+          learnedPointIds = pointIds
+        }
       }
     }
-  }
     
     // 分别查询各类型节点（避免 .in() 可能的问题）
     // 使用 sort_order 排序确保章节按正确顺序显示（第一章、第二章...）
