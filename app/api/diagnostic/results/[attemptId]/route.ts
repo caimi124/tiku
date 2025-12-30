@@ -1,10 +1,17 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { createClient } from "@supabase/supabase-js";
 import { Pool } from "pg";
 import { calculateRecommendationPriority } from "@/lib/recommendationPriority";
 import { extractChapterId, resolveChapterName } from "@/lib/chapterUtils";
 import { recoLogger } from "@/lib/logger";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const pool = new Pool({
   connectionString:
@@ -153,6 +160,14 @@ export async function GET(
     );
   }
 
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get("sb-access-token")?.value;
+  let userId: string | null = null;
+  if (accessToken) {
+    const { data: session } = await supabase.auth.getUser(accessToken);
+    userId = session?.user?.id ?? null;
+  }
+
   const client = await pool.connect();
   try {
     const attemptResult = await client.query<AttemptRow>(
@@ -178,6 +193,29 @@ export async function GET(
         { error: { code: "NOT_FOUND", message: "诊断尝试不存在" } },
         { status: 404 },
       );
+    }
+
+    const learnedChapterNumbers = new Set<number>();
+    if (userId) {
+      const progressResult = await client.query(
+        `
+        SELECT DISTINCT chapter.code AS chapter_code
+        FROM user_learning_progress ulp
+        JOIN knowledge_tree point ON point.id = ulp.point_id
+        LEFT JOIN knowledge_tree section ON section.id = point.parent_id
+        LEFT JOIN knowledge_tree chapter ON chapter.id = section.parent_id
+        WHERE ulp.user_id = $1
+          AND ulp.status IN ('in_progress', 'completed', 'mastered')
+          AND chapter.code IS NOT NULL
+      `,
+        [userId],
+      );
+      progressResult.rows.forEach((row) => {
+        const parsed = extractChapterId(row.chapter_code);
+        if (parsed) {
+          learnedChapterNumbers.add(parsed);
+        }
+      });
     }
 
     const answersResult = await client.query<AnswerRow>(
@@ -377,6 +415,8 @@ export async function GET(
       learn_mode: w.learn_mode,
       chapter_code: w.chapterId ? `C${w.chapterId}` : undefined,
       chapterId: w.chapterId,
+      chapterStatus:
+        w.chapterId && learnedChapterNumbers.has(w.chapterId) ? "learned" : "idle",
       pointType: w.pointType,
       chapterName: w.chapterName ?? resolveChapterName(w.chapterId, w.sectionTitle),
       pointTitle: w.pointTitle ?? w.displayTitle ?? w.point_name ?? w.title,

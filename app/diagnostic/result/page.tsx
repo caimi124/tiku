@@ -44,6 +44,7 @@ type Report = {
     baseWeaknessScore?: number;
     priority?: number;
     chapterName?: string | null;
+    chapterStatus?: "learned" | "idle";
     pointTitle?: string | null;
     pointTypeLabel?: string | null;
   }[];
@@ -71,6 +72,8 @@ type Recommendation = {
   emphasis?: boolean;
   accuracy?: number;
   chapterName?: string | null;
+  chapterCode?: string | null;
+  chapterStatus?: "learned" | "idle";
   pointTitle?: string | null;
   pointTypeLabel?: string | null;
 };
@@ -257,6 +260,8 @@ function buildWeaknessRecommendation(
     emphasis,
     accuracy,
     chapterName,
+    chapterCode: weakness.chapter_code ?? (weakness.chapterId ? `C${weakness.chapterId}` : undefined),
+    chapterStatus: weakness.chapterStatus ?? "idle",
     pointTitle,
     pointTypeLabel,
   };
@@ -340,6 +345,11 @@ function buildPriorityRecommendations(
   if (normalized < 0.85) {
     const logicMode: "weight-first" | "balanced" = normalized < 0.4 ? "weight-first" : "balanced";
     const prioritized = [...weaknesses].sort((a, b) => {
+      const aLearned = a.chapterStatus === "learned";
+      const bLearned = b.chapterStatus === "learned";
+      if (aLearned !== bLearned) {
+        return aLearned ? 1 : -1;
+      }
       const priorityA = a.priority ?? a.baseWeaknessScore ?? 0;
       const priorityB = b.priority ?? b.baseWeaknessScore ?? 0;
       if (priorityA === priorityB) {
@@ -514,6 +524,12 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
   const topRecommendations = recommendations.slice(0, 3);
   const primaryRecommendation = topRecommendations[0];
   const secondaryRecommendations = topRecommendations.slice(1);
+  const primaryDestination =
+    primaryRecommendation && attemptId
+      ? primaryRecommendation.chapterCode
+        ? `/knowledge?chapter=${encodeURIComponent(primaryRecommendation.chapterCode)}&source=diagnostic&attempt_id=${attemptId}`
+        : primaryRecommendation.href
+      : primaryRecommendation?.href;
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -699,7 +715,7 @@ export default function DiagnosticResultPage({ searchParams }: DiagnosticResultP
                       <div className="flex items-center justify-between gap-3">
                         <span className="text-xs font-semibold text-slate-500">⏱ {primaryRecommendation.duration}</span>
                         <Link
-                          href={primaryRecommendation.href}
+                          href={primaryDestination ?? primaryRecommendation.href}
                           className="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
                         >
                           立即开始

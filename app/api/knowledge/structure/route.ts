@@ -12,6 +12,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -64,7 +65,26 @@ export async function GET(request: NextRequest) {
     const subjectCode = subjectParam || 'xiyao_yaoxue_er'
     const debugEnabled = process.env.NODE_ENV !== 'production' || searchParams.get('debug') === '1'
     
-    const supabase = createClient(supabaseUrl, supabaseKey)
+  const supabase = createClient(supabaseUrl, supabaseKey)
+  const cookieStore = cookies()
+  const accessToken = cookieStore.get('sb-access-token')?.value
+  const learningStatuses = ['in_progress', 'completed', 'mastered']
+  let learnedPointIds: Set<string> | null = null
+
+  if (accessToken) {
+    const { data: session } = await supabase.auth.getUser(accessToken)
+    const userId = session?.user?.id
+    if (userId) {
+      const { data: progressData, error: progressError } = await supabase
+        .from('user_learning_progress')
+        .select('point_id')
+        .eq('user_id', userId)
+        .in('status', learningStatuses)
+      if (!progressError && progressData) {
+        learnedPointIds = new Set(progressData.map((entry) => entry.point_id))
+      }
+    }
+  }
     
     // 分别查询各类型节点（避免 .in() 可能的问题）
     // 使用 sort_order 排序确保章节按正确顺序显示（第一章、第二章...）
@@ -101,6 +121,25 @@ export async function GET(request: NextRequest) {
     const chapterNodes = chaptersRes.data || []
     const sectionNodes = sectionsRes.data || []
     const pointNodes = pointsRes.data || []
+
+    const sectionIdToChapterId = new Map<string, string>()
+    sectionNodes.forEach((section) => {
+      if (section.parent_id) {
+        sectionIdToChapterId.set(section.id, section.parent_id)
+      }
+    })
+
+    const pointsBySection = new Map<string, typeof pointNodes>()
+    const pointIdToSectionId = new Map<string, string>()
+    pointNodes.forEach((point) => {
+      const sectionId = point.parent_id || ''
+      pointIdToSectionId.set(point.id, sectionId)
+      const existing = pointsBySection.get(sectionId) ?? []
+      existing.push(point)
+      pointsBySection.set(sectionId, existing)
+    })
+
+    const learnedPoints = learnedPointIds ?? new Set<string>()
     
     // 统计信息
     const stats: StructureStats = {
@@ -114,16 +153,21 @@ export async function GET(request: NextRequest) {
     const structure: ChapterStructure[] = chapterNodes.map(chapter => {
       const chapterSections = sectionNodes.filter(s => s.parent_id === chapter.id)
       
-      // 计算章节下的考点统计
       let chapterPointCount = 0
       let chapterHighFreqCount = 0
-      
+      let chapterLearnedCount = 0
+
       const sections: SectionStructure[] = chapterSections.map(section => {
-        const sectionPoints = pointNodes.filter(p => p.parent_id === section.id)
+        const sectionPoints = pointsBySection.get(section.id) ?? []
         const highFreqPoints = sectionPoints.filter(p => (p.importance || 0) >= 4)
+        const sectionLearnedCount = sectionPoints.filter((point) => learnedPoints.has(point.id)).length
         
         chapterPointCount += sectionPoints.length
         chapterHighFreqCount += highFreqPoints.length
+        chapterLearnedCount += sectionLearnedCount
+
+        const sectionMastery =
+          sectionPoints.length > 0 ? Math.round((sectionLearnedCount / sectionPoints.length) * 100) : 0
         
         return {
           id: section.id,
@@ -131,7 +175,7 @@ export async function GET(request: NextRequest) {
           title: section.title,
           point_count: sectionPoints.length,
           high_frequency_count: highFreqPoints.length,
-          mastery_score: 0, // TODO: 从用户掌握度数据计算
+          mastery_score: sectionMastery,
           parent_id: section.parent_id,
           node_type: section.node_type,
           level: section.level,
@@ -142,13 +186,16 @@ export async function GET(request: NextRequest) {
         }
       })
       
+      const chapterMastery =
+        chapterPointCount > 0 ? Math.round((chapterLearnedCount / chapterPointCount) * 100) : 0
+      
       return {
         id: chapter.id,
         code: chapter.code,
         title: chapter.title,
         point_count: chapterPointCount,
         high_frequency_count: chapterHighFreqCount,
-        mastery_score: 0, // TODO: 从用户掌握度数据计算
+        mastery_score: chapterMastery,
         parent_id: chapter.parent_id,
         node_type: chapter.node_type,
         level: chapter.level,

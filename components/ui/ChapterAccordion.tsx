@@ -28,6 +28,7 @@ export interface ChapterAccordionProps {
   isExpanded?: boolean
   onToggle?: (id: string, expanded: boolean) => void
   weightInfo?: ChapterWeightUI
+  isHighlighted?: boolean
   children?: React.ReactNode
 }
 
@@ -69,6 +70,7 @@ export function ChapterAccordion({
   isExpanded = false,
   onToggle,
   weightInfo,
+  isHighlighted = false,
   children
 }: ChapterAccordionProps) {
   // 使用外部控制的展开状态，不再使用内部状态
@@ -80,8 +82,12 @@ export function ChapterAccordion({
     onToggle?.(id, newExpanded)
   }, [expanded, id, onToggle])
   
+  const highlightClasses = isHighlighted
+    ? 'ring-2 ring-blue-300/80 border-blue-200 bg-blue-50/60 shadow-blue-50'
+    : ''
+
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+    <div className={`border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm transition ${highlightClasses}`}>
       {/* 章节头部 - 可点击展开/收起 */}
       <button
         onClick={handleToggle}

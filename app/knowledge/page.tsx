@@ -13,7 +13,7 @@
 
 'use client'
 
-import { useState, useEffect, useCallback, useMemo, Suspense } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { 
@@ -152,6 +152,12 @@ function KnowledgePageContent() {
     },
     [currentOrder, pathname, router, searchParams],
   )
+
+  const chapterParam = searchParams.get('chapter')?.trim()
+  const [highlightedChapterId, setHighlightedChapterId] = useState<string | null>(null)
+  const processedChapterParamRef = useRef<string | null>(null)
+  const progressMarkedChaptersRef = useRef<Set<string>>(new Set())
+  const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   
   // 数据状态
   const [chapters, setChapters] = useState<ChapterStructure[]>([])
@@ -168,6 +174,70 @@ function KnowledgePageContent() {
   const [highlightedPointId, setHighlightedPointId] = useState<string | null>(null)
   const [filters, setFilters] = useState<FilterPanelOptions>(DEFAULT_FILTER_PANEL_OPTIONS)
   const [previewData, setPreviewData] = useState<PreviewData | null>(null)
+
+  const loadInitialData = useCallback(async () => {
+    setLoading(true)
+    try {
+      // 并行加载结构和进度数据
+      const [structureRes, progressRes] = await Promise.all([
+        fetch('/api/knowledge/structure?subject=xiyao_yaoxue_er'),
+        fetch('/api/user/progress?subject=xiyao_yaoxue_er')
+      ])
+      
+      const structureData = await structureRes.json()
+      const progressData = await progressRes.json()
+      
+      if (structureData.success) {
+        // API返回的是 data.structure，不是 data.chapters
+        setChapters(structureData.data.structure || structureData.data.chapters || [])
+      }
+      
+      if (progressData.success) {
+        // API返回的是 data.stats，需要转换为页面期望的格式
+        const stats = progressData.data.stats || progressData.data
+        setUserProgress({
+          total_points: stats.total_points || 0,
+          learned_count: stats.learned_count || 0,
+          mastered_count: stats.mastered_count || 0,
+          review_count: stats.review_count || 0,
+          overall_percentage: stats.completion_percentage || stats.overall_percentage || 0
+        })
+        setRecentLearning(progressData.data.recent_points || progressData.data.recent_learning || [])
+      }
+    } catch (error) {
+      console.error('加载数据失败:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const markChapterProgress = useCallback(
+    async (chapter: WeightedChapter) => {
+      if (progressMarkedChaptersRef.current.has(chapter.id)) return
+      progressMarkedChaptersRef.current.add(chapter.id)
+
+      const chapterDigits = parseChapterCode(chapter.code)
+      const encodedChapterCode = chapterDigits ? `C${chapterDigits}` : chapter.code
+
+      try {
+        await fetch('/api/user/progress/chapter', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chapterId: chapter.id,
+            chapterCode: encodedChapterCode,
+          }),
+        })
+        await loadInitialData()
+      } catch (error) {
+        console.error('记录章节学习进度失败', error)
+      }
+    },
+    [loadInitialData],
+  )
   
   // 统计数据
   const stats = useMemo(() => {
@@ -213,6 +283,48 @@ function KnowledgePageContent() {
   useEffect(() => {
     loadInitialData()
     restoreAccordionState()
+  }, [loadInitialData])
+
+  useEffect(() => {
+    if (!chapterParam || chaptersWithWeight.length === 0) return
+    if (processedChapterParamRef.current === chapterParam) return
+
+    const targetOrder = parseChapterCode(chapterParam)
+    if (targetOrder == null) return
+
+    const targetChapter = chaptersWithWeight.find(chapter => parseChapterCode(chapter.code) === targetOrder)
+    if (!targetChapter) return
+
+    processedChapterParamRef.current = chapterParam
+
+    setExpandedChapters(prev => new Set([...prev, targetChapter.id]))
+    setExpandedSections(prev => {
+      const next = new Set(prev)
+      targetChapter.sections.forEach(section => next.add(section.id))
+      return next
+    })
+
+    setTimeout(() => {
+      document.getElementById(`chapter-${targetChapter.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 80)
+
+    setHighlightedChapterId(targetChapter.id)
+    if (highlightTimerRef.current) {
+      clearTimeout(highlightTimerRef.current)
+    }
+    highlightTimerRef.current = setTimeout(() => {
+      setHighlightedChapterId(null)
+    }, 3000)
+
+    void markChapterProgress(targetChapter)
+  }, [chapterParam, chaptersWithWeight, markChapterProgress])
+
+  useEffect(() => {
+    return () => {
+      if (highlightTimerRef.current) {
+        clearTimeout(highlightTimerRef.current)
+      }
+    }
   }, [])
   
   // URL锚点定位
@@ -231,42 +343,6 @@ function KnowledgePageContent() {
   }, [expandedChapters, expandedSections, highlightedPointId])
 
   // 加载初始数据
-  const loadInitialData = async () => {
-    setLoading(true)
-    try {
-      // 并行加载结构和进度数据
-      const [structureRes, progressRes] = await Promise.all([
-        fetch('/api/knowledge/structure?subject=xiyao_yaoxue_er'),
-        fetch('/api/user/progress?subject=xiyao_yaoxue_er')
-      ])
-      
-      const structureData = await structureRes.json()
-      const progressData = await progressRes.json()
-      
-      if (structureData.success) {
-        // API返回的是 data.structure，不是 data.chapters
-        setChapters(structureData.data.structure || structureData.data.chapters || [])
-      }
-      
-      if (progressData.success) {
-        // API返回的是 data.stats，需要转换为页面期望的格式
-        const stats = progressData.data.stats || progressData.data
-        setUserProgress({
-          total_points: stats.total_points || 0,
-          learned_count: stats.learned_count || 0,
-          mastered_count: stats.mastered_count || 0,
-          review_count: stats.review_count || 0,
-          overall_percentage: stats.completion_percentage || stats.overall_percentage || 0
-        })
-        setRecentLearning(progressData.data.recent_points || progressData.data.recent_learning || [])
-      }
-    } catch (error) {
-      console.error('加载数据失败:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-  
   // 恢复手风琴状态
   const restoreAccordionState = () => {
     try {
@@ -363,17 +439,27 @@ function KnowledgePageContent() {
   }
   
   // 章节展开/收起
-  const handleChapterToggle = (chapterId: string, expanded: boolean) => {
-    setExpandedChapters(prev => {
-      const next = new Set(prev)
+  const handleChapterToggle = useCallback(
+    (chapterId: string, expanded: boolean) => {
+      setExpandedChapters(prev => {
+        const next = new Set(prev)
+        if (expanded) {
+          next.add(chapterId)
+        } else {
+          next.delete(chapterId)
+        }
+        return next
+      })
+
       if (expanded) {
-        next.add(chapterId)
-      } else {
-        next.delete(chapterId)
+        const matchedChapter = chaptersWithWeight.find(ch => ch.id === chapterId)
+        if (matchedChapter) {
+          void markChapterProgress(matchedChapter)
+        }
       }
-      return next
-    })
-  }
+    },
+    [chaptersWithWeight, markChapterProgress],
+  )
   
   // 小节展开/收起
   const handleSectionToggle = (sectionId: string, expanded: boolean) => {
@@ -669,6 +755,7 @@ function KnowledgePageContent() {
                   isExpanded={expandedChapters.has(chapter.id)}
                   onToggle={handleChapterToggle}
                   weightInfo={chapter.weightInfo}
+                  isHighlighted={highlightedChapterId === chapter.id}
                 >
                   {/* 小节列表 */}
                   {chapter.sections.map(section => (
