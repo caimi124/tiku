@@ -258,12 +258,20 @@ export default function Navbar() {
       } else {
         const detail =
           result?.error || result?.message || "登录失败，请稍后再试，如仍失败请联系管理员";
-        const composedMessage = `登录失败（${res.status}）：${detail}`;
+        
+        // 检查是否是环境变量缺失错误
+        let composedMessage = `登录失败（${res.status}）：${detail}`;
+        if (detail.startsWith("MISSING_ENV:")) {
+          const missingVar = detail.replace("MISSING_ENV:", "");
+          composedMessage = `登录失败：缺少环境变量 ${missingVar}。请前往 Vercel 项目设置中补齐该环境变量。`;
+        }
+        
         setMagicLinkStatus("error");
         setMagicLinkMessage(composedMessage);
         console.error("Magic Link 请求失败", {
           status: res.status,
           detail,
+          fullResponse: result,
         });
       }
     } catch (error) {
