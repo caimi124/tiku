@@ -37,8 +37,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: '需要提供邮箱' }, { status: 400 })
     }
 
-    const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL!.trim().replace(/\/$/, '')}/auth/callback`
-    logDebug('redirect target', { redirectTo })
+    // 计算 baseUrl：优先使用 VERCEL_URL，否则使用 NEXT_PUBLIC_SITE_URL
+    let baseUrl: string
+    if (process.env.VERCEL_URL) {
+      baseUrl = `https://${process.env.VERCEL_URL}`
+    } else {
+      baseUrl = process.env.NEXT_PUBLIC_SITE_URL!.trim().replace(/\/$/, '')
+    }
+
+    // 生产环境防呆：禁止使用 localhost
+    if (process.env.NODE_ENV === 'production' && baseUrl.includes('localhost')) {
+      console.error('[magic-link] BAD_SITE_URL: production redirectTo points to localhost', { baseUrl })
+      return NextResponse.json(
+        { success: false, error: 'BAD_SITE_URL: production redirectTo points to localhost' },
+        { status: 500 }
+      )
+    }
+
+    const redirectTo = `${baseUrl}/auth/callback`
+    logDebug('redirect target', { baseUrl, redirectTo, nodeEnv: process.env.NODE_ENV })
 
     const supabase = createServerSupabaseClient()
     const { error } = await supabase.auth.signInWithOtp({
