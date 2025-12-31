@@ -106,8 +106,34 @@ export default function KnowledgePointPage() {
     setPointCompleted(isPointCompleted(point.id))
   }, [point])
 
+  // 所有 hooks 必须在早期返回之前调用
+  // 使用安全的默认值，即使 point 为 null
+  const safePoint = point ?? null
+  const safePointId = pointId ?? ''
+
+  // 提取数据 - 使用安全的默认值
+  const keyTakeaways = useMemo(() => getKeyTakeaways(safePointId), [safePointId])
+  const mnemonic = useMemo(() => {
+    if (safePoint?.memory_tips) return safePoint.memory_tips
+    if (safePoint?.content) return extractMnemonic(safePoint.content)
+    return null
+  }, [safePoint])
+  const hasStructure = useMemo(() => {
+    return safePoint?.content ? hasClassificationTable(safePoint.content) : false
+  }, [safePoint])
+
+  // 计算有效值 - 使用安全的默认值
+  const effectiveImportanceLevel = useMemo(() => {
+    return safePoint?.importance_level ?? safePoint?.importance ?? 3
+  }, [safePoint])
+
+  const effectiveLearnMode = useMemo(() => {
+    return safePoint?.learn_mode ?? 'BOTH'
+  }, [safePoint])
+
+  // 早期返回必须在所有 hooks 之后
   if (loading) return <div className="p-8">加载中…</div>
-  if (error || !point) {
+  if (error || !safePoint) {
     return (
       <div className="p-8 text-center">
         <p className="mb-4">{error || '知识点不存在'}</p>
@@ -116,38 +142,17 @@ export default function KnowledgePointPage() {
     )
   }
 
-  /* ======== 关键修复点（止血） ======== */
-  const effectiveImportanceLevel =
-    point.importance_level ??
-    point.importance ??
-    3
-
-  const effectiveLearnMode =
-    point.learn_mode ?? 'BOTH'
-  /* ==================================== */
-
-  // 提取数据
-  const keyTakeaways = useMemo(() => getKeyTakeaways(pointId), [pointId])
-  const mnemonic = useMemo(() => {
-    if (point?.memory_tips) return point.memory_tips
-    if (point?.content) return extractMnemonic(point.content)
-    return null
-  }, [point])
-  const hasStructure = useMemo(() => {
-    return point?.content ? hasClassificationTable(point.content) : false
-  }, [point])
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-6 lg:py-8">
         {/* A. 考试价值卡 */}
         <ExamValueCard
-          title={point.title}
+          title={safePoint.title}
           importanceLevel={effectiveImportanceLevel}
-          masteryScore={point.mastery_score}
+          masteryScore={safePoint.mastery_score}
           learnMode={effectiveLearnMode}
-          examYears={point.exam_years}
-          examFrequency={point.exam_frequency}
+          examYears={safePoint.exam_years}
+          examFrequency={safePoint.exam_frequency}
           className="mb-6"
         />
 
@@ -203,9 +208,9 @@ export default function KnowledgePointPage() {
                 <ChevronDown className="w-5 h-5 text-gray-400" />
               )}
             </button>
-            {structureExpanded && point.content && (
+            {structureExpanded && safePoint.content && (
               <div className="px-4 pb-4">
-                <SmartContentRenderer content={point.content} />
+                <SmartContentRenderer content={safePoint.content} />
               </div>
             )}
           </div>
@@ -255,8 +260,8 @@ export default function KnowledgePointPage() {
             </button>
             {detailExpanded && (
               <div className="px-4 pb-4">
-                {point.content ? (
-                  <SmartContentRenderer content={point.content} />
+                {safePoint.content ? (
+                  <SmartContentRenderer content={safePoint.content} />
                 ) : (
                   <div className="text-gray-400 py-8 text-center">暂无内容</div>
                 )}
@@ -266,14 +271,14 @@ export default function KnowledgePointPage() {
         )}
 
         {/* G. 历年考点分布（弱化展示） */}
-        {!focusMode && point.exam_years && point.exam_years.length > 0 && (
+        {!focusMode && safePoint.exam_years && safePoint.exam_years.length > 0 && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 mb-6">
             <div className="flex items-center gap-2 mb-2">
               <Calendar className="w-4 h-4 text-gray-400" />
               <h3 className="text-sm font-medium text-gray-600">历年考点分布</h3>
             </div>
             <div className="flex flex-wrap gap-2">
-              {point.exam_years.map((year) => (
+              {safePoint.exam_years.map((year) => (
                 <span
                   key={year}
                   className="px-2 py-1 text-xs text-gray-500 bg-gray-50 rounded border border-gray-200"
@@ -287,7 +292,7 @@ export default function KnowledgePointPage() {
 
         {/* H. 行动区 */}
         <ActionArea
-          pointId={point.id}
+          pointId={safePoint.id}
           isCompleted={pointCompleted}
           sticky={!isMobile}
           className="mb-6"
