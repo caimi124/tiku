@@ -1,22 +1,32 @@
 /**
- * 知识点详情页（稳定构建版）
+ * 知识点详情页（重构版 - 应试驱动布局）
+ * 
+ * 布局顺序：
+ * A. 考试价值卡（顶部首屏必见）
+ * B. 本页重点速览（6-8条，可折叠）
+ * C. 口诀（有则展示；没有先放占位"后续补充"）
+ * D. 结构骨架（分类表，可折叠）
+ * E. 老司机/易错点（先从重点速览复用；后续可自动化）
+ * F. 细节查阅区（临床用药评价/药物信息表：默认折叠）
+ * G. 历年考点分布（弱化展示）
+ * H. 行动区（桌面端可做粘底；否则页面底部）
  */
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter, useParams } from 'next/navigation'
-import { Menu } from 'lucide-react'
+import { ChevronDown, ChevronUp, Lightbulb, AlertTriangle, BookOpen, Calendar } from 'lucide-react'
 
-import { MasteryProgressBar } from '@/components/ui/MasteryProgressBar'
-import { MasteryStatusBadge } from '@/components/ui/MasteryStatusBadge'
-import { ImportanceStars, isHighFrequency } from '@/components/ui/ImportanceStars'
-import { ExpertTipsPanel, ExpertTips } from '@/components/ui/ExpertTipsPanel'
-import { SectionTOC, MobileTOCDrawer, TOCPoint } from '@/components/ui/SectionTOC'
-import { PointNavigation, MobileBottomNav, NavPoint } from '@/components/ui/PointNavigation'
+import { ExamValueCard } from '@/components/ui/ExamValueCard'
+import { KeyTakeaways } from '@/components/ui/KeyTakeaways'
+import { FocusModeToggle } from '@/components/ui/FocusModeToggle'
+import { ActionArea } from '@/components/ui/ActionArea'
 import { SmartContentRenderer } from '@/components/ui/SmartContentRenderer'
-import { isPointCompleted, markPointCompleted } from '@/lib/learningProgress'
+import { isPointCompleted } from '@/lib/learningProgress'
+import { getKeyTakeaways } from '@/lib/keyTakeawaysConfig'
+import { extractMnemonic, hasClassificationTable } from '@/lib/contentUtils'
 
 /* =========================
    类型（宽松版，避免 build 卡死）
@@ -38,37 +48,17 @@ interface KnowledgePointDetail {
   last_review_at?: string
   practice_count?: number
   correct_rate?: number
+  exam_years?: number[]
+  exam_frequency?: number
   related_points?: any[]
   content_item_accuracy?: any[]
   navigation?: {
-    prev_point?: NavPoint
-    next_point?: NavPoint
-    section_points?: TOCPoint[]
+    prev_point?: any
+    next_point?: any
+    section_points?: any[]
   }
   chapter?: { id: string; title: string; code: string }
   section?: { id: string; title: string; code: string }
-}
-
-/* ========================= */
-
-const LEARN_MODE_BADGES = {
-  MEMORIZE: { label: '必背', className: 'bg-amber-100 text-amber-700' },
-  PRACTICE: { label: '多练', className: 'bg-emerald-100 text-emerald-700' },
-  BOTH: { label: '背+练', className: 'bg-slate-100 text-slate-700' },
-}
-
-function getImportanceBadge(level?: number) {
-  if ((level ?? 0) >= 4) {
-    return { symbol: '🔥', label: '高频', className: 'bg-red-100 text-red-600' }
-  }
-  if ((level ?? 0) === 3) {
-    return { symbol: '🟡', label: '常考', className: 'bg-amber-100 text-amber-600' }
-  }
-  return { symbol: '⚪', label: '低频', className: 'bg-slate-100 text-slate-500' }
-}
-
-function getLearnModeBadge(mode?: string) {
-  return (LEARN_MODE_BADGES as any)[mode ?? 'BOTH'] ?? LEARN_MODE_BADGES.BOTH
 }
 
 /* ========================= */
@@ -81,9 +71,13 @@ export default function KnowledgePointPage() {
   const [point, setPoint] = useState<KnowledgePointDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showMobileTOC, setShowMobileTOC] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [pointCompleted, setPointCompleted] = useState(false)
+  const [focusMode, setFocusMode] = useState(false)
+  
+  // 折叠状态
+  const [structureExpanded, setStructureExpanded] = useState(false)
+  const [detailExpanded, setDetailExpanded] = useState(false)
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024)
@@ -132,66 +126,182 @@ export default function KnowledgePointPage() {
     point.learn_mode ?? 'BOTH'
   /* ==================================== */
 
-  const importanceBadge = getImportanceBadge(effectiveImportanceLevel)
-  const learnModeBadge = getLearnModeBadge(effectiveLearnMode)
-
-  const handleMarkComplete = () => {
-    if (!point || pointCompleted) return
-    const chapterCode = point.chapter?.code
-    const updated = markPointCompleted(point.id, chapterCode)
-    if (updated) {
-      setPointCompleted(true)
-    }
-  }
+  // 提取数据
+  const keyTakeaways = useMemo(() => getKeyTakeaways(pointId), [pointId])
+  const mnemonic = useMemo(() => {
+    if (point?.memory_tips) return point.memory_tips
+    if (point?.content) return extractMnemonic(point.content)
+    return null
+  }, [point])
+  const hasStructure = useMemo(() => {
+    return point?.content ? hasClassificationTable(point.content) : false
+  }, [point])
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-3">{point.title}</h1>
+      <div className="max-w-6xl mx-auto px-4 py-6 lg:py-8">
+        {/* A. 考试价值卡 */}
+        <ExamValueCard
+          title={point.title}
+          importanceLevel={effectiveImportanceLevel}
+          masteryScore={point.mastery_score}
+          learnMode={effectiveLearnMode}
+          examYears={point.exam_years}
+          examFrequency={point.exam_frequency}
+          className="mb-6"
+        />
 
-        <div className="flex items-center gap-3 mb-4 text-sm">
-          <ImportanceStars level={effectiveImportanceLevel} size="md" />
-          <span className={`px-2 py-0.5 rounded ${importanceBadge.className}`}>
-            {importanceBadge.symbol} {importanceBadge.label}
-          </span>
-          <span className={`px-2 py-0.5 rounded ${learnModeBadge.className}`}>
-            {learnModeBadge.label}
-          </span>
-          {isHighFrequency(effectiveImportanceLevel) && (
-            <span className="px-2 py-0.5 rounded bg-orange-100 text-orange-600">
-              高频考点
-            </span>
+        {/* 只看重点开关 */}
+        <FocusModeToggle
+          enabled={focusMode}
+          onToggle={setFocusMode}
+          className="mb-6"
+        />
+
+        {/* B. 本页重点速览 */}
+        {keyTakeaways.length > 0 && (
+          <KeyTakeaways
+            items={keyTakeaways}
+            defaultExpanded={true}
+            className="mb-6"
+          />
+        )}
+
+        {/* C. 口诀 */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Lightbulb className="w-5 h-5 text-amber-500" />
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">记忆口诀</h2>
+          </div>
+          {mnemonic ? (
+            <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg p-4 border border-amber-200">
+              <p className="text-amber-800 font-medium text-lg leading-relaxed">{mnemonic}</p>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
+              <Lightbulb className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+              <p className="text-sm">暂无口诀，后续补充</p>
+            </div>
           )}
         </div>
 
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          {point.content
-            ? <SmartContentRenderer content={point.content} />
-            : <div className="text-gray-400">暂无内容</div>
-          }
-        </div>
+        {/* D. 结构骨架（分类表） */}
+        {hasStructure && (
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+            <button
+              type="button"
+              onClick={() => setStructureExpanded(!structureExpanded)}
+              className="w-full flex items-center justify-between p-3 sm:p-4 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-blue-500" />
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900">结构骨架</h2>
+              </div>
+              {structureExpanded ? (
+                <ChevronUp className="w-5 h-5 text-gray-400" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              )}
+            </button>
+            {structureExpanded && point.content && (
+              <div className="px-4 pb-4">
+                <SmartContentRenderer content={point.content} />
+              </div>
+            )}
+          </div>
+        )}
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href={`/practice/by-point?pointId=${point.id}`}
-            className="px-4 py-2 bg-blue-600 text-white rounded"
-          >
-            专项练习
-          </Link>
+        {/* E. 老司机/易错点 */}
+        {keyTakeaways.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <AlertTriangle className="w-5 h-5 text-orange-500" />
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">老司机提醒 / 易错点</h2>
+            </div>
+            <div className="space-y-3">
+              {keyTakeaways.slice(0, 4).map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100"
+                >
+                  <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-gray-700 leading-relaxed flex-1">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* F. 细节查阅区（默认折叠） */}
+        {!focusMode && (
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+            <button
+              type="button"
+              onClick={() => setDetailExpanded(!detailExpanded)}
+              className="w-full flex items-center justify-between p-3 sm:p-4 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-gray-500" />
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-900">细节查阅区</h2>
+                </div>
+                <span className="text-xs sm:text-sm text-gray-500">（临床用药评价/药物信息表）</span>
+              </div>
+              {detailExpanded ? (
+                <ChevronUp className="w-5 h-5 text-gray-400" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              )}
+            </button>
+            {detailExpanded && (
+              <div className="px-4 pb-4">
+                {point.content ? (
+                  <SmartContentRenderer content={point.content} />
+                ) : (
+                  <div className="text-gray-400 py-8 text-center">暂无内容</div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* G. 历年考点分布（弱化展示） */}
+        {!focusMode && point.exam_years && point.exam_years.length > 0 && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <Calendar className="w-4 h-4 text-gray-400" />
+              <h3 className="text-sm font-medium text-gray-600">历年考点分布</h3>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {point.exam_years.map((year) => (
+                <span
+                  key={year}
+                  className="px-2 py-1 text-xs text-gray-500 bg-gray-50 rounded border border-gray-200"
+                >
+                  {year}年
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* H. 行动区 */}
+        <ActionArea
+          pointId={point.id}
+          isCompleted={pointCompleted}
+          sticky={!isMobile}
+          className="mb-6"
+        />
+
+        {/* 返回链接 */}
+        <div className="text-center">
           <Link
             href="/knowledge"
-            className="px-4 py-2 bg-gray-200 rounded"
+            className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
           >
+            <ChevronUp className="w-4 h-4 rotate-[-90deg]" />
             返回知识图谱
           </Link>
-          <button
-            type="button"
-            onClick={handleMarkComplete}
-            disabled={pointCompleted}
-            className="px-4 py-2 bg-emerald-600 text-white rounded disabled:bg-emerald-300 disabled:cursor-not-allowed"
-          >
-            {pointCompleted ? '已完成' : '✅ 我已学习完成'}
-          </button>
         </div>
       </div>
     </div>
