@@ -28,7 +28,7 @@ import { StudyPathBlock } from '@/components/ui/StudyPathBlock'
 import { SmartContentRenderer } from '@/components/ui/SmartContentRenderer'
 import { isPointCompleted } from '@/lib/learningProgress'
 import { getPointPageConfig } from '@/lib/knowledge/pointPage.config'
-import { getDefaultUIOptions, getDefaultExamOverview } from '@/lib/knowledge/pointPage.schema'
+import { getDefaultUIOptions, getDefaultExamOverview, type Takeaway } from '@/lib/knowledge/pointPage.schema'
 import { extractMnemonic, hasClassificationTable } from '@/lib/contentUtils'
 
 /* =========================
@@ -126,7 +126,7 @@ export default function KnowledgePointPage() {
   }), [pageConfig])
 
   // 提取数据 - 使用安全的默认值
-  const takeaways = useMemo(() => {
+  const takeaways = useMemo<Takeaway[]>(() => {
     if (pageConfig?.takeaways && pageConfig.takeaways.length > 0) {
       return pageConfig.takeaways
     }
