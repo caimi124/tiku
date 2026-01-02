@@ -132,13 +132,13 @@ export default function KnowledgePointPage() {
   // 判断是否使用新配置系统
   const useNewConfig = !!newConfig
 
-  // 提取数据 - 使用安全的默认值
+  // 提取数据 - 使用安全的默认值（旧配置系统）
   const takeaways = useMemo<Takeaway[]>(() => {
-    if (pageConfig?.takeaways && pageConfig.takeaways.length > 0) {
-      return pageConfig.takeaways
+    if (oldConfig?.takeaways && oldConfig.takeaways.length > 0) {
+      return oldConfig.takeaways
     }
     return []
-  }, [pageConfig])
+  }, [oldConfig])
 
   const mnemonic = useMemo(() => {
     if (safePoint?.memory_tips) return safePoint.memory_tips
