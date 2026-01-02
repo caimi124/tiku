@@ -27,7 +27,7 @@ export const POINT_PAGE_CONFIG: Record<string, PointPageConfig> = {
       focusTitle: "其中重点集中在：",
       focus: [
         { id: "focus-classification", text: "药物分类与代表药（高频送分）" },
-        { id: "focus-evaluation", text: "临床用药评价中的"禁忌 / 易错点"" },
+        { id: "focus-evaluation", text: "临床用药评价中的\"禁忌 / 易错点\"" },
         { id: "focus-udca", text: "熊去氧胆酸（UDCA）的适应证 / 禁忌 / 相互作用" },
         { id: "focus-nac", text: "乙酰半胱氨酸（NAC）：对乙酰氨基酚过量的特异性解救药" },
       ],
@@ -73,7 +73,7 @@ export const POINT_PAGE_CONFIG: Record<string, PointPageConfig> = {
         annotation: {
           type: "秒选",
           level: "key",
-          message: "看到"对乙酰氨基酚过量"→ 直接选 NAC。",
+          message: "看到\"对乙酰氨基酚过量\"→ 直接选 NAC。",
         },
         anchorId: "a-nac",
       },
