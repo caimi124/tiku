@@ -23,9 +23,12 @@ import { ExamValueCard } from '@/components/ui/ExamValueCard'
 import { KeyTakeaways } from '@/components/ui/KeyTakeaways'
 import { FocusModeToggle } from '@/components/ui/FocusModeToggle'
 import { ActionArea } from '@/components/ui/ActionArea'
+import { ExamOverviewBlock } from '@/components/ui/ExamOverviewBlock'
+import { StudyPathBlock } from '@/components/ui/StudyPathBlock'
 import { SmartContentRenderer } from '@/components/ui/SmartContentRenderer'
 import { isPointCompleted } from '@/lib/learningProgress'
-import { getKeyTakeaways } from '@/lib/keyTakeawaysConfig'
+import { getPointPageConfig } from '@/lib/knowledge/pointPage.config'
+import { getDefaultUIOptions, getDefaultExamOverview } from '@/lib/knowledge/pointPage.schema'
 import { extractMnemonic, hasClassificationTable } from '@/lib/contentUtils'
 
 /* =========================
@@ -73,7 +76,11 @@ export default function KnowledgePointPage() {
   const [error, setError] = useState<string | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [pointCompleted, setPointCompleted] = useState(false)
-  const [focusMode, setFocusMode] = useState(false)
+  
+  // 从配置读取默认 Focus Mode（必须在 hooks 中）
+  const initialPageConfig = useMemo(() => getPointPageConfig(pointId ?? ''), [pointId])
+  const defaultFocusMode = initialPageConfig?.ui?.defaultFocusMode ?? false
+  const [focusMode, setFocusMode] = useState(defaultFocusMode)
   
   // 折叠状态
   const [structureExpanded, setStructureExpanded] = useState(false)
@@ -111,25 +118,56 @@ export default function KnowledgePointPage() {
   const safePoint = point ?? null
   const safePointId = pointId ?? ''
 
+  // 读取配置
+  const pageConfig = useMemo(() => getPointPageConfig(safePointId), [safePointId])
+  const uiOptions = useMemo(() => ({
+    ...getDefaultUIOptions(),
+    ...pageConfig?.ui,
+  }), [pageConfig])
+
   // 提取数据 - 使用安全的默认值
-  const keyTakeaways = useMemo(() => getKeyTakeaways(safePointId), [safePointId])
+  const takeaways = useMemo(() => {
+    if (pageConfig?.takeaways && pageConfig.takeaways.length > 0) {
+      return pageConfig.takeaways
+    }
+    return []
+  }, [pageConfig])
+
   const mnemonic = useMemo(() => {
     if (safePoint?.memory_tips) return safePoint.memory_tips
     if (safePoint?.content) return extractMnemonic(safePoint.content)
     return null
   }, [safePoint])
+
   const hasStructure = useMemo(() => {
     return safePoint?.content ? hasClassificationTable(safePoint.content) : false
   }, [safePoint])
 
   // 计算有效值 - 使用安全的默认值
   const effectiveImportanceLevel = useMemo(() => {
+    if (pageConfig?.stars) return pageConfig.stars
     return safePoint?.importance_level ?? safePoint?.importance ?? 3
-  }, [safePoint])
+  }, [safePoint, pageConfig])
 
   const effectiveLearnMode = useMemo(() => {
     return safePoint?.learn_mode ?? 'BOTH'
   }, [safePoint])
+
+  // 考试概览配置
+  const examOverview = useMemo(() => {
+    if (pageConfig?.examOverview) {
+      return pageConfig.examOverview
+    }
+    if (safePoint?.title) {
+      return getDefaultExamOverview(safePoint.title)
+    }
+    return null
+  }, [pageConfig, safePoint])
+
+  // 内联注释
+  const inlineAnnotations = useMemo(() => {
+    return pageConfig?.inlineAnnotations || []
+  }, [pageConfig])
 
   // 早期返回必须在所有 hooks 之后
   if (loading) return <div className="p-8">加载中…</div>
@@ -157,38 +195,52 @@ export default function KnowledgePointPage() {
         />
 
         {/* 只看重点开关 */}
-        <FocusModeToggle
-          enabled={focusMode}
-          onToggle={setFocusMode}
-          className="mb-6"
-        />
+        {uiOptions.enableFocusMode && (
+          <FocusModeToggle
+            enabled={focusMode}
+            onToggle={setFocusMode}
+            className="mb-6"
+          />
+        )}
+
+        {/* 学习路线 */}
+        {pageConfig?.studyPath && (
+          <StudyPathBlock data={pageConfig.studyPath} className="mb-6" />
+        )}
+
+        {/* D. 考试概览（本考点在考什么？） */}
+        {examOverview && (
+          <ExamOverviewBlock data={examOverview} className="mb-6" />
+        )}
 
         {/* B. 本页重点速览 */}
-        {keyTakeaways.length > 0 && (
+        {takeaways.length > 0 && (
           <KeyTakeaways
-            items={keyTakeaways}
+            items={takeaways}
             defaultExpanded={true}
             className="mb-6"
           />
         )}
 
         {/* C. 口诀 */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Lightbulb className="w-5 h-5 text-amber-500" />
-            <h2 className="text-base sm:text-lg font-semibold text-gray-900">记忆口诀</h2>
+        {uiOptions.showMnemonic !== "hidden" && (
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Lightbulb className="w-5 h-5 text-amber-500" />
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">记忆口诀</h2>
+            </div>
+            {mnemonic ? (
+              <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg p-4 border border-amber-200">
+                <p className="text-amber-800 font-medium text-lg leading-relaxed">{mnemonic}</p>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
+                <Lightbulb className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                <p className="text-sm">暂无口诀，后续补充</p>
+              </div>
+            )}
           </div>
-          {mnemonic ? (
-            <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg p-4 border border-amber-200">
-              <p className="text-amber-800 font-medium text-lg leading-relaxed">{mnemonic}</p>
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
-              <Lightbulb className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-              <p className="text-sm">暂无口诀，后续补充</p>
-            </div>
-          )}
-        </div>
+        )}
 
         {/* D. 结构骨架（分类表） */}
         {hasStructure && (
@@ -216,23 +268,26 @@ export default function KnowledgePointPage() {
           </div>
         )}
 
-        {/* E. 老司机/易错点 */}
-        {keyTakeaways.length > 0 && (
+        {/* E. 老司机/易错点（从重点速览中筛选 warn/danger 级别） */}
+        {takeaways.filter(t => t.level === "warn" || t.level === "danger").length > 0 && (
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
             <div className="flex items-center gap-2 mb-4">
               <AlertTriangle className="w-5 h-5 text-orange-500" />
               <h2 className="text-base sm:text-lg font-semibold text-gray-900">老司机提醒 / 易错点</h2>
             </div>
             <div className="space-y-3">
-              {keyTakeaways.slice(0, 4).map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100"
-                >
-                  <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
-                  <p className="text-gray-700 leading-relaxed flex-1">{item}</p>
-                </div>
-              ))}
+              {takeaways
+                .filter(t => t.level === "warn" || t.level === "danger")
+                .slice(0, 4)
+                .map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100"
+                  >
+                    <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-gray-700 leading-relaxed flex-1">{item.text}</p>
+                  </div>
+                ))}
             </div>
           </div>
         )}
@@ -261,7 +316,10 @@ export default function KnowledgePointPage() {
             {detailExpanded && (
               <div className="px-4 pb-4">
                 {safePoint.content ? (
-                  <SmartContentRenderer content={safePoint.content} />
+                  <SmartContentRenderer 
+                    content={safePoint.content}
+                    annotations={inlineAnnotations.length > 0 ? inlineAnnotations : undefined}
+                  />
                 ) : (
                   <div className="text-gray-400 py-8 text-center">暂无内容</div>
                 )}
@@ -271,7 +329,7 @@ export default function KnowledgePointPage() {
         )}
 
         {/* G. 历年考点分布（弱化展示） */}
-        {!focusMode && safePoint.exam_years && safePoint.exam_years.length > 0 && (
+        {!focusMode && uiOptions.showExamDistribution !== "hidden" && safePoint.exam_years && safePoint.exam_years.length > 0 && (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 mb-6">
             <div className="flex items-center gap-2 mb-2">
               <Calendar className="w-4 h-4 text-gray-400" />

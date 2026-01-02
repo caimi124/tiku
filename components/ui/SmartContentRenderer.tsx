@@ -19,9 +19,13 @@ import {
   Pill, BookOpen, List
 } from 'lucide-react'
 
+import type { InlineAnnotationRule } from '@/lib/knowledge/pointPage.schema'
+import { InlineAnnotation } from './InlineAnnotation'
+
 interface SmartContentRendererProps {
   content: string
   className?: string
+  annotations?: InlineAnnotationRule[]
 }
 
 // 内容块类型
@@ -164,8 +168,38 @@ function parseContent(content: string): ContentBlock[] {
 /**
  * 主组件
  */
-export function SmartContentRenderer({ content, className = '' }: SmartContentRendererProps) {
+export function SmartContentRenderer({ content, className = '', annotations }: SmartContentRendererProps) {
   const blocks = useMemo(() => parseContent(content), [content])
+  
+  // 处理标注：在内容块中查找匹配并注入标注
+  const blocksWithAnnotations = useMemo(() => {
+    if (!annotations || annotations.length === 0) {
+      return blocks.map((block, index) => ({ block, index, annotations: [] }))
+    }
+
+    return blocks.map((block, index) => {
+      const matchedAnnotations: InlineAnnotationRule[] = []
+      
+      for (const rule of annotations) {
+        let regex: RegExp
+        try {
+          if (rule.match.type === "regex") {
+            regex = new RegExp(rule.match.value, "gi")
+          } else {
+            regex = new RegExp(rule.match.value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi")
+          }
+          
+          if (regex.test(block.content)) {
+            matchedAnnotations.push(rule)
+          }
+        } catch {
+          // 无效的正则表达式，跳过
+        }
+      }
+      
+      return { block, index, annotations: matchedAnnotations }
+    })
+  }, [blocks, annotations])
   
   if (blocks.length === 0) {
     return (
@@ -177,8 +211,17 @@ export function SmartContentRenderer({ content, className = '' }: SmartContentRe
   
   return (
     <div className={`space-y-4 ${className}`}>
-      {blocks.map((block, index) => (
-        <ContentBlockRenderer key={index} block={block} index={index} />
+      {blocksWithAnnotations.map(({ block, index, annotations: blockAnnotations }) => (
+        <div key={index}>
+          <ContentBlockRenderer block={block} index={index} />
+          {blockAnnotations.length > 0 && (
+            <div className="mt-2 space-y-2">
+              {blockAnnotations.map((rule) => (
+                <InlineAnnotation key={rule.id} rule={rule} />
+              ))}
+            </div>
+          )}
+        </div>
       ))}
     </div>
   )
