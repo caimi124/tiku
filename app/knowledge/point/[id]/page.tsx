@@ -26,8 +26,11 @@ import { ActionArea } from '@/components/ui/ActionArea'
 import { ExamOverviewBlock } from '@/components/ui/ExamOverviewBlock'
 import { StudyPathBlock } from '@/components/ui/StudyPathBlock'
 import { SmartContentRenderer } from '@/components/ui/SmartContentRenderer'
+import { ModuleRenderer } from '@/components/ui/modules/ModuleRenderer'
+import { PointPageActions } from '@/components/ui/PointPageActions'
 import { isPointCompleted } from '@/lib/learningProgress'
 import { getPointPageConfig } from '@/lib/knowledge/pointPage.config'
+import { getPointConfig } from '@/lib/knowledge/pointConfigs'
 import { getDefaultUIOptions, getDefaultExamOverview, type Takeaway } from '@/lib/knowledge/pointPage.schema'
 import { extractMnemonic, hasClassificationTable } from '@/lib/contentUtils'
 
@@ -118,12 +121,16 @@ export default function KnowledgePointPage() {
   const safePoint = point ?? null
   const safePointId = pointId ?? ''
 
-  // 读取配置
-  const pageConfig = useMemo(() => getPointPageConfig(safePointId), [safePointId])
+  // 读取配置（优先使用新配置系统）
+  const newConfig = useMemo(() => getPointConfig(safePointId), [safePointId])
+  const oldConfig = useMemo(() => getPointPageConfig(safePointId), [safePointId])
   const uiOptions = useMemo(() => ({
     ...getDefaultUIOptions(),
-    ...pageConfig?.ui,
-  }), [pageConfig])
+    ...oldConfig?.ui,
+  }), [oldConfig])
+  
+  // 判断是否使用新配置系统
+  const useNewConfig = !!newConfig
 
   // 提取数据 - 使用安全的默认值
   const takeaways = useMemo<Takeaway[]>(() => {
@@ -145,29 +152,30 @@ export default function KnowledgePointPage() {
 
   // 计算有效值 - 使用安全的默认值
   const effectiveImportanceLevel = useMemo(() => {
-    if (pageConfig?.stars) return pageConfig.stars
+    if (newConfig?.meta.stars) return newConfig.meta.stars
+    if (oldConfig?.stars) return oldConfig.stars
     return safePoint?.importance_level ?? safePoint?.importance ?? 3
-  }, [safePoint, pageConfig])
+  }, [safePoint, newConfig, oldConfig])
 
   const effectiveLearnMode = useMemo(() => {
     return safePoint?.learn_mode ?? 'BOTH'
   }, [safePoint])
 
-  // 考试概览配置
+  // 考试概览配置（旧系统）
   const examOverview = useMemo(() => {
-    if (pageConfig?.examOverview) {
-      return pageConfig.examOverview
+    if (oldConfig?.examOverview) {
+      return oldConfig.examOverview
     }
     if (safePoint?.title) {
       return getDefaultExamOverview(safePoint.title)
     }
     return null
-  }, [pageConfig, safePoint])
+  }, [oldConfig, safePoint])
 
-  // 内联注释
+  // 内联注释（旧系统）
   const inlineAnnotations = useMemo(() => {
-    return pageConfig?.inlineAnnotations || []
-  }, [pageConfig])
+    return oldConfig?.inlineAnnotations || []
+  }, [oldConfig])
 
   // 早期返回必须在所有 hooks 之后
   if (loading) return <div className="p-8">加载中…</div>
@@ -185,7 +193,7 @@ export default function KnowledgePointPage() {
       <div className="max-w-6xl mx-auto px-4 py-6 lg:py-8">
         {/* A. 考试价值卡 */}
         <ExamValueCard
-          title={safePoint.title}
+          title={newConfig?.meta.title || safePoint.title}
           importanceLevel={effectiveImportanceLevel}
           masteryScore={safePoint.mastery_score}
           learnMode={effectiveLearnMode}
@@ -203,158 +211,203 @@ export default function KnowledgePointPage() {
           />
         )}
 
-        {/* 学习路线 */}
-        {pageConfig?.studyPath && (
-          <StudyPathBlock data={pageConfig.studyPath} className="mb-6" />
-        )}
-
-        {/* D. 考试概览（本考点在考什么？） */}
-        {examOverview && (
-          <ExamOverviewBlock data={examOverview} className="mb-6" />
-        )}
-
-        {/* B. 本页重点速览 */}
-        {takeaways.length > 0 && (
-          <KeyTakeaways
-            items={takeaways}
-            defaultExpanded={true}
-            className="mb-6"
-          />
-        )}
-
-        {/* C. 口诀 */}
-        {uiOptions.showMnemonic !== "hidden" && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Lightbulb className="w-5 h-5 text-amber-500" />
-              <h2 className="text-base sm:text-lg font-semibold text-gray-900">记忆口诀</h2>
-            </div>
-            {mnemonic ? (
-              <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg p-4 border border-amber-200">
-                <p className="text-amber-800 font-medium text-lg leading-relaxed">{mnemonic}</p>
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
-                <Lightbulb className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-                <p className="text-sm">暂无口诀，后续补充</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* D. 结构骨架（分类表） */}
-        {hasStructure && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
-            <button
-              type="button"
-              onClick={() => setStructureExpanded(!structureExpanded)}
-              className="w-full flex items-center justify-between p-3 sm:p-4 hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-blue-500" />
-                <h2 className="text-base sm:text-lg font-semibold text-gray-900">结构骨架</h2>
-              </div>
-              {structureExpanded ? (
-                <ChevronUp className="w-5 h-5 text-gray-400" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-gray-400" />
-              )}
-            </button>
-            {structureExpanded && safePoint.content && (
-              <div className="px-4 pb-4">
-                <SmartContentRenderer content={safePoint.content} />
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* E. 老司机/易错点（从重点速览中筛选 warn/danger 级别） */}
-        {takeaways.filter(t => t.level === "warn" || t.level === "danger").length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <AlertTriangle className="w-5 h-5 text-orange-500" />
-              <h2 className="text-base sm:text-lg font-semibold text-gray-900">老司机提醒 / 易错点</h2>
-            </div>
-            <div className="space-y-3">
-              {takeaways
-                .filter(t => t.level === "warn" || t.level === "danger")
-                .slice(0, 4)
-                .map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100"
-                  >
-                    <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-gray-700 leading-relaxed flex-1">{item.text}</p>
-                  </div>
-                ))}
-            </div>
-          </div>
-        )}
-
-        {/* F. 细节查阅区（默认折叠） */}
-        {!focusMode && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
-            <button
-              type="button"
-              onClick={() => setDetailExpanded(!detailExpanded)}
-              className="w-full flex items-center justify-between p-3 sm:p-4 hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <div className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-gray-500" />
-                  <h2 className="text-base sm:text-lg font-semibold text-gray-900">细节查阅区</h2>
+        {/* 新配置系统：模块化渲染 */}
+        {useNewConfig && newConfig ? (
+          <>
+            {/* 学习路线 */}
+            {newConfig.meta.studyRoute.length > 0 && (
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200 p-4 mb-6">
+                <div className="flex items-center gap-2 text-sm text-gray-700">
+                  <span>学习路线：</span>
+                  <span>{newConfig.meta.studyRoute.join(' → ')}</span>
                 </div>
-                <span className="text-xs sm:text-sm text-gray-500">（临床用药评价/药物信息表）</span>
               </div>
-              {detailExpanded ? (
-                <ChevronUp className="w-5 h-5 text-gray-400" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-gray-400" />
-              )}
-            </button>
-            {detailExpanded && (
-              <div className="px-4 pb-4">
-                {safePoint.content ? (
-                  <SmartContentRenderer 
-                    content={safePoint.content}
-                    annotations={inlineAnnotations.length > 0 ? inlineAnnotations : undefined}
-                  />
+            )}
+
+            {/* 渲染所有模块 */}
+            {newConfig.modules.map((module) => {
+              // 在 Focus Mode 下隐藏 sourceMaterial 和 examDistribution
+              if (focusMode && (module.type === "sourceMaterial" || module.type === "examDistribution")) {
+                return null
+              }
+              
+              return (
+                <ModuleRenderer
+                  key={module.id}
+                  module={module}
+                  content={module.type === "sourceMaterial" ? safePoint.content : undefined}
+                  className="mb-6"
+                />
+              )
+            })}
+
+            {/* 行动区 */}
+            <PointPageActions
+              primary={newConfig.actions.primary}
+              secondary={newConfig.actions.secondary}
+              tertiary={newConfig.actions.tertiary}
+              pointId={safePoint.id}
+              sticky={!isMobile}
+              className="mb-6"
+            />
+          </>
+        ) : (
+          /* 旧配置系统：向后兼容 */
+          <>
+            {/* 学习路线 */}
+            {oldConfig?.studyPath && (
+              <StudyPathBlock data={oldConfig.studyPath} className="mb-6" />
+            )}
+
+            {/* D. 考试概览（本考点在考什么？） */}
+            {examOverview && (
+              <ExamOverviewBlock data={examOverview} className="mb-6" />
+            )}
+
+            {/* B. 本页重点速览 */}
+            {takeaways.length > 0 && (
+              <KeyTakeaways
+                items={takeaways}
+                defaultExpanded={true}
+                className="mb-6"
+              />
+            )}
+
+            {/* C. 口诀 */}
+            {uiOptions.showMnemonic !== "hidden" && (
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Lightbulb className="w-5 h-5 text-amber-500" />
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-900">记忆口诀</h2>
+                </div>
+                {mnemonic ? (
+                  <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg p-4 border border-amber-200">
+                    <p className="text-amber-800 font-medium text-lg leading-relaxed">{mnemonic}</p>
+                  </div>
                 ) : (
-                  <div className="text-gray-400 py-8 text-center">暂无内容</div>
+                  <div className="text-center py-8 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
+                    <Lightbulb className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                    <p className="text-sm">暂无口诀，后续补充</p>
+                  </div>
                 )}
               </div>
             )}
-          </div>
-        )}
 
-        {/* G. 历年考点分布（弱化展示） */}
-        {!focusMode && uiOptions.showExamDistribution !== "hidden" && safePoint.exam_years && safePoint.exam_years.length > 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              <Calendar className="w-4 h-4 text-gray-400" />
-              <h3 className="text-sm font-medium text-gray-600">历年考点分布</h3>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {safePoint.exam_years.map((year) => (
-                <span
-                  key={year}
-                  className="px-2 py-1 text-xs text-gray-500 bg-gray-50 rounded border border-gray-200"
+            {/* D. 结构骨架（分类表） */}
+            {hasStructure && !focusMode && (
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+                <button
+                  type="button"
+                  onClick={() => setStructureExpanded(!structureExpanded)}
+                  className="w-full flex items-center justify-between p-3 sm:p-4 hover:bg-gray-50 transition-colors"
                 >
-                  {year}年
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-blue-500" />
+                    <h2 className="text-base sm:text-lg font-semibold text-gray-900">结构骨架</h2>
+                  </div>
+                  {structureExpanded ? (
+                    <ChevronUp className="w-5 h-5 text-gray-400" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-gray-400" />
+                  )}
+                </button>
+                {structureExpanded && safePoint.content && (
+                  <div className="px-4 pb-4">
+                    <SmartContentRenderer content={safePoint.content} />
+                  </div>
+                )}
+              </div>
+            )}
 
-        {/* H. 行动区 */}
-        <ActionArea
-          pointId={safePoint.id}
-          isCompleted={pointCompleted}
-          sticky={!isMobile}
-          className="mb-6"
-        />
+            {/* E. 老司机/易错点 */}
+            {takeaways.filter(t => t.level === "warn" || t.level === "danger").length > 0 && (
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <AlertTriangle className="w-5 h-5 text-orange-500" />
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-900">老司机提醒 / 易错点</h2>
+                </div>
+                <div className="space-y-3">
+                  {takeaways
+                    .filter(t => t.level === "warn" || t.level === "danger")
+                    .slice(0, 4)
+                    .map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100"
+                      >
+                        <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
+                        <p className="text-gray-700 leading-relaxed flex-1">{item.text}</p>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {/* F. 细节查阅区（默认折叠） */}
+            {!focusMode && (
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+                <button
+                  type="button"
+                  onClick={() => setDetailExpanded(!detailExpanded)}
+                  className="w-full flex items-center justify-between p-3 sm:p-4 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="w-5 h-5 text-gray-500" />
+                      <h2 className="text-base sm:text-lg font-semibold text-gray-900">细节查阅区</h2>
+                    </div>
+                    <span className="text-xs sm:text-sm text-gray-500">（临床用药评价/药物信息表）</span>
+                  </div>
+                  {detailExpanded ? (
+                    <ChevronUp className="w-5 h-5 text-gray-400" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-gray-400" />
+                  )}
+                </button>
+                {detailExpanded && (
+                  <div className="px-4 pb-4">
+                    {safePoint.content ? (
+                      <SmartContentRenderer 
+                        content={safePoint.content}
+                        annotations={inlineAnnotations.length > 0 ? inlineAnnotations : undefined}
+                      />
+                    ) : (
+                      <div className="text-gray-400 py-8 text-center">暂无内容</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* G. 历年考点分布（弱化展示） */}
+            {!focusMode && uiOptions.showExamDistribution !== "hidden" && safePoint.exam_years && safePoint.exam_years.length > 0 && (
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <h3 className="text-sm font-medium text-gray-600">历年考点分布</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {safePoint.exam_years.map((year) => (
+                    <span
+                      key={year}
+                      className="px-2 py-1 text-xs text-gray-500 bg-gray-50 rounded border border-gray-200"
+                    >
+                      {year}年
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* H. 行动区 */}
+            <ActionArea
+              pointId={safePoint.id}
+              isCompleted={pointCompleted}
+              sticky={!isMobile}
+              className="mb-6"
+            />
+          </>
+        )}
 
         {/* 返回链接 */}
         <div className="text-center">
