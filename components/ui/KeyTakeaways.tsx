@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { ChevronDown, ChevronUp, Lightbulb, Navigation } from 'lucide-react'
 import type { Takeaway, TakeawayLevel } from '@/lib/knowledge/pointPage.schema'
 import { cn } from '@/lib/utils'
+import { formatAbbreviations } from '@/lib/abbreviations'
 
 export interface KeyTakeawaysProps {
   /** 重点列表（新格式：支持 level） */
@@ -129,7 +130,7 @@ export function KeyTakeaways({
                 )}>
                   {index + 1}
                 </span>
-                <p className={cn("leading-relaxed flex-1", styles.text)}>{item.text}</p>
+                <p className={cn("leading-relaxed flex-1", styles.text)}>{formatAbbreviations(item.text)}</p>
                 {item.anchorId && (
                   <button
                     type="button"

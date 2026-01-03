@@ -21,6 +21,9 @@ import {
 
 import type { InlineAnnotationRule } from '@/lib/knowledge/pointPage.schema'
 import { InlineAnnotation } from './InlineAnnotation'
+import { formatAbbreviations } from '@/lib/abbreviations'
+import { TableMnemonicCard } from './TableMnemonicCard'
+import { cn } from '@/lib/utils'
 
 interface SmartContentRendererProps {
   content: string
@@ -235,7 +238,8 @@ function ContentBlockRenderer({ block, index }: { block: ContentBlock; index: nu
     case 'table':
       return <TableBlock content={block.content} />
     case 'mnemonic':
-      return <MnemonicBlock content={block.content} />
+      // 口诀现在只在表格后显示，不再单独渲染
+      return null
     case 'image':
       return <ImageBlock content={block.content} />
     case 'numbered_list':
@@ -251,14 +255,21 @@ function ContentBlockRenderer({ block, index }: { block: ContentBlock; index: nu
 }
 
 /**
- * 表格块 - 美化的卡片式表格
+ * 表格块 - 优化的教材式表格
+ * 
+ * 支持：
+ * - 缩写格式化
+ * - 编号列表展开/折叠
+ * - 重点标注（颜色+贴纸）
+ * - 表格后口诀卡片
+ * - 表格视觉优化
  */
 function TableBlock({ content }: { content: string }) {
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(false) // 默认折叠
   
-  const { headers, rows, tableTitle } = useMemo(() => {
+  const { headers, rows, tableTitle, mnemonic } = useMemo(() => {
     const lines = content.split('\n').filter(l => l.trim())
-    if (lines.length < 2) return { headers: [], rows: [], tableTitle: '数据表' }
+    if (lines.length < 2) return { headers: [], rows: [], tableTitle: '数据表', mnemonic: null }
     
     const parseRow = (line: string) => 
       line.split('|').filter(cell => cell.trim()).map(cell => cell.trim())
@@ -281,13 +292,22 @@ function TableBlock({ content }: { content: string }) {
       tableTitle = '考点分布'
     }
     
-    return { headers, rows, tableTitle }
+    // 提取口诀（从表格内容中查找）
+    let mnemonic: string | null = null
+    const mnemonicMatch = content.match(/【(润德巧记|巧记|口诀|记忆口诀)】([^【\n]+)/)
+    if (mnemonicMatch) {
+      mnemonic = mnemonicMatch[2].trim()
+    }
+    
+    return { headers, rows, tableTitle, mnemonic }
   }, [content])
   
   if (headers.length === 0) return null
   
-  // 判断是否是简单的两列表格，可以用卡片样式
-  const isSimpleTable = headers.length === 2 && rows.length <= 10
+  // 排除"考点分布"表格（如果已有考点分布模块，避免重复）
+  if (tableTitle === '考点分布') {
+    return null
+  }
   
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
@@ -298,7 +318,7 @@ function TableBlock({ content }: { content: string }) {
       >
         <div className="flex items-center gap-2">
           <List className="w-4 h-4 text-blue-500" />
-          <span className="font-medium text-gray-700">{tableTitle}</span>
+          <span className="font-medium text-gray-700">{formatAbbreviations(tableTitle)}</span>
           <span className="text-xs text-gray-400 bg-white/60 px-2 py-0.5 rounded-full">{rows.length}项</span>
         </div>
         <div className="flex items-center gap-2">
@@ -313,15 +333,17 @@ function TableBlock({ content }: { content: string }) {
       
       {isExpanded && (
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-50/80">
                 {headers.map((header, i) => (
                   <th 
                     key={i} 
-                    className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-200 whitespace-nowrap"
+                    className={`px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-200 ${
+                      i === 0 ? 'w-32 min-w-[8rem]' : ''
+                    }`}
                   >
-                    {header}
+                    {formatAbbreviations(header)}
                   </th>
                 ))}
               </tr>
@@ -330,13 +352,13 @@ function TableBlock({ content }: { content: string }) {
               {rows.map((row, rowIndex) => (
                 <tr 
                   key={rowIndex} 
-                  className={`${rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'} hover:bg-blue-50/50 transition-colors group`}
+                  className={`${rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'} hover:bg-blue-50/50 transition-colors`}
                 >
                   {row.map((cell, cellIndex) => (
                     <td 
                       key={cellIndex} 
-                      className={`px-4 py-3 text-sm border-b border-gray-100 ${
-                        cellIndex === 0 ? 'text-gray-800 font-medium' : 'text-gray-600'
+                      className={`px-4 py-5 text-sm border-b border-gray-100 ${
+                        cellIndex === 0 ? 'text-gray-800 font-medium w-32 min-w-[8rem]' : 'text-gray-600'
                       }`}
                     >
                       <CellContent content={cell} isFirstColumn={cellIndex === 0} />
@@ -348,87 +370,225 @@ function TableBlock({ content }: { content: string }) {
           </table>
         </div>
       )}
+      
+      {/* 表格后口诀卡片 */}
+      {mnemonic && (
+        <div className="px-4 pb-4 pt-2">
+          <TableMnemonicCard mnemonic={mnemonic} />
+        </div>
+      )}
     </div>
   )
 }
 
 /**
- * 单元格内容渲染 - 处理口诀等特殊内容
+ * 单元格内容渲染 - 支持编号列表展开/折叠、重点标注、缩写格式化、inline贴纸
  */
 function CellContent({ content, isFirstColumn = false }: { content: string; isFirstColumn?: boolean }) {
-  // 检测口诀
-  const mnemonicMatch = content.match(/【(润德巧记|巧记|口诀)】([^【]+)/)
+  const [isExpanded, setIsExpanded] = useState(false)
   
-  if (mnemonicMatch) {
-    const beforeMnemonic = content.substring(0, content.indexOf('【'))
-    const mnemonic = mnemonicMatch[2].trim()
+  // 格式化缩写
+  const formattedContent = formatAbbreviations(content)
+  
+  // 检测编号列表：(1)(2)(3) 或 ①②③
+  const numberedListMatch = formattedContent.match(/(\([0-9一二三四五六七八九十]+\)|[\u2460-\u2473])/g)
+  const hasNumberedList = numberedListMatch && numberedListMatch.length >= 2
+  
+  // 解析编号列表项
+  const listItems = useMemo(() => {
+    if (!hasNumberedList) return []
     
-    return (
-      <div className="space-y-2">
-        {beforeMnemonic && (
-          <div className="leading-relaxed">
-            <HighlightedText text={beforeMnemonic} />
-          </div>
-        )}
-        <div className="inline-flex items-start gap-1.5 px-3 py-2 bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 rounded-lg text-xs border border-amber-200/50">
-          <Lightbulb className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-          <span className="font-medium leading-relaxed">{mnemonic}</span>
-        </div>
-      </div>
-    )
-  }
+    // 匹配 (1) 或 ① 格式，更精确地拆分
+    const items: string[] = []
+    // 匹配编号和后面的内容，直到下一个编号或结束
+    const pattern = /(\([0-9一二三四五六七八九十]+\)|[\u2460-\u2473])\s*([^\(（\u2460-\u2473]*?)(?=\([0-9一二三四五六七八九十]+\)|[\u2460-\u2473]|$)/g
+    let match
+    let lastIndex = 0
+    
+    while ((match = pattern.exec(formattedContent)) !== null) {
+      if (match.index > lastIndex) {
+        // 添加前面的内容（如果有）
+        const before = formattedContent.substring(lastIndex, match.index).trim()
+        if (before) items.push(before)
+      }
+      // 添加编号和内容
+      const fullItem = (match[1] + ' ' + match[2]).trim()
+      if (fullItem) items.push(fullItem)
+      lastIndex = match.index + match[0].length
+    }
+    
+    // 添加剩余内容
+    if (lastIndex < formattedContent.length) {
+      const remaining = formattedContent.substring(lastIndex).trim()
+      if (remaining) items.push(remaining)
+    }
+    
+    return items.length > 0 ? items : [formattedContent]
+  }, [formattedContent, hasNumberedList])
+  
+  // 获取第一项作为骨干句（用于折叠状态）
+  const summaryLine = useMemo(() => {
+    if (listItems.length > 0) {
+      const firstItem = listItems[0]
+      // 提取第一项的前半句（约30字）
+      const match = firstItem.match(/^[^。，；：]+[。，；：]?/)
+      return match ? match[0].substring(0, 30) + '...' : firstItem.substring(0, 30) + '...'
+    }
+    return formattedContent.substring(0, 50) + '...'
+  }, [listItems, formattedContent])
+  
+  // 检测重点标注关键词和贴纸
+  const highlightInfo = useMemo(() => {
+    if (/禁用|禁忌|严禁|不得|禁止/.test(formattedContent)) {
+      return { 
+        className: 'bg-red-50 border-l-4 border-red-400', 
+        sticker: '🚫禁用',
+        stickerColor: 'text-red-600 bg-red-100'
+      }
+    }
+    if (/稀释|配制|只能用|不得用/.test(formattedContent)) {
+      return { 
+        className: 'bg-orange-50 border-l-4 border-orange-400', 
+        sticker: '⚠️配制',
+        stickerColor: 'text-orange-600 bg-orange-100'
+      }
+    }
+    if (/特异性解救药|首选|一线|关键/.test(formattedContent)) {
+      return { 
+        className: 'bg-blue-50 border-l-4 border-blue-400', 
+        sticker: '🎯题干关键词',
+        stickerColor: 'text-blue-600 bg-blue-100'
+      }
+    }
+    if (/但|不明显|远期差|易混/.test(formattedContent)) {
+      return { 
+        className: 'bg-purple-50 border-l-4 border-purple-400', 
+        sticker: '🧨易混点',
+        stickerColor: 'text-purple-600 bg-purple-100'
+      }
+    }
+    return { className: '', sticker: null, stickerColor: '' }
+  }, [formattedContent])
   
   // 第一列通常是分类名，用药物图标装饰
-  if (isFirstColumn && content.length < 30) {
+  if (isFirstColumn && formattedContent.length < 30 && !hasNumberedList) {
     return (
       <div className="flex items-center gap-2">
         <Pill className="w-4 h-4 text-blue-400 flex-shrink-0" />
-        <span>{content}</span>
+        <span>{formattedContent}</span>
       </div>
     )
   }
-  
-  // 长内容需要换行显示
-  if (content.length > 50) {
+
+  // 如果有编号列表，显示展开/折叠功能
+  if (hasNumberedList && listItems.length > 0) {
     return (
-      <div className="leading-relaxed">
-        <HighlightedText text={content} />
+      <div className={cn('relative', highlightInfo.className)}>
+        {highlightInfo.sticker && (
+          <span className={cn(
+            'absolute -top-2 -right-2 px-1.5 py-0.5 text-xs rounded border',
+            highlightInfo.stickerColor
+          )}>
+            {highlightInfo.sticker}
+          </span>
+        )}
+        {!isExpanded ? (
+          <div className="flex items-start justify-between gap-2">
+            <p className="text-sm leading-relaxed flex-1">{summaryLine}</p>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsExpanded(true)
+              }}
+              className="flex-shrink-0 text-xs text-blue-600 hover:text-blue-800 px-2 py-1 hover:bg-blue-50 rounded transition-colors"
+            >
+              展开
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <ul className="space-y-1.5">
+              {listItems.map((item, idx) => {
+                // 对每个列表项进行关键词加粗
+                const highlightedItem = item
+                  .replace(/(禁用|禁忌|严禁|不得|禁止)/g, '<strong class="text-red-600">$1</strong>')
+                  .replace(/(稀释|配制|只能用|不得用)/g, '<strong class="text-orange-600">$1</strong>')
+                  .replace(/(特异性解救药|首选|一线|关键)/g, '<strong class="text-blue-600">$1</strong>')
+                  .replace(/(但|不明显|远期差|易混)/g, '<strong class="text-purple-600">$1</strong>')
+                
+                return (
+                  <li key={idx} className="text-sm leading-relaxed flex items-start gap-2">
+                    <span className="text-gray-400 flex-shrink-0">•</span>
+                    <span dangerouslySetInnerHTML={{ __html: highlightedItem }} />
+                  </li>
+                )
+              })}
+            </ul>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsExpanded(false)
+              }}
+              className="text-xs text-gray-500 hover:text-gray-700 px-2 py-1 hover:bg-gray-50 rounded transition-colors"
+            >
+              收起
+            </button>
+          </div>
+        )}
       </div>
     )
   }
-  
-  return <span>{content}</span>
+
+  // 普通长内容，带重点标注
+  if (formattedContent.length > 50) {
+    return (
+      <div className={cn('relative', highlightInfo.className)}>
+        {highlightInfo.sticker && (
+          <span className={cn(
+            'absolute -top-2 -right-2 px-1.5 py-0.5 text-xs rounded border',
+            highlightInfo.stickerColor
+          )}>
+            {highlightInfo.sticker}
+          </span>
+        )}
+        <div 
+          className="leading-relaxed"
+          dangerouslySetInnerHTML={{ 
+            __html: formattedContent
+              .replace(/(禁用|禁忌|严禁|不得|禁止)/g, '<strong class="text-red-600">$1</strong>')
+              .replace(/(稀释|配制|只能用|不得用)/g, '<strong class="text-orange-600">$1</strong>')
+              .replace(/(特异性解救药|首选|一线|关键)/g, '<strong class="text-blue-600">$1</strong>')
+              .replace(/(但|不明显|远期差|易混)/g, '<strong class="text-purple-600">$1</strong>')
+          }}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div className={cn('relative', highlightInfo.className)}>
+      {highlightInfo.sticker && (
+        <span className={cn(
+          'absolute -top-2 -right-2 px-1.5 py-0.5 text-xs rounded border',
+          highlightInfo.stickerColor
+        )}>
+          {highlightInfo.sticker}
+        </span>
+      )}
+      <span>{formattedContent}</span>
+    </div>
+  )
 }
 
 /**
- * 口诀块 - 醒目的记忆提示
+ * 口诀块 - 已移除单独模块，口诀只在表格后显示
+ * 保留此函数以兼容旧数据，但不渲染
  */
 function MnemonicBlock({ content }: { content: string }) {
-  // 提取口诀内容
-  const match = content.match(/【(润德巧记|巧记|口诀|记忆口诀)】([^【\n]+)/)
-  const mnemonic = match ? match[2].trim() : content
-  const context = match ? content.replace(match[0], '').trim() : ''
-  
-  return (
-    <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-4 border border-amber-200 shadow-sm">
-      <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-          <Lightbulb className="w-5 h-5 text-amber-600" />
-        </div>
-        <div className="flex-1">
-          <div className="text-xs font-medium text-amber-600 mb-1">💡 记忆口诀</div>
-          <div className="text-amber-800 font-medium text-lg leading-relaxed">
-            {mnemonic}
-          </div>
-          {context && (
-            <div className="mt-2 text-sm text-amber-700/80">
-              {context}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
+  // 口诀现在只在表格后显示，不再单独渲染
+  return null
 }
 
 /**
@@ -616,33 +776,32 @@ function ParagraphBlock({ content }: { content: string }) {
 }
 
 /**
- * 高亮文本 - 自动高亮关键词
+ * 高亮文本 - 自动高亮关键词，并格式化缩写
  */
 function HighlightedText({ text }: { text: string }) {
-  // 关键词高亮规则
+  // 先格式化缩写
+  const formattedText = formatAbbreviations(text)
+  
+  // 关键词高亮规则（加粗显示）
   const highlights = [
-    { pattern: /禁用|禁忌/g, className: 'text-red-600 font-semibold' },
-    { pattern: /慎用/g, className: 'text-orange-600 font-medium' },
-    { pattern: /首选|一线/g, className: 'text-green-600 font-semibold' },
-    { pattern: /不良反应/g, className: 'text-red-500 font-medium' },
-    { pattern: /适应证|适用于/g, className: 'text-blue-600 font-medium' },
+    { pattern: /禁用|禁忌|严禁|不得|禁止/g, className: 'text-red-600 font-bold' },
+    { pattern: /稀释|配制|只能用|不得用/g, className: 'text-orange-600 font-bold' },
+    { pattern: /特异性解救药|首选|一线|关键/g, className: 'text-blue-600 font-bold' },
+    { pattern: /但|不明显|远期差|易混/g, className: 'text-purple-600 font-bold' },
+    { pattern: /慎用/g, className: 'text-orange-600 font-semibold' },
+    { pattern: /不良反应/g, className: 'text-red-500 font-semibold' },
+    { pattern: /适应证|适用于/g, className: 'text-blue-600 font-semibold' },
   ]
   
-  let result = text
-  let elements: (string | JSX.Element)[] = [text]
+  // 应用所有高亮规则
+  let html = formattedText
+  for (const { pattern, className } of highlights) {
+    html = html.replace(pattern, `<span class="${className}">$&</span>`)
+  }
   
-  // 简单实现：直接返回带样式的文本
-  // 实际项目中可以用更复杂的解析逻辑
   return (
     <span 
-      dangerouslySetInnerHTML={{
-        __html: text
-          .replace(/禁用|禁忌/g, '<span class="text-red-600 font-semibold">$&</span>')
-          .replace(/慎用/g, '<span class="text-orange-600 font-medium">$&</span>')
-          .replace(/首选|一线/g, '<span class="text-green-600 font-semibold">$&</span>')
-          .replace(/不良反应/g, '<span class="text-red-500 font-medium">$&</span>')
-          .replace(/适应证|适用于/g, '<span class="text-blue-600 font-medium">$&</span>')
-      }}
+      dangerouslySetInnerHTML={{ __html: html }}
     />
   )
 }

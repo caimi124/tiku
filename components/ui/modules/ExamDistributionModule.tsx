@@ -9,6 +9,7 @@
 import { useState } from 'react'
 import { ChevronDown, ChevronUp, Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { formatAbbreviations } from '@/lib/abbreviations'
 import type { ExamDistributionModule } from '@/lib/knowledge/pointPage.types'
 
 export interface ExamDistributionModuleProps {
@@ -51,7 +52,7 @@ export function ExamDistributionModule({ module, className }: ExamDistributionMo
         <div className="p-3 space-y-2">
           {module.data.items.map((item) => (
             <div key={item.id} className="flex items-center justify-between text-sm">
-              <span className="text-gray-700">{item.text}</span>
+              <span className="text-gray-700">{formatAbbreviations(item.text)}</span>
               <span className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded border border-gray-200">
                 {item.years}
               </span>

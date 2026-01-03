@@ -11,6 +11,7 @@ import { ChevronDown, ChevronUp, Pill } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { CoreDrugsModule } from '@/lib/knowledge/pointPage.types'
 import { KeyTakeaways } from '../KeyTakeaways'
+import { formatAbbreviations } from '@/lib/abbreviations'
 
 export interface CoreDrugsModuleProps {
   module: CoreDrugsModule
@@ -56,12 +57,12 @@ export function CoreDrugsModule({ module, className }: CoreDrugsModuleProps) {
               className="border border-gray-200 rounded-lg p-4 bg-gradient-to-br from-green-50 to-blue-50"
             >
               <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-lg font-bold text-gray-900">{card.name}</h3>
+                <h3 className="text-lg font-bold text-gray-900">{formatAbbreviations(card.name)}</h3>
                 {card.alias && (
-                  <span className="text-sm text-gray-500">({card.alias})</span>
+                  <span className="text-sm text-gray-500">({formatAbbreviations(card.alias)})</span>
                 )}
               </div>
-              <p className="text-sm text-gray-600 mb-3">{card.why}</p>
+              <p className="text-sm text-gray-600 mb-3">{formatAbbreviations(card.why)}</p>
               <KeyTakeaways
                 items={card.bullets}
                 defaultExpanded={true}

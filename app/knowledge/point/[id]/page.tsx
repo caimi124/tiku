@@ -4,12 +4,13 @@
  * 布局顺序：
  * A. 考试价值卡（顶部首屏必见）
  * B. 本页重点速览（6-8条，可折叠）
- * C. 口诀（有则展示；没有先放占位"后续补充"）
- * D. 结构骨架（分类表，可折叠）
- * E. 老司机/易错点（先从重点速览复用；后续可自动化）
- * F. 细节查阅区（临床用药评价/药物信息表：默认折叠）
- * G. 历年考点分布（弱化展示）
- * H. 行动区（桌面端可做粘底；否则页面底部）
+ * C. 结构骨架（分类表，可折叠）
+ * D. 老司机/易错点（先从重点速览复用；后续可自动化）
+ * E. 细节查阅区（临床用药评价/药物信息表：默认折叠，表格后显示口诀）
+ * F. 历年考点分布（弱化展示，默认折叠）
+ * G. 行动区（桌面端可做粘底；否则页面底部）
+ * 
+ * 注意：口诀不再单独显示，只在表格后以小卡片形式出现
  */
 
 'use client'
@@ -17,7 +18,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter, useParams } from 'next/navigation'
-import { ChevronDown, ChevronUp, Lightbulb, AlertTriangle, BookOpen, Calendar } from 'lucide-react'
+import { ChevronDown, ChevronUp, AlertTriangle, BookOpen, Calendar } from 'lucide-react'
 
 import { ExamValueCard } from '@/components/ui/ExamValueCard'
 import { KeyTakeaways } from '@/components/ui/KeyTakeaways'
@@ -32,7 +33,8 @@ import { isPointCompleted } from '@/lib/learningProgress'
 import { getPointPageConfig } from '@/lib/knowledge/pointPage.config'
 import { getPointConfig } from '@/lib/knowledge/pointConfigs'
 import { getDefaultUIOptions, getDefaultExamOverview, type Takeaway } from '@/lib/knowledge/pointPage.schema'
-import { extractMnemonic, hasClassificationTable } from '@/lib/contentUtils'
+import { hasClassificationTable } from '@/lib/contentUtils'
+import { formatAbbreviations } from '@/lib/abbreviations'
 
 /* =========================
    类型（宽松版，避免 build 卡死）
@@ -140,11 +142,7 @@ export default function KnowledgePointPage() {
     return []
   }, [oldConfig])
 
-  const mnemonic = useMemo(() => {
-    if (safePoint?.memory_tips) return safePoint.memory_tips
-    if (safePoint?.content) return extractMnemonic(safePoint.content)
-    return null
-  }, [safePoint])
+  // 口诀不再单独使用，只在表格后显示（由 SmartContentRenderer 处理）
 
   const hasStructure = useMemo(() => {
     return safePoint?.content ? hasClassificationTable(safePoint.content) : false
@@ -273,26 +271,6 @@ export default function KnowledgePointPage() {
               />
             )}
 
-            {/* C. 口诀 */}
-            {uiOptions.showMnemonic !== "hidden" && (
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Lightbulb className="w-5 h-5 text-amber-500" />
-                  <h2 className="text-base sm:text-lg font-semibold text-gray-900">记忆口诀</h2>
-                </div>
-                {mnemonic ? (
-                  <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg p-4 border border-amber-200">
-                    <p className="text-amber-800 font-medium text-lg leading-relaxed">{mnemonic}</p>
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
-                    <Lightbulb className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-                    <p className="text-sm">暂无口诀，后续补充</p>
-                  </div>
-                )}
-              </div>
-            )}
-
             {/* D. 结构骨架（分类表） */}
             {hasStructure && !focusMode && (
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
@@ -336,7 +314,7 @@ export default function KnowledgePointPage() {
                         className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100"
                       >
                         <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
-                        <p className="text-gray-700 leading-relaxed flex-1">{item.text}</p>
+                        <p className="text-gray-700 leading-relaxed flex-1">{formatAbbreviations(item.text)}</p>
                       </div>
                     ))}
                 </div>
@@ -379,25 +357,7 @@ export default function KnowledgePointPage() {
               </div>
             )}
 
-            {/* G. 历年考点分布（弱化展示） */}
-            {!focusMode && uiOptions.showExamDistribution !== "hidden" && safePoint.exam_years && safePoint.exam_years.length > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 mb-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="w-4 h-4 text-gray-400" />
-                  <h3 className="text-sm font-medium text-gray-600">历年考点分布</h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {safePoint.exam_years.map((year) => (
-                    <span
-                      key={year}
-                      className="px-2 py-1 text-xs text-gray-500 bg-gray-50 rounded border border-gray-200"
-                    >
-                      {year}年
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* G. 历年考点分布（弱化展示）- 已由examDistribution模块处理，此处不再重复显示 */}
 
             {/* H. 行动区 */}
             <ActionArea

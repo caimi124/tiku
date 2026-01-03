@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { ChevronDown, ChevronUp, List } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ClassificationMapModule } from '@/lib/knowledge/pointPage.types'
+import { formatAbbreviations } from '@/lib/abbreviations'
 
 export interface ClassificationMapModuleProps {
   module: ClassificationMapModule
@@ -52,16 +53,16 @@ export function ClassificationMapModule({ module, className }: ClassificationMap
           {module.data.sections.map((section) => (
             <div key={section.id} className="space-y-2">
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-gray-900">{section.title}</h3>
+                <h3 className="font-semibold text-gray-900">{formatAbbreviations(section.title)}</h3>
                 {section.hint && (
-                  <span className="text-xs text-gray-500">({section.hint})</span>
+                  <span className="text-xs text-gray-500">({formatAbbreviations(section.hint)})</span>
                 )}
               </div>
               <ul className="space-y-1 ml-4">
                 {section.items.map((item) => (
                   <li key={item.id} className="text-sm text-gray-700 flex items-start gap-2">
                     <span className="text-purple-500 mt-1">•</span>
-                    <span>{item.text}</span>
+                    <span>{formatAbbreviations(item.text)}</span>
                   </li>
                 ))}
               </ul>

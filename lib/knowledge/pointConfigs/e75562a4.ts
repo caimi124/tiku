@@ -60,7 +60,7 @@ export const e75562a4_config: PointPageConfig = {
             items: [
               { id: "g1", text: "胆固醇结石溶解药" },
               { id: "g2", text: "胆汁淤积性肝病治疗药" },
-              { id: "g3", text: "IBAT 抑制剂" },
+              { id: "g3", text: "回肠胆汁酸转运蛋白（IBAT）抑制剂" },
               { id: "g4", text: "胆汁酸螯合剂" },
             ],
           },
@@ -92,8 +92,8 @@ export const e75562a4_config: PointPageConfig = {
             id: "hy-3",
             bucket: "解毒类",
             level: "key",
-            oneLiner: "NAC：对乙酰氨基酚过量中毒的特异性解救药",
-            examMove: "看到「对乙酰氨基酚过量」 → 秒选 NAC",
+            oneLiner: "乙酰半胱氨酸（NAC）：对乙酰氨基酚过量中毒的特异性解救药",
+            examMove: "看到「对乙酰氨基酚过量」 → 秒选乙酰半胱氨酸（NAC）",
           },
           {
             id: "hy-4",
@@ -106,8 +106,8 @@ export const e75562a4_config: PointPageConfig = {
             id: "hy-5",
             bucket: "抗氧化药",
             level: "warn",
-            oneLiner: "联苯双酯：ALT↓明显，但 AST↓不明显；短期好，远期差",
-            examMove: "问「ALT vs AST」 → 选「ALT 降得更明显」",
+            oneLiner: "联苯双酯：丙氨酸氨基转移酶（ALT）↓明显，但天冬氨酸氨基转移酶（AST）↓不明显；短期好，远期差",
+            examMove: "问「丙氨酸氨基转移酶（ALT） vs 天冬氨酸氨基转移酶（AST）」 → 选「丙氨酸氨基转移酶（ALT）降得更明显」",
           },
         ],
       },
@@ -124,7 +124,7 @@ export const e75562a4_config: PointPageConfig = {
             alias: "UDCA",
             why: "适应证/禁忌/相互作用三件套，反复考。",
             bullets: [
-              { id: "ud1", level: "key", text: "适应证：X线可穿透胆固醇结石 + 胆囊收缩正常；胆汁淤积性肝病（如PBC）；胆汁反流性胃炎" },
+              { id: "ud1", level: "key", text: "适应证：X线可穿透胆固醇结石 + 胆囊收缩正常；胆汁淤积性肝病（如原发性胆汁性肝硬化（PBC））；胆汁反流性胃炎" },
               { id: "ud2", level: "danger", text: "禁忌：急性胆囊炎/胆管炎；胆道阻塞；严重肝功能减退等" },
               { id: "ud3", level: "warn", text: "相互作用：不与考来烯胺/含铝抗酸剂同服；必要时间隔≥2小时" },
             ],
@@ -136,7 +136,7 @@ export const e75562a4_config: PointPageConfig = {
             alias: "NAC",
             why: "典型「看到题干关键词→秒选」的送分点。",
             bullets: [
-              { id: "na1", level: "key", text: "题干出现「对乙酰氨基酚过量/中毒」 → 直接选 NAC（特异性解救药）" },
+              { id: "na1", level: "key", text: "题干出现「对乙酰氨基酚过量/中毒」 → 直接选乙酰半胱氨酸（NAC）（特异性解救药）" },
             ],
             relatedPracticeTag: "NAC",
           },

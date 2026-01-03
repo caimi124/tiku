@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { ChevronDown, ChevronUp, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { HighYieldModule } from '@/lib/knowledge/pointPage.types'
+import { formatAbbreviations } from '@/lib/abbreviations'
 
 export interface HighYieldModuleProps {
   module: HighYieldModule
@@ -83,7 +84,7 @@ export function HighYieldModule({ module, className }: HighYieldModuleProps) {
       {(!collapsible || isExpanded) && (
         <div className="p-4 space-y-3">
           {module.data.intro && (
-            <p className="text-sm text-gray-600 italic">{module.data.intro}</p>
+            <p className="text-sm text-gray-600 italic">{formatAbbreviations(module.data.intro)}</p>
           )}
 
           {module.data.rules.map((rule) => {
@@ -102,15 +103,15 @@ export function HighYieldModule({ module, className }: HighYieldModuleProps) {
                     "px-2 py-0.5 rounded text-xs font-medium text-white",
                     styles.badge
                   )}>
-                    {rule.bucket}
+                    {formatAbbreviations(rule.bucket)}
                   </span>
                 </div>
                 <p className={cn("font-medium mb-1", styles.text)}>
-                  {rule.oneLiner}
+                  {formatAbbreviations(rule.oneLiner)}
                 </p>
                 {rule.examMove && (
                   <p className="text-sm text-gray-600 mt-1">
-                    💡 {rule.examMove}
+                    💡 {formatAbbreviations(rule.examMove)}
                   </p>
                 )}
               </div>

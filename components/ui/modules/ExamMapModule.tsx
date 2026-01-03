@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { ChevronDown, ChevronUp, Navigation } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ExamMapModule, Takeaway } from '@/lib/knowledge/pointPage.types'
+import { formatAbbreviations } from '@/lib/abbreviations'
 
 export interface ExamMapModuleProps {
   module: ExamMapModule
@@ -62,7 +63,7 @@ export function ExamMapModule({ module, className }: ExamMapModuleProps) {
 
       {(!collapsible || isExpanded) && (
         <div className="p-4 space-y-4">
-          <p className="text-gray-700 leading-relaxed">{module.data.prompt}</p>
+          <p className="text-gray-700 leading-relaxed">{formatAbbreviations(module.data.prompt)}</p>
 
           {/* 三个角度 */}
           <div className="space-y-2">
@@ -74,7 +75,7 @@ export function ExamMapModule({ module, className }: ExamMapModuleProps) {
                 <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 text-white text-sm font-bold flex items-center justify-center">
                   {index + 1}
                 </span>
-                <div className="text-gray-800 leading-relaxed">{angle}</div>
+                <div className="text-gray-800 leading-relaxed">{formatAbbreviations(angle)}</div>
               </div>
             ))}
           </div>
@@ -82,7 +83,7 @@ export function ExamMapModule({ module, className }: ExamMapModuleProps) {
           {/* 重点集中 */}
           {module.data.focusTitle && module.data.focus.length > 0 && (
             <div className="pt-2">
-              <div className="text-sm font-medium text-gray-700 mb-2">{module.data.focusTitle}</div>
+              <div className="text-sm font-medium text-gray-700 mb-2">{formatAbbreviations(module.data.focusTitle)}</div>
               <div className="space-y-2">
                 {module.data.focus.map((item) => (
                   <div
@@ -92,7 +93,7 @@ export function ExamMapModule({ module, className }: ExamMapModuleProps) {
                       getLevelColor(item.level)
                     )}
                   >
-                    <span>{item.text}</span>
+                    <span>{formatAbbreviations(item.text)}</span>
                   </div>
                 ))}
               </div>
