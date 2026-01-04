@@ -223,21 +223,27 @@ export default function KnowledgePointPage() {
             )}
 
             {/* 渲染所有模块 */}
-            {newConfig.modules.map((module) => {
-              // 在 Focus Mode 下隐藏 sourceMaterial 和 examDistribution
-              if (focusMode && (module.type === "sourceMaterial" || module.type === "examDistribution")) {
-                return null
-              }
-              
-              return (
+            {newConfig.modules
+              .filter((module) => {
+                // 过滤无意义模块：「@」和「全」
+                const moduleTitle = module.title?.trim() || ''
+                if (!moduleTitle || moduleTitle === '@' || moduleTitle === '全') {
+                  return false
+                }
+                // 在 Focus Mode 下隐藏 sourceMaterial 和 examDistribution
+                if (focusMode && (module.type === "sourceMaterial" || module.type === "examDistribution")) {
+                  return false
+                }
+                return true
+              })
+              .map((module) => (
                 <ModuleRenderer
                   key={module.id}
                   module={module}
                   content={module.type === "sourceMaterial" ? safePoint.content : undefined}
                   className="mb-6"
                 />
-              )
-            })}
+              ))}
 
             {/* 行动区 */}
             <PointPageActions

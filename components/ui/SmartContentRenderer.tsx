@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 
 import type { InlineAnnotationRule } from '@/lib/knowledge/pointPage.schema'
-import { InlineAnnotation } from './InlineAnnotation'
+// 删除 InlineAnnotation 导入：不再渲染标签含义解释区
 import { formatAbbreviations } from '@/lib/abbreviations'
 import { TableMnemonicCard } from './TableMnemonicCard'
 import { cn } from '@/lib/utils'
@@ -217,13 +217,7 @@ export function SmartContentRenderer({ content, className = '', annotations }: S
       {blocksWithAnnotations.map(({ block, index, annotations: blockAnnotations }) => (
         <div key={index}>
           <ContentBlockRenderer block={block} index={index} />
-          {blockAnnotations.length > 0 && (
-            <div className="mt-2 space-y-2">
-              {blockAnnotations.map((rule) => (
-                <InlineAnnotation key={rule.id} rule={rule} />
-              ))}
-            </div>
-          )}
+          {/* 删除标签含义解释区：不再渲染 InlineAnnotation 组件（原文旁已标注，不需要重复解释） */}
         </div>
       ))}
     </div>
@@ -483,18 +477,18 @@ function CellContent({ content, isFirstColumn = false }: { content: string; isFi
   // 如果有编号列表，显示展开/折叠功能
   if (hasNumberedList && listItems.length > 0) {
     return (
-      <div className={cn('relative', highlightInfo.className)}>
-        {highlightInfo.sticker && (
-          <span className={cn(
-            'absolute -top-2 -right-2 px-1.5 py-0.5 text-xs rounded border',
-            highlightInfo.stickerColor
-          )}>
-            {highlightInfo.sticker}
-          </span>
-        )}
+      <div className={cn(highlightInfo.className)}>
         {!isExpanded ? (
-          <div className="flex items-start justify-between gap-2">
-            <p className="text-sm leading-relaxed flex-1">{summaryLine}</p>
+          <div className="flex items-start gap-2 flex-wrap">
+            {highlightInfo.sticker && (
+              <span className={cn(
+                'inline-flex items-center px-1.5 py-0.5 text-xs rounded border flex-shrink-0',
+                highlightInfo.stickerColor
+              )}>
+                {highlightInfo.sticker}
+              </span>
+            )}
+            <p className="text-sm leading-relaxed flex-1 min-w-0">{summaryLine}</p>
             <button
               type="button"
               onClick={(e) => {
@@ -508,6 +502,16 @@ function CellContent({ content, isFirstColumn = false }: { content: string; isFi
           </div>
         ) : (
           <div className="space-y-2">
+            {highlightInfo.sticker && (
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className={cn(
+                  'inline-flex items-center px-1.5 py-0.5 text-xs rounded border',
+                  highlightInfo.stickerColor
+                )}>
+                  {highlightInfo.sticker}
+                </span>
+              </div>
+            )}
             <ul className="space-y-1.5">
               {listItems.map((item, idx) => {
                 // 对每个列表项进行关键词加粗
@@ -520,7 +524,7 @@ function CellContent({ content, isFirstColumn = false }: { content: string; isFi
                 return (
                   <li key={idx} className="text-sm leading-relaxed flex items-start gap-2">
                     <span className="text-gray-400 flex-shrink-0">•</span>
-                    <span dangerouslySetInnerHTML={{ __html: highlightedItem }} />
+                    <span className="flex-1 min-w-0" dangerouslySetInnerHTML={{ __html: highlightedItem }} />
                   </li>
                 )
               })}
@@ -544,40 +548,44 @@ function CellContent({ content, isFirstColumn = false }: { content: string; isFi
   // 普通长内容，带重点标注
   if (formattedContent.length > 50) {
     return (
-      <div className={cn('relative', highlightInfo.className)}>
-        {highlightInfo.sticker && (
-          <span className={cn(
-            'absolute -top-2 -right-2 px-1.5 py-0.5 text-xs rounded border',
-            highlightInfo.stickerColor
-          )}>
-            {highlightInfo.sticker}
-          </span>
-        )}
-        <div 
-          className="leading-relaxed"
-          dangerouslySetInnerHTML={{ 
-            __html: formattedContent
-              .replace(/(禁用|禁忌|严禁|不得|禁止)/g, '<strong class="text-red-600">$1</strong>')
-              .replace(/(稀释|配制|只能用|不得用)/g, '<strong class="text-orange-600">$1</strong>')
-              .replace(/(特异性解救药|首选|一线|关键)/g, '<strong class="text-blue-600">$1</strong>')
-              .replace(/(但|不明显|远期差|易混)/g, '<strong class="text-purple-600">$1</strong>')
-          }}
-        />
+      <div className={cn(highlightInfo.className)}>
+        <div className="flex items-start gap-2 flex-wrap">
+          {highlightInfo.sticker && (
+            <span className={cn(
+              'inline-flex items-center px-1.5 py-0.5 text-xs rounded border flex-shrink-0',
+              highlightInfo.stickerColor
+            )}>
+              {highlightInfo.sticker}
+            </span>
+          )}
+          <div 
+            className="leading-relaxed flex-1 min-w-0"
+            dangerouslySetInnerHTML={{ 
+              __html: formattedContent
+                .replace(/(禁用|禁忌|严禁|不得|禁止)/g, '<strong class="text-red-600">$1</strong>')
+                .replace(/(稀释|配制|只能用|不得用)/g, '<strong class="text-orange-600">$1</strong>')
+                .replace(/(特异性解救药|首选|一线|关键)/g, '<strong class="text-blue-600">$1</strong>')
+                .replace(/(但|不明显|远期差|易混)/g, '<strong class="text-purple-600">$1</strong>')
+            }}
+          />
+        </div>
       </div>
     )
   }
 
   return (
-    <div className={cn('relative', highlightInfo.className)}>
-      {highlightInfo.sticker && (
-        <span className={cn(
-          'absolute -top-2 -right-2 px-1.5 py-0.5 text-xs rounded border',
-          highlightInfo.stickerColor
-        )}>
-          {highlightInfo.sticker}
-        </span>
-      )}
-      <span>{formattedContent}</span>
+    <div className={cn(highlightInfo.className)}>
+      <div className="flex items-center gap-2 flex-wrap">
+        {highlightInfo.sticker && (
+          <span className={cn(
+            'inline-flex items-center px-1.5 py-0.5 text-xs rounded border flex-shrink-0',
+            highlightInfo.stickerColor
+          )}>
+            {highlightInfo.sticker}
+          </span>
+        )}
+        <span className="flex-1 min-w-0">{formattedContent}</span>
+      </div>
     </div>
   )
 }

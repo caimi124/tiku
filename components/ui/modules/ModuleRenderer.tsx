@@ -21,6 +21,32 @@ export interface ModuleRendererProps {
 }
 
 export function ModuleRenderer({ module, content, className }: ModuleRendererProps) {
+  // 过滤无意义模块：「@」和「全」
+  const moduleTitle = module.title?.trim() || ''
+  if (!moduleTitle || moduleTitle === '@' || moduleTitle === '全') {
+    return null
+  }
+  
+  // 检查模块是否有实际内容
+  if (module.type === 'classificationMap' && (!module.data?.sections || module.data.sections.length === 0)) {
+    return null
+  }
+  if (module.type === 'highYield' && (!module.data?.rules || module.data.rules.length === 0)) {
+    return null
+  }
+  if (module.type === 'coreDrugs' && (!module.data?.cards || module.data.cards.length === 0)) {
+    return null
+  }
+  if (module.type === 'examMap' && (!module.data?.angles || module.data.angles.length === 0)) {
+    return null
+  }
+  if (module.type === 'examDistribution' && (!module.data?.items || module.data.items.length === 0)) {
+    return null
+  }
+  if (module.type === 'sourceMaterial' && (!module.data?.blocks || module.data.blocks.length === 0)) {
+    return null
+  }
+  
   switch (module.type) {
     case "examMap":
       return <ExamMapModule module={module} className={className} />
