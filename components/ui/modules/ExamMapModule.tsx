@@ -7,10 +7,11 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, ChevronUp, Navigation } from 'lucide-react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ExamMapModule, Takeaway } from '@/lib/knowledge/pointPage.types'
 import { formatAbbreviations } from '@/lib/abbreviations'
+import { SectionHeader } from '../SectionHeader'
 
 export interface ExamMapModuleProps {
   module: ExamMapModule
@@ -42,10 +43,7 @@ export function ExamMapModule({ module, className }: ExamMapModuleProps) {
           onClick={() => setIsExpanded(!isExpanded)}
           className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
         >
-          <div className="flex items-center gap-2">
-            <Navigation className="w-5 h-5 text-blue-500" />
-            <h2 className="text-lg font-semibold text-gray-900">{module.title}</h2>
-          </div>
+          <SectionHeader title={module.title} kind="examMap" />
           {isExpanded ? (
             <ChevronUp className="w-5 h-5 text-gray-400" />
           ) : (
@@ -54,10 +52,7 @@ export function ExamMapModule({ module, className }: ExamMapModuleProps) {
         </button>
       ) : (
         <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <Navigation className="w-5 h-5 text-blue-500" />
-            <h2 className="text-lg font-semibold text-gray-900">{module.title}</h2>
-          </div>
+          <SectionHeader title={module.title} kind="examMap" />
         </div>
       )}
 

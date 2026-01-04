@@ -845,29 +845,56 @@ function HighlightedText({ text, variant }: { text: string; variant: 'default' |
   // 关键词高亮规则（加粗显示）
   const highlights = variant === 'minimal'
     ? [
-        { pattern: /禁用|禁忌|严禁|不得|禁止|禁服|慎用/g, className: 'text-red-600 font-semibold' },
-        { pattern: /易错|注意|间隔|配制|稀释|只能|不宜/g, className: 'text-orange-600 font-semibold' },
+        { pattern: /(禁用|禁忌|严禁|不得|禁止|禁服|慎用)/g, className: 'text-red-600 font-semibold bg-red-50 px-1 rounded' },
+        { pattern: /(易错|注意|间隔|配制|稀释|只能|不宜)/g, className: 'text-amber-700 font-semibold bg-amber-50 px-1 rounded' },
       ]
     : [
-        { pattern: /禁用|禁忌|严禁|不得|禁止/g, className: 'text-red-600 font-bold' },
-        { pattern: /稀释|配制|只能用|不得用/g, className: 'text-orange-600 font-bold' },
-        { pattern: /特异性解救药|首选|一线|关键/g, className: 'text-blue-600 font-bold' },
-        { pattern: /但|不明显|远期差|易混/g, className: 'text-purple-600 font-bold' },
-        { pattern: /慎用/g, className: 'text-orange-600 font-semibold' },
-        { pattern: /不良反应/g, className: 'text-red-500 font-semibold' },
-        { pattern: /适应证|适用于/g, className: 'text-blue-600 font-semibold' },
+        { pattern: /(禁用|禁忌|严禁|不得|禁止)/g, className: 'text-red-600 font-semibold bg-red-50 px-1 rounded' },
+        { pattern: /(稀释|配制|只能用|不得用)/g, className: 'text-orange-600 font-semibold bg-amber-50 px-1 rounded' },
+        { pattern: /(特异性解救药|首选|一线|关键)/g, className: 'text-blue-600 font-semibold' },
+        { pattern: /(但|不明显|远期差|易混)/g, className: 'text-purple-600 font-semibold' },
+        { pattern: /(慎用)/g, className: 'text-orange-600 font-semibold' },
+        { pattern: /(不良反应)/g, className: 'text-red-500 font-semibold' },
+        { pattern: /(适应证|适用于)/g, className: 'text-blue-600 font-semibold' },
       ]
-  
-  // 应用所有高亮规则
-  let html = formattedText
-  for (const { pattern, className } of highlights) {
-    html = html.replace(pattern, `<span class="${className}">$&</span>`)
+
+  const applyHighlights = (input: string, rules: typeof highlights) => {
+    let segments: Array<string | { text: string; className: string }> = [input]
+    rules.forEach(({ pattern, className }) => {
+      const next: typeof segments = []
+      segments.forEach((seg) => {
+        if (typeof seg !== 'string') {
+          next.push(seg)
+          return
+        }
+        const parts = seg.split(pattern)
+        for (let i = 0; i < parts.length; i++) {
+          const chunk = parts[i]
+          if (chunk === undefined) continue
+          if (chunk.match(pattern) && i % 2 === 1) {
+            next.push({ text: chunk, className })
+          } else if (chunk) {
+            next.push(chunk)
+          }
+        }
+      })
+      segments = next
+    })
+    return segments
   }
-  
+
+  const highlighted = applyHighlights(formattedText, highlights)
+
   return (
-    <span 
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <>
+      {highlighted.map((seg, idx) =>
+        typeof seg === 'string' ? (
+          <span key={idx}>{seg}</span>
+        ) : (
+          <span key={idx} className={seg.className}>{seg.text}</span>
+        )
+      )}
+    </>
   )
 }
 

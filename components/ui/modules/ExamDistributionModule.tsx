@@ -11,6 +11,7 @@ import { ChevronDown, ChevronUp, Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAbbreviations } from '@/lib/abbreviations'
 import type { ExamDistributionModule } from '@/lib/knowledge/pointPage.types'
+import { SectionHeader } from '../SectionHeader'
 
 export interface ExamDistributionModuleProps {
   module: ExamDistributionModule
@@ -29,10 +30,7 @@ export function ExamDistributionModule({ module, className }: ExamDistributionMo
           onClick={() => setIsExpanded(!isExpanded)}
           className="w-full flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
         >
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-gray-400" />
-            <h3 className="text-sm font-medium text-gray-600">{module.title}</h3>
-          </div>
+          <SectionHeader title={module.title} kind="distribution" className="text-sm" />
           {isExpanded ? (
             <ChevronUp className="w-4 h-4 text-gray-400" />
           ) : (
@@ -41,10 +39,7 @@ export function ExamDistributionModule({ module, className }: ExamDistributionMo
         </button>
       ) : (
         <div className="p-3 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-gray-400" />
-            <h3 className="text-sm font-medium text-gray-600">{module.title}</h3>
-          </div>
+          <SectionHeader title={module.title} kind="distribution" className="text-sm" />
         </div>
       )}
 

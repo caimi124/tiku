@@ -7,10 +7,12 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, ChevronUp, Zap } from 'lucide-react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { HighYieldModule } from '@/lib/knowledge/pointPage.types'
 import { formatAbbreviations } from '@/lib/abbreviations'
+import { SectionHeader } from '../SectionHeader'
+import { ExamHintCard } from '../ExamHintCard'
 
 export interface HighYieldModuleProps {
   module: HighYieldModule
@@ -62,10 +64,7 @@ export function HighYieldModule({ module, className }: HighYieldModuleProps) {
           onClick={() => setIsExpanded(!isExpanded)}
           className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
         >
-          <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 text-orange-500" />
-            <h2 className="text-lg font-semibold text-gray-900">{module.title}</h2>
-          </div>
+          <SectionHeader title={module.title} kind="highYield" />
           {isExpanded ? (
             <ChevronUp className="w-5 h-5 text-gray-400" />
           ) : (
@@ -74,10 +73,7 @@ export function HighYieldModule({ module, className }: HighYieldModuleProps) {
         </button>
       ) : (
         <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 text-orange-500" />
-            <h2 className="text-lg font-semibold text-gray-900">{module.title}</h2>
-          </div>
+          <SectionHeader title={module.title} kind="highYield" />
         </div>
       )}
 
@@ -90,13 +86,9 @@ export function HighYieldModule({ module, className }: HighYieldModuleProps) {
           {module.data.rules.map((rule) => {
             const styles = getLevelStyles(rule.level)
             return (
-              <div
+              <ExamHintCard
                 key={rule.id}
-                className={cn(
-                  "p-3 rounded-lg border",
-                  styles.bg,
-                  styles.border
-                )}
+                className={cn(styles.bg, styles.border)}
               >
                 <div className="flex items-start gap-2 mb-2">
                   <span className={cn(
@@ -114,7 +106,7 @@ export function HighYieldModule({ module, className }: HighYieldModuleProps) {
                     💡 {formatAbbreviations(rule.examMove)}
                   </p>
                 )}
-              </div>
+              </ExamHintCard>
             )
           })}
         </div>

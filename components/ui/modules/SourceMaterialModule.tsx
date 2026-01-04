@@ -7,11 +7,12 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, ChevronUp, BookOpen } from 'lucide-react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { SourceMaterialModule, StickerRule } from '@/lib/knowledge/pointPage.types'
 import { SmartContentRenderer } from '../SmartContentRenderer'
 import type { InlineAnnotationRule } from '@/lib/knowledge/pointPage.schema'
+import { SectionHeader } from '../SectionHeader'
 
 export interface SourceMaterialModuleProps {
   module: SourceMaterialModule
@@ -52,10 +53,7 @@ export function SourceMaterialModule({ module, content, className }: SourceMater
   return (
     <div className={cn('bg-white rounded-xl border border-gray-200 shadow-sm', className)}>
       <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-gray-500" />
-          <h2 className="text-lg font-semibold text-gray-900">{module.title}</h2>
-        </div>
+        <SectionHeader title={module.title} kind="source" />
       </div>
 
       <div className="p-4 space-y-3">
