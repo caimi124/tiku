@@ -14,9 +14,9 @@
 
 import React, { useState, useMemo } from 'react'
 import { 
-  Lightbulb, AlertTriangle, CheckCircle, 
+  AlertTriangle, CheckCircle, 
   ChevronDown, ChevronUp, ZoomIn, X,
-  Pill, BookOpen, List
+  Pill, List
 } from 'lucide-react'
 
 import type { InlineAnnotationRule } from '@/lib/knowledge/pointPage.schema'
@@ -29,6 +29,7 @@ interface SmartContentRendererProps {
   content: string
   className?: string
   annotations?: InlineAnnotationRule[]
+  variant?: 'default' | 'minimal'
 }
 
 // 内容块类型
@@ -171,7 +172,7 @@ function parseContent(content: string): ContentBlock[] {
 /**
  * 主组件
  */
-export function SmartContentRenderer({ content, className = '', annotations }: SmartContentRendererProps) {
+export function SmartContentRenderer({ content, className = '', annotations, variant = 'default' }: SmartContentRendererProps) {
   const blocks = useMemo(() => parseContent(content), [content])
   
   // 处理标注：在内容块中查找匹配并注入标注
@@ -216,7 +217,7 @@ export function SmartContentRenderer({ content, className = '', annotations }: S
     <div className={`space-y-4 ${className}`}>
       {blocksWithAnnotations.map(({ block, index, annotations: blockAnnotations }) => (
         <div key={index}>
-          <ContentBlockRenderer block={block} index={index} />
+          <ContentBlockRenderer block={block} index={index} variant={variant} />
           {/* 删除标签含义解释区：不再渲染 InlineAnnotation 组件（原文旁已标注，不需要重复解释） */}
         </div>
       ))}
@@ -227,24 +228,24 @@ export function SmartContentRenderer({ content, className = '', annotations }: S
 /**
  * 内容块渲染器
  */
-function ContentBlockRenderer({ block, index }: { block: ContentBlock; index: number }) {
+function ContentBlockRenderer({ block, index, variant }: { block: ContentBlock; index: number; variant: 'default' | 'minimal' }) {
   switch (block.type) {
     case 'table':
-      return <TableBlock content={block.content} />
+      return <TableBlock content={block.content} variant={variant} />
     case 'mnemonic':
       // 口诀现在只在表格后显示，不再单独渲染
       return null
     case 'image':
       return <ImageBlock content={block.content} />
     case 'numbered_list':
-      return <NumberedListBlock content={block.content} />
+      return <NumberedListBlock content={block.content} variant={variant} />
     case 'warning':
-      return <WarningBlock content={block.content} />
+      return <WarningBlock content={block.content} variant={variant} />
     case 'key_point':
-      return <KeyPointBlock content={block.content} />
+      return <KeyPointBlock content={block.content} variant={variant} />
     case 'paragraph':
     default:
-      return <ParagraphBlock content={block.content} />
+      return <ParagraphBlock content={block.content} variant={variant} />
   }
 }
 
@@ -258,7 +259,7 @@ function ContentBlockRenderer({ block, index }: { block: ContentBlock; index: nu
  * - 表格后口诀卡片
  * - 表格视觉优化
  */
-function TableBlock({ content }: { content: string }) {
+function TableBlock({ content, variant }: { content: string; variant: 'default' | 'minimal' }) {
   const [isExpanded, setIsExpanded] = useState(false) // 默认折叠
   
   const { headers, rows, tableTitle, mnemonic } = useMemo(() => {
@@ -307,7 +308,12 @@ function TableBlock({ content }: { content: string }) {
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
       {/* 表格标题栏 */}
       <div 
-        className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100 cursor-pointer hover:from-blue-100 hover:to-indigo-100 transition-colors"
+        className={cn(
+          "flex items-center justify-between px-4 py-3 border-b border-gray-100 cursor-pointer transition-colors",
+          variant === 'default'
+            ? "bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100"
+            : "bg-gray-50 hover:bg-gray-100"
+        )}
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-2">
@@ -355,7 +361,7 @@ function TableBlock({ content }: { content: string }) {
                         cellIndex === 0 ? 'text-gray-800 font-medium w-32 min-w-[8rem]' : 'text-gray-600'
                       }`}
                     >
-                      <CellContent content={cell} isFirstColumn={cellIndex === 0} />
+                      <CellContent content={cell} isFirstColumn={cellIndex === 0} variant={variant} />
                     </td>
                   ))}
                 </tr>
@@ -366,7 +372,7 @@ function TableBlock({ content }: { content: string }) {
       )}
       
       {/* 表格后口诀卡片 */}
-      {mnemonic && (
+      {variant === 'default' && mnemonic && (
         <div className="px-4 pb-4 pt-2">
           <TableMnemonicCard mnemonic={mnemonic} />
         </div>
@@ -378,7 +384,7 @@ function TableBlock({ content }: { content: string }) {
 /**
  * 单元格内容渲染 - 支持编号列表展开/折叠、重点标注、缩写格式化、inline贴纸
  */
-function CellContent({ content, isFirstColumn = false }: { content: string; isFirstColumn?: boolean }) {
+function CellContent({ content, isFirstColumn = false, variant }: { content: string; isFirstColumn?: boolean; variant: 'default' | 'minimal' }) {
   const [isExpanded, setIsExpanded] = useState(false)
   
   // 格式化缩写
@@ -433,6 +439,9 @@ function CellContent({ content, isFirstColumn = false }: { content: string; isFi
   
   // 检测重点标注关键词和贴纸
   const highlightInfo = useMemo(() => {
+    if (variant === 'minimal') {
+      return { className: '', sticker: null as string | null, stickerColor: '' }
+    }
     if (/禁用|禁忌|严禁|不得|禁止/.test(formattedContent)) {
       return { 
         className: 'bg-red-50 border-l-4 border-red-400', 
@@ -462,7 +471,7 @@ function CellContent({ content, isFirstColumn = false }: { content: string; isFi
       }
     }
     return { className: '', sticker: null, stickerColor: '' }
-  }, [formattedContent])
+  }, [formattedContent, variant])
   
   // 第一列通常是分类名，用药物图标装饰
   if (isFirstColumn && formattedContent.length < 30 && !hasNumberedList) {
@@ -518,8 +527,8 @@ function CellContent({ content, isFirstColumn = false }: { content: string; isFi
                 const highlightedItem = item
                   .replace(/(禁用|禁忌|严禁|不得|禁止)/g, '<strong class="text-red-600">$1</strong>')
                   .replace(/(稀释|配制|只能用|不得用)/g, '<strong class="text-orange-600">$1</strong>')
-                  .replace(/(特异性解救药|首选|一线|关键)/g, '<strong class="text-blue-600">$1</strong>')
-                  .replace(/(但|不明显|远期差|易混)/g, '<strong class="text-purple-600">$1</strong>')
+                  .replace(/(特异性解救药|首选|一线|关键)/g, variant === 'default' ? '<strong class="text-blue-600">$1</strong>' : '<strong>$1</strong>')
+                  .replace(/(但|不明显|远期差|易混)/g, variant === 'default' ? '<strong class="text-purple-600">$1</strong>' : '<strong>$1</strong>')
                 
                 return (
                   <li key={idx} className="text-sm leading-relaxed flex items-start gap-2">
@@ -564,8 +573,8 @@ function CellContent({ content, isFirstColumn = false }: { content: string; isFi
               __html: formattedContent
                 .replace(/(禁用|禁忌|严禁|不得|禁止)/g, '<strong class="text-red-600">$1</strong>')
                 .replace(/(稀释|配制|只能用|不得用)/g, '<strong class="text-orange-600">$1</strong>')
-                .replace(/(特异性解救药|首选|一线|关键)/g, '<strong class="text-blue-600">$1</strong>')
-                .replace(/(但|不明显|远期差|易混)/g, '<strong class="text-purple-600">$1</strong>')
+                .replace(/(特异性解救药|首选|一线|关键)/g, variant === 'default' ? '<strong class="text-blue-600">$1</strong>' : '<strong>$1</strong>')
+                .replace(/(但|不明显|远期差|易混)/g, variant === 'default' ? '<strong class="text-purple-600">$1</strong>' : '<strong>$1</strong>')
             }}
           />
         </div>
@@ -676,7 +685,7 @@ function ImageBlock({ content }: { content: string }) {
 /**
  * 编号列表块 - 将(1)(2)(3)格式转换为美观列表
  */
-function NumberedListBlock({ content }: { content: string }) {
+function NumberedListBlock({ content, variant }: { content: string; variant: 'default' | 'minimal' }) {
   const items = useMemo(() => {
     // 分割 (1)xxx(2)xxx 格式
     const parts = content.split(/\((\d+)\)/).filter(p => p.trim())
@@ -692,7 +701,7 @@ function NumberedListBlock({ content }: { content: string }) {
   }, [content])
   
   if (items.length === 0) {
-    return <ParagraphBlock content={content} />
+    return <ParagraphBlock content={content} variant={variant} />
   }
   
   return (
@@ -704,7 +713,7 @@ function NumberedListBlock({ content }: { content: string }) {
               {item.num}
             </div>
             <div className="flex-1 text-gray-700 leading-relaxed pt-0.5">
-              <HighlightedText text={item.text} />
+              <HighlightedText text={item.text} variant={variant} />
             </div>
           </div>
         ))}
@@ -716,7 +725,17 @@ function NumberedListBlock({ content }: { content: string }) {
 /**
  * 警告/禁忌块
  */
-function WarningBlock({ content }: { content: string }) {
+function WarningBlock({ content, variant }: { content: string; variant: 'default' | 'minimal' }) {
+  if (variant === 'minimal') {
+    return (
+      <div className="border-l-4 border-red-400 bg-white px-4 py-3">
+        <div className="text-red-700 leading-relaxed">
+          <HighlightedText text={content} variant={variant} />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="bg-red-50 rounded-xl p-4 border border-red-200">
       <div className="flex items-start gap-3">
@@ -726,7 +745,7 @@ function WarningBlock({ content }: { content: string }) {
         <div className="flex-1">
           <div className="text-xs font-medium text-red-600 mb-1">⚠️ 注意事项</div>
           <div className="text-red-800 leading-relaxed">
-            <HighlightedText text={content} />
+            <HighlightedText text={content} variant={variant} />
           </div>
         </div>
       </div>
@@ -737,7 +756,17 @@ function WarningBlock({ content }: { content: string }) {
 /**
  * 重点内容块
  */
-function KeyPointBlock({ content }: { content: string }) {
+function KeyPointBlock({ content, variant }: { content: string; variant: 'default' | 'minimal' }) {
+  if (variant === 'minimal') {
+    return (
+      <div className="border-l-4 border-orange-300 bg-white px-4 py-3">
+        <div className="text-gray-800 leading-relaxed">
+          <HighlightedText text={content} variant={variant} />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="bg-green-50 rounded-xl p-4 border border-green-200">
       <div className="flex items-start gap-3">
@@ -747,7 +776,7 @@ function KeyPointBlock({ content }: { content: string }) {
         <div className="flex-1">
           <div className="text-xs font-medium text-green-600 mb-1">✓ 重点内容</div>
           <div className="text-green-800 leading-relaxed">
-            <HighlightedText text={content} />
+            <HighlightedText text={content} variant={variant} />
           </div>
         </div>
       </div>
@@ -758,7 +787,7 @@ function KeyPointBlock({ content }: { content: string }) {
 /**
  * 普通段落块 - 优化长文本阅读体验
  */
-function ParagraphBlock({ content }: { content: string }) {
+function ParagraphBlock({ content, variant }: { content: string; variant: 'default' | 'minimal' }) {
   // 长段落分段显示
   const isLongParagraph = content.length > 200
   
@@ -775,7 +804,7 @@ function ParagraphBlock({ content }: { content: string }) {
             key={index} 
             className="text-gray-700 leading-[1.8] text-[15px]"
           >
-            <HighlightedText text={sentence.trim()} />
+            <HighlightedText text={sentence.trim()} variant={variant} />
           </p>
         ))}
       </div>
@@ -786,20 +815,25 @@ function ParagraphBlock({ content }: { content: string }) {
 /**
  * 高亮文本 - 自动高亮关键词，并格式化缩写
  */
-function HighlightedText({ text }: { text: string }) {
+function HighlightedText({ text, variant }: { text: string; variant: 'default' | 'minimal' }) {
   // 先格式化缩写
   const formattedText = formatAbbreviations(text)
   
   // 关键词高亮规则（加粗显示）
-  const highlights = [
-    { pattern: /禁用|禁忌|严禁|不得|禁止/g, className: 'text-red-600 font-bold' },
-    { pattern: /稀释|配制|只能用|不得用/g, className: 'text-orange-600 font-bold' },
-    { pattern: /特异性解救药|首选|一线|关键/g, className: 'text-blue-600 font-bold' },
-    { pattern: /但|不明显|远期差|易混/g, className: 'text-purple-600 font-bold' },
-    { pattern: /慎用/g, className: 'text-orange-600 font-semibold' },
-    { pattern: /不良反应/g, className: 'text-red-500 font-semibold' },
-    { pattern: /适应证|适用于/g, className: 'text-blue-600 font-semibold' },
-  ]
+  const highlights = variant === 'minimal'
+    ? [
+        { pattern: /禁用|禁忌|严禁|不得|禁止|禁服|慎用/g, className: 'text-red-600 font-semibold' },
+        { pattern: /易错|注意|间隔|配制|稀释|只能|不宜/g, className: 'text-orange-600 font-semibold' },
+      ]
+    : [
+        { pattern: /禁用|禁忌|严禁|不得|禁止/g, className: 'text-red-600 font-bold' },
+        { pattern: /稀释|配制|只能用|不得用/g, className: 'text-orange-600 font-bold' },
+        { pattern: /特异性解救药|首选|一线|关键/g, className: 'text-blue-600 font-bold' },
+        { pattern: /但|不明显|远期差|易混/g, className: 'text-purple-600 font-bold' },
+        { pattern: /慎用/g, className: 'text-orange-600 font-semibold' },
+        { pattern: /不良反应/g, className: 'text-red-500 font-semibold' },
+        { pattern: /适应证|适用于/g, className: 'text-blue-600 font-semibold' },
+      ]
   
   // 应用所有高亮规则
   let html = formattedText

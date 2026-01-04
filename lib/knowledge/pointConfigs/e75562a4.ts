@@ -19,14 +19,15 @@ export const e75562a4_config: PointPageConfig = {
       id: "exam-map",
       type: "examMap",
       title: "本考点在考什么",
+      collapsible: false,
       data: {
-        prompt: "考试通常从 3 个角度出题：",
+        prompt: "本考点围绕【肝胆疾病用药】，考试通常从 3 个角度出题：",
         angles: [
-          "① 药物如何分类（肝用药 vs 胆用药）",
-          "② 各类药物的作用特点及关键禁忌",
-          "③ 必考核心药物的典型考法",
+          "① 药物如何分类（肝用药 vs 胆用药）  ",
+          "② 各类药物的作用特点及关键禁忌  ",
+          "③ 必考核心药物的典型考法  ",
         ],
-        focusTitle: "重点集中在：",
+        focusTitle: "👉 其中重点集中在：",
         focus: [
           { id: "focus-1", level: "key", text: "药物分类与代表药（高频送分）" },
           { id: "focus-2", level: "warn", text: "临床用药评价中的「禁忌 / 易错点」" },
@@ -39,12 +40,12 @@ export const e75562a4_config: PointPageConfig = {
       id: "class-map",
       type: "classificationMap",
       title: "药物怎么分（先立结构）",
+      collapsible: false,
       data: {
         sections: [
           {
             id: "liver",
             title: "肝脏疾病用药",
-            hint: "只记分类名，不背解释",
             items: [
               { id: "l1", text: "促进肝脏代谢能力的药物" },
               { id: "l2", text: "肝细胞膜修复保护剂（必须磷脂类）" },
@@ -56,7 +57,6 @@ export const e75562a4_config: PointPageConfig = {
           {
             id: "gall",
             title: "胆疾病用药",
-            hint: "只记分类名，不背解释",
             items: [
               { id: "g1", text: "胆固醇结石溶解药" },
               { id: "g2", text: "胆汁淤积性肝病治疗药" },
@@ -72,42 +72,28 @@ export const e75562a4_config: PointPageConfig = {
       type: "highYield",
       title: "高频考法 & 易错点（一句 = 一题）",
       data: {
-        intro: "不抄教材，只留「考场能用」的一句话。",
+        intro: "一句话 = 一道题；解题提示用自然语言写清楚。",
         rules: [
           {
             id: "hy-1",
             bucket: "必须磷脂类",
             level: "danger",
-            oneLiner: "多烯磷脂酰胆碱注射液含苯甲醇 → 新生儿/早产儿禁用",
-            examMove: "题干出现「新生儿/早产儿」 + 多烯磷脂酰胆碱 → 直接判禁用",
+            oneLiner: "多烯磷脂酰胆碱注射液含苯甲醇 → 新生儿 / 早产儿禁用",
+            examMove: "题干出现「新生儿 / 早产儿」且使用多烯磷脂酰胆碱注射液，直接判断禁用。",
           },
           {
             id: "hy-2",
-            bucket: "必须磷脂类",
-            level: "warn",
-            oneLiner: "多烯磷脂酰胆碱注射液：禁用生理盐水/林格稀释，只能用葡萄糖/木糖醇",
-            examMove: "问「配制/稀释」 → 选「葡萄糖/木糖醇」，排除「氯化钠/林格」",
-          },
-          {
-            id: "hy-3",
             bucket: "解毒类",
             level: "key",
             oneLiner: "乙酰半胱氨酸（NAC）：对乙酰氨基酚过量中毒的特异性解救药",
-            examMove: "看到「对乙酰氨基酚过量」 → 秒选乙酰半胱氨酸（NAC）",
+            examMove: "题干出现「对乙酰氨基酚过量 / 中毒」，直接选择乙酰半胱氨酸（NAC）。",
           },
           {
-            id: "hy-4",
-            bucket: "抗炎类",
-            level: "warn",
-            oneLiner: "甘草甜素制剂：可致低血钾、加重高血压 → 严重低钾/高血压/心衰/肾衰禁用",
-            examMove: "题干出现「低钾/高血压/心衰」 → 甘草类慎用/禁用",
-          },
-          {
-            id: "hy-5",
+            id: "hy-3",
             bucket: "抗氧化药",
             level: "warn",
-            oneLiner: "联苯双酯：丙氨酸氨基转移酶（ALT）↓明显，但天冬氨酸氨基转移酶（AST）↓不明显；短期好，远期差",
-            examMove: "问「丙氨酸氨基转移酶（ALT） vs 天冬氨酸氨基转移酶（AST）」 → 选「丙氨酸氨基转移酶（ALT）降得更明显」",
+            oneLiner: "联苯双酯：丙氨酸氨基转移酶（ALT）下降明显，天冬氨酸氨基转移酶（AST）下降不明显，短期疗效好，远期疗效差。",
+            examMove: "比较 ALT 与 AST 变化时，选择 ALT 降低更明显。",
           },
         ],
       },
@@ -122,23 +108,13 @@ export const e75562a4_config: PointPageConfig = {
             id: "udca",
             name: "熊去氧胆酸",
             alias: "UDCA",
-            why: "适应证/禁忌/相互作用三件套，反复考。",
+            why: "胆疾病用药中的核心药物，适应证、禁忌和相互作用反复考查。",
             bullets: [
-              { id: "ud1", level: "key", text: "适应证：X线可穿透胆固醇结石 + 胆囊收缩正常；胆汁淤积性肝病（如原发性胆汁性肝硬化（PBC））；胆汁反流性胃炎" },
-              { id: "ud2", level: "danger", text: "禁忌：急性胆囊炎/胆管炎；胆道阻塞；严重肝功能减退等" },
-              { id: "ud3", level: "warn", text: "相互作用：不与考来烯胺/含铝抗酸剂同服；必要时间隔≥2小时" },
+              { id: "ud1", level: "key", text: "适应证：X 线可穿透的胆固醇结石 + 胆囊收缩功能正常；胆汁淤积性肝病（如原发性胆汁性肝硬化）；胆汁反流性胃炎" },
+              { id: "ud2", level: "danger", text: "禁忌：急性胆囊炎、急性胆管炎；胆道阻塞；严重肝功能减退" },
+              { id: "ud3", level: "warn", text: "相互作用：不与考来烯胺、含铝抗酸剂同服；必须合用时，间隔 ≥2 小时" },
             ],
             relatedPracticeTag: "UDCA",
-          },
-          {
-            id: "nac",
-            name: "乙酰半胱氨酸",
-            alias: "NAC",
-            why: "典型「看到题干关键词→秒选」的送分点。",
-            bullets: [
-              { id: "na1", level: "key", text: "题干出现「对乙酰氨基酚过量/中毒」 → 直接选乙酰半胱氨酸（NAC）（特异性解救药）" },
-            ],
-            relatedPracticeTag: "NAC",
           },
         ],
       },
@@ -146,7 +122,7 @@ export const e75562a4_config: PointPageConfig = {
     {
       id: "source",
       type: "sourceMaterial",
-      title: "教材原文（查资料，不用背）",
+      title: "📘 教材原文（精选整理，用于系统复习）",
       collapsible: true,
       defaultExpanded: false,
       data: {
@@ -157,16 +133,6 @@ export const e75562a4_config: PointPageConfig = {
             title: "分类表 / 临床用药评价 / 药物信息表",
             renderFrom: "existingSmartRenderer",
             defaultExpanded: false,
-            highlighting: {
-              enabled: true,
-              palette: { danger: "red", warn: "orange", key: "blue" },
-              stickers: [
-                { id: "s1", match: "新生儿|早产儿.*禁用", label: "🚫必考禁用", level: "danger" },
-                { id: "s2", match: "严禁用.*稀释|只能用.*稀释", label: "⚠️配制坑", level: "warn" },
-                { id: "s3", match: "特异性解救药", label: "🎯秒选点", level: "key" },
-                { id: "s4", match: "ALT.*肯定|AST.*不明显", label: "🧨经典陷阱", level: "warn" },
-              ],
-            },
           },
         ],
       },
