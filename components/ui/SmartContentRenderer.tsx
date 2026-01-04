@@ -32,6 +32,17 @@ interface SmartContentRendererProps {
   variant?: 'default' | 'minimal'
 }
 
+function sanitizeText(raw: string): string | null {
+  if (!raw) return null
+  const trimmed = raw.replace(/\u00A0/g, ' ').trim()
+  if (!trimmed) return null
+  if (/^(?:@|全)$/.test(trimmed)) return null
+  if (/^[\s\u00A0]*$/.test(trimmed)) return null
+  const hasMeaningful = /[\u4e00-\u9fa5A-Za-z0-9]/.test(trimmed)
+  if (trimmed.length <= 1 && !hasMeaningful) return null
+  return trimmed
+}
+
 // 内容块类型
 type ContentBlockType = 
   | 'table' 
@@ -82,38 +93,39 @@ function parseContent(content: string): ContentBlock[] {
   if (!content) return []
   
   const blocks: ContentBlock[] = []
-  const lines = content.split('\n')
+  const lines = content.split('\n').map(line => sanitizeText(line) ?? '')
   let currentBlock: string[] = []
   let inTable = false
   
   const flushParagraph = () => {
     if (currentBlock.length > 0) {
       const text = currentBlock.join('\n').trim()
-      if (text) {
+      const cleaned = sanitizeText(text)
+      if (cleaned) {
         // 跳过乱码文本
-        if (isGarbageText(text)) {
+        if (isGarbageText(cleaned)) {
           currentBlock = []
           return
         }
         
         // 检查是否包含口诀
-        if (text.includes('【润德巧记】') || text.includes('【巧记】') || text.includes('【口诀】')) {
-          blocks.push({ type: 'mnemonic', content: text, raw: text })
+        if (cleaned.includes('【润德巧记】') || cleaned.includes('【巧记】') || cleaned.includes('【口诀】')) {
+          blocks.push({ type: 'mnemonic', content: cleaned, raw: cleaned })
         }
         // 检查是否是编号列表 (1)xxx(2)xxx
-        else if (/\(\d+\)/.test(text) && text.split(/\(\d+\)/).length > 2) {
-          blocks.push({ type: 'numbered_list', content: text, raw: text })
+        else if (/\(\d+\)/.test(cleaned) && cleaned.split(/\(\d+\)/).length > 2) {
+          blocks.push({ type: 'numbered_list', content: cleaned, raw: cleaned })
         }
         // 检查是否包含警告/禁忌关键词
-        else if (/禁用|禁忌|慎用|注意|警告|不良反应/.test(text)) {
-          blocks.push({ type: 'warning', content: text, raw: text })
+        else if (/禁用|禁忌|慎用|注意|警告|不良反应/.test(cleaned)) {
+          blocks.push({ type: 'warning', content: cleaned, raw: cleaned })
         }
         // 检查是否是重点内容
-        else if (/首选|关键|重要|必须|一定/.test(text)) {
-          blocks.push({ type: 'key_point', content: text, raw: text })
+        else if (/首选|关键|重要|必须|一定/.test(cleaned)) {
+          blocks.push({ type: 'key_point', content: cleaned, raw: cleaned })
         }
         else {
-          blocks.push({ type: 'paragraph', content: text, raw: text })
+          blocks.push({ type: 'paragraph', content: cleaned, raw: cleaned })
         }
       }
       currentBlock = []
@@ -267,12 +279,17 @@ function TableBlock({ content, variant }: { content: string; variant: 'default' 
     if (lines.length < 2) return { headers: [], rows: [], tableTitle: '数据表', mnemonic: null }
     
     const parseRow = (line: string) => 
-      line.split('|').filter(cell => cell.trim()).map(cell => cell.trim())
+      line.split('|')
+        .map(cell => sanitizeText(cell))
+        .filter(cell => cell !== null) as string[]
     
     const headers = parseRow(lines[0])
     // 跳过分隔行 |---|---|
     const dataLines = lines.slice(1).filter(l => !l.match(/^\|[\s\-|]+\|$/))
-    const rows = dataLines.map(parseRow)
+    const rows = dataLines
+      .map(parseRow)
+      .map(row => row.filter(cell => sanitizeText(cell ?? '') !== null))
+      .filter(row => row.length > 0)
     
     // 根据表头推断表格标题
     let tableTitle = '数据表'
@@ -297,7 +314,7 @@ function TableBlock({ content, variant }: { content: string; variant: 'default' 
     return { headers, rows, tableTitle, mnemonic }
   }, [content])
   
-  if (headers.length === 0) return null
+  if (headers.length === 0 || rows.length === 0) return null
   
   // 排除"考点分布"表格（如果已有考点分布模块，避免重复）
   if (tableTitle === '考点分布') {
@@ -388,7 +405,9 @@ function CellContent({ content, isFirstColumn = false, variant }: { content: str
   const [isExpanded, setIsExpanded] = useState(false)
   
   // 格式化缩写
-  const formattedContent = formatAbbreviations(content)
+  const sanitized = sanitizeText(content)
+  const formattedContent = sanitized ? formatAbbreviations(sanitized) : ''
+  if (!formattedContent) return null
   
   // 检测编号列表：(1)(2)(3) 或 ①②③
   const numberedListMatch = formattedContent.match(/(\([0-9一二三四五六七八九十]+\)|[\u2460-\u2473])/g)
@@ -687,16 +706,17 @@ function ImageBlock({ content }: { content: string }) {
  */
 function NumberedListBlock({ content, variant }: { content: string; variant: 'default' | 'minimal' }) {
   const items = useMemo(() => {
-    // 分割 (1)xxx(2)xxx 格式
-    const parts = content.split(/\((\d+)\)/).filter(p => p.trim())
+    const parts = content.split(/\((\d+)\)/).filter(p => sanitizeText(p) !== null)
     const result: { num: string; text: string }[] = []
-    
     for (let i = 0; i < parts.length; i += 2) {
       if (parts[i + 1]) {
-        result.push({ num: parts[i], text: parts[i + 1].trim() })
+        const num = sanitizeText(parts[i]) ?? ''
+        const text = sanitizeText(parts[i + 1]) ?? ''
+        if (num && text) {
+          result.push({ num, text })
+        }
       }
     }
-    
     return result
   }, [content])
   
@@ -789,12 +809,14 @@ function KeyPointBlock({ content, variant }: { content: string; variant: 'defaul
  */
 function ParagraphBlock({ content, variant }: { content: string; variant: 'default' | 'minimal' }) {
   // 长段落分段显示
-  const isLongParagraph = content.length > 200
+  const cleaned = sanitizeText(content)
+  if (!cleaned) return null
+  const isLongParagraph = cleaned.length > 200
   
   // 尝试按句号分段
   const sentences = isLongParagraph 
-    ? content.split(/(?<=[。；])\s*/).filter(s => s.trim())
-    : [content]
+    ? cleaned.split(/(?<=[。；])\s*/).filter(s => sanitizeText(s))
+    : [cleaned]
   
   return (
     <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
