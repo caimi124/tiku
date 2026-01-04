@@ -407,10 +407,9 @@ function CellContent({ content, isFirstColumn = false, variant }: { content: str
   // 格式化缩写
   const sanitized = sanitizeText(content)
   const formattedContent = sanitized ? formatAbbreviations(sanitized) : ''
-  if (!formattedContent) return null
   
   // 检测编号列表：(1)(2)(3) 或 ①②③
-  const numberedListMatch = formattedContent.match(/(\([0-9一二三四五六七八九十]+\)|[\u2460-\u2473])/g)
+  const numberedListMatch = useMemo(() => formattedContent.match(/(\([0-9一二三四五六七八九十]+\)|[\u2460-\u2473])/g), [formattedContent])
   const hasNumberedList = numberedListMatch && numberedListMatch.length >= 2
   
   // 解析编号列表项
@@ -491,6 +490,8 @@ function CellContent({ content, isFirstColumn = false, variant }: { content: str
     }
     return { className: '', sticker: null, stickerColor: '' }
   }, [formattedContent, variant])
+
+  if (!formattedContent) return null
   
   // 第一列通常是分类名，用药物图标装饰
   if (isFirstColumn && formattedContent.length < 30 && !hasNumberedList) {
