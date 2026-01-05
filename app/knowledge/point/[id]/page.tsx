@@ -22,12 +22,13 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 
 import { ExamValueCard } from '@/components/ui/ExamValueCard'
 import { SmartContentRenderer } from '@/components/ui/SmartContentRenderer'
-import { PointPageActions } from '@/components/ui/PointPageActions'
+import { PointBottomActions } from '@/components/ui/PointBottomActions'
 import { getPointPageConfig } from '@/lib/knowledge/pointPage.config'
 import { getPointConfig } from '@/lib/knowledge/pointConfigs'
 import { getDefaultExamOverview, type Takeaway } from '@/lib/knowledge/pointPage.schema'
 import { formatAbbreviations } from '@/lib/abbreviations'
 import type { Action } from '@/lib/knowledge/pointPage.types'
+import { hasClassificationTable } from '@/lib/contentUtils'
 
 /* =========================
    类型（宽松版，避免 build 卡死）
@@ -95,6 +96,15 @@ type ExamMapData = {
   angles: string[]
   focusTitle?: string
   focus: { id: string; text: string }[]
+}
+
+type PointType = 'specific_drug' | 'drug_class' | 'exam_strategy' | 'structure_skeleton'
+
+type ExamCoreZone = {
+  high_frequency_patterns: string[]
+  common_traps: string[]
+  isComplete: boolean
+  isPlaceholder: boolean
 }
 
 const DEFAULT_ACTIONS: Record<'primary' | 'secondary' | 'tertiary', Action> = {
@@ -304,15 +314,176 @@ export default function KnowledgePointPage() {
     return newConfig?.actions ?? DEFAULT_ACTIONS
   }, [newConfig])
 
+  // 学习路线：仅保留一行固定提示
   const studyRouteText = useMemo(() => {
     if (newConfig?.meta.studyRoute?.length) {
       return newConfig.meta.studyRoute.join(' → ')
     }
     if (oldConfig?.studyPath?.text) {
-      return oldConfig.studyPath.text
+      // 提取固定提示文本，移除展开解释
+      const text = oldConfig.studyPath.text
+      if (text.includes('：')) {
+        return text.split('：')[0] + '：' + text.split('：')[1]?.split('→')[0]?.trim() || ''
+      }
+      return text
     }
-    return null
+    return '学习路线：先看考什么 → 再记重点 → 最后做3题'
   }, [newConfig, oldConfig])
+
+  // 结构骨架：禁止直接用表格，只用于建立脑内地图
+  const hasStructureTable = useMemo(() => {
+    return safePoint?.content ? hasClassificationTable(safePoint.content) : false
+  }, [safePoint])
+
+  // 【步骤 1】判断考点类型
+  const pointType = useMemo<PointType>(() => {
+    // 若核心对象是"单一具体药物"，判定为【具体必考药物】
+    if (safePoint?.drug_name || 
+        (coreDrugCards.length > 0 && coreDrugCards[0]?.name && !coreDrugCards[0]?.name.includes('类'))) {
+      return 'specific_drug'
+    }
+    
+    // 若核心对象是"某一类药物"，判定为【药物分类】
+    if (safePoint?.point_type === 'drug' || 
+        (safePoint?.title && /类|分类|药物分类/.test(safePoint.title)) ||
+        (coreDrugCards.length > 0 && coreDrugCards[0]?.name?.includes('类'))) {
+      return 'drug_class'
+    }
+    
+    // 若内容围绕考试分值/策略，判定为【考试策略】
+    if (safePoint?.title && /策略|分值|考试|复习|备考/.test(safePoint.title)) {
+      return 'exam_strategy'
+    }
+    
+    // 若内容目标是建立分类关系，判定为【结构骨架】
+    if (classificationSections.length > 0 || hasStructureTable) {
+      return 'structure_skeleton'
+    }
+    
+    // 默认：根据是否有药物相关内容判断
+    if (safePoint?.title && /药|用药|治疗/.test(safePoint.title)) {
+      return 'drug_class'
+    }
+    
+    return 'structure_skeleton'
+  }, [safePoint, coreDrugCards, classificationSections, hasStructureTable])
+
+  // 检查是否为药物类考点（兼容旧逻辑）
+  const isDrugPoint = useMemo(() => {
+    return pointType === 'specific_drug' || pointType === 'drug_class'
+  }, [pointType])
+
+  // 验证核心药物详解卡必需字段
+  const validateCoreDrugCard = useMemo(() => {
+    if (!isDrugPoint) return true // 非药物类考点不需要验证
+    
+    if (coreDrugCards.length === 0) {
+      console.error(`[系统错误] 药物类考点 ${safePointId} 缺少核心药物详解卡模块`)
+      return false
+    }
+
+    for (const card of coreDrugCards) {
+      const hasWhy = !!card.why
+      const hasIndication = card.bullets.some(b => 
+        b.text.includes('适应证') || b.text.includes('适应症') || b.level === 'key'
+      )
+      const hasContraindication = card.bullets.some(b => 
+        b.text.includes('禁忌') || b.level === 'danger'
+      )
+      const hasInteraction = card.bullets.some(b => 
+        b.text.includes('相互作用') || b.text.includes('交互') || b.level === 'warn'
+      )
+
+      if (!hasWhy || !hasIndication || !hasContraindication || !hasInteraction) {
+        console.error(`[系统错误] 核心药物详解卡 ${card.name} 缺少必需字段`, {
+          hasWhy,
+          hasIndication,
+          hasContraindication,
+          hasInteraction
+        })
+        return false
+      }
+    }
+    return true
+  }, [isDrugPoint, coreDrugCards, safePointId])
+
+  // 【强制模块】exam_core_zone: 高频考法 & 易错点（应试核心区）
+  const examCoreZone = useMemo<ExamCoreZone>(() => {
+    // 适用范围：仅【具体必考药物】和【药物分类】需要生成
+    if (pointType !== 'specific_drug' && pointType !== 'drug_class') {
+      return {
+        high_frequency_patterns: [],
+        common_traps: [],
+        isComplete: false,
+        isPlaceholder: false
+      }
+    }
+
+    // 从 highYieldModule 提取数据
+    const patterns: string[] = []
+    const traps: string[] = []
+
+    if (highYieldModule?.data?.rules) {
+      for (const rule of highYieldModule.data.rules) {
+        // 高频考法：使用特定句式
+        if (rule.examMove || rule.oneLiner) {
+          const text = rule.examMove || rule.oneLiner
+          // 检查是否符合句式要求
+          if (text.includes('如果') && text.includes('问') && text.includes('选')) {
+            patterns.push(formatAbbreviations(text))
+          } else if (text.includes('题干出现') && text.includes('首选')) {
+            patterns.push(formatAbbreviations(text))
+          } else if (rule.level === 'key') {
+            // 转换为标准句式
+            patterns.push(`如果题干问${formatAbbreviations(rule.oneLiner)}，选${formatAbbreviations(rule.bucket)}`)
+          }
+        }
+        
+        // 易错点：使用特定句式
+        if (rule.level === 'warn' || rule.level === 'danger') {
+          const trapText = rule.examMove || rule.oneLiner
+          if (trapText && !trapText.includes('常见误区')) {
+            traps.push(`常见误区是${formatAbbreviations(trapText)}，正确理解是${formatAbbreviations(rule.oneLiner)}`)
+          } else if (trapText) {
+            traps.push(formatAbbreviations(trapText))
+          }
+        }
+      }
+    }
+
+    // 从 takeaways 补充数据（如果 highYieldModule 数据不足）
+    if (patterns.length < 2 || traps.length < 2) {
+      for (const item of takeaways) {
+        if (patterns.length < 2 && item.level === 'key') {
+          patterns.push(`如果题干问${formatAbbreviations(item.text)}，选相关药物`)
+        }
+        if (traps.length < 2 && (item.level === 'warn' || item.level === 'danger')) {
+          traps.push(`常见误区是${formatAbbreviations(item.text)}，正确理解需参考教材原文`)
+        }
+      }
+    }
+
+    // 校验数量下限
+    const hasMinPatterns = patterns.length >= 2
+    const hasMinTraps = traps.length >= 2
+    const isComplete = hasMinPatterns && hasMinTraps
+
+    return {
+      high_frequency_patterns: patterns,
+      common_traps: traps,
+      isComplete,
+      isPlaceholder: !isComplete && (patterns.length > 0 || traps.length > 0)
+    }
+  }, [pointType, highYieldModule, takeaways])
+
+  // 确保高频考法模块存在（兼容旧逻辑）
+  const hasHighYield = useMemo(() => {
+    return examCoreZone.high_frequency_patterns.length > 0 || examCoreZone.common_traps.length > 0
+  }, [examCoreZone])
+
+  const structureSections = useMemo(() => {
+    return classificationSections.length > 0 ? classificationSections : []
+  }, [classificationSections])
 
   // 早期返回必须在所有 hooks 之后
   if (loading) return <div className="p-8">加载中…</div>
@@ -350,11 +521,10 @@ export default function KnowledgePointPage() {
               <br />
               ✓ 你目前是否掌握
             </div>
-            {studyRouteText && (
-              <div className="rounded-lg border border-dashed border-blue-200 bg-blue-50/60 px-4 py-2 text-sm text-blue-900">
-                学习路线：{formatAbbreviations(studyRouteText)}
-              </div>
-            )}
+            {/* 学习路线：仅保留一行固定提示 */}
+            <div className="rounded-lg border border-dashed border-blue-200 bg-blue-50/60 px-4 py-2 text-sm text-blue-900">
+              {formatAbbreviations(studyRouteText)}
+            </div>
           </div>
 
           {examMapData && (
@@ -390,93 +560,248 @@ export default function KnowledgePointPage() {
             </div>
           )}
 
-          {(classificationSections.length > 0 || safePoint.content) && (
+          {/* 结构骨架：只用于建立脑内地图，禁止直接用表格作为主展示 */}
+          {structureSections.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（只建立脑内地图）</h2>
-              {classificationSections.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {classificationSections.map((section) => (
-                    <div key={section.id} className="space-y-2">
-                      <h3 className="text-base font-semibold text-gray-900">
-                        {formatAbbreviations(section.title)}
-                      </h3>
-                      <ul className="space-y-1 text-gray-800 ml-1">
-                        {section.items.map((item) => (
-                          <li key={item.id} className="flex items-start gap-2">
-                            <span className="text-purple-500 mt-1">•</span>
-                            <span>{formatAbbreviations(item.text)}</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {structureSections.map((section) => (
+                  <div key={section.id} className="space-y-2">
+                    <h3 className="text-base font-semibold text-gray-900">
+                      {formatAbbreviations(section.title)}
+                    </h3>
+                    <ul className="space-y-1 text-gray-800 ml-1">
+                      {section.items.map((item) => (
+                        <li key={item.id} className="flex items-start gap-2">
+                          <span className="text-purple-500 mt-1">•</span>
+                          <span>{formatAbbreviations(item.text)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 强制引入模块「核心药物详解卡（只保留必考药）」，必须包含：为什么考它、适应证、禁忌、相互作用
+              仅当考点类型 =【具体必考药物】时，才允许输出 */}
+          {pointType === 'specific_drug' && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">高频考法 & 易错点（应试核心区）</h2>
+              
+              {examCoreZone.isComplete ? (
+                <div className="space-y-6">
+                  {/* 高频考法 */}
+                  {examCoreZone.high_frequency_patterns.length > 0 && (
+                    <div>
+                      <h3 className="text-base font-semibold text-blue-700 mb-3">📌 高频考法</h3>
+                      <ul className="space-y-2">
+                        {examCoreZone.high_frequency_patterns.map((pattern, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
+                            <span className="text-blue-600 mt-1">•</span>
+                            <span>{pattern}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
-                  ))}
+                  )}
+
+                  {/* 易错点 */}
+                  {examCoreZone.common_traps.length > 0 && (
+                    <div>
+                      <h3 className="text-base font-semibold text-orange-700 mb-3">⚠️ 易错点</h3>
+                      <ul className="space-y-2">
+                        {examCoreZone.common_traps.map((trap, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
+                            <span className="text-orange-600 mt-1">•</span>
+                            <span>{trap}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ) : examCoreZone.isPlaceholder ? (
+                // 部分数据：显示已有内容 + 提示
+                <div className="space-y-4">
+                  {examCoreZone.high_frequency_patterns.length > 0 && (
+                    <div>
+                      <h3 className="text-base font-semibold text-blue-700 mb-3">📌 高频考法</h3>
+                      <ul className="space-y-2">
+                        {examCoreZone.high_frequency_patterns.map((pattern, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
+                            <span className="text-blue-600 mt-1">•</span>
+                            <span>{pattern}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      {examCoreZone.high_frequency_patterns.length < 2 && (
+                        <p className="text-yellow-600 text-sm mt-2">
+                          ⚠️ 高频考法不足2条（当前{examCoreZone.high_frequency_patterns.length}条），待补充
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  
+                  {examCoreZone.common_traps.length > 0 && (
+                    <div>
+                      <h3 className="text-base font-semibold text-orange-700 mb-3">⚠️ 易错点</h3>
+                      <ul className="space-y-2">
+                        {examCoreZone.common_traps.map((trap, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
+                            <span className="text-orange-600 mt-1">•</span>
+                            <span>{trap}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      {examCoreZone.common_traps.length < 2 && (
+                        <p className="text-yellow-600 text-sm mt-2">
+                          ⚠️ 易错点不足2条（当前{examCoreZone.common_traps.length}条），待补充
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
+                    <p className="text-yellow-800 text-sm">
+                      ⚠️ 本考点应试核心内容待补充（point_id: {safePointId}）
+                    </p>
+                  </div>
                 </div>
               ) : (
-                safePoint.content && (
-                  <div className="border border-gray-100 rounded-lg p-4">
-                    <SmartContentRenderer
-                      content={safePoint.content}
-                      annotations={inlineAnnotations.length > 0 ? inlineAnnotations : undefined}
-                    />
-                  </div>
-                )
+                // 完全缺失：显示占位卡片
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <p className="text-yellow-800 text-sm font-medium">
+                    ⚠️ 本考点应试核心内容待补充
+                  </p>
+                  <p className="text-yellow-700 text-xs mt-2">
+                    考点ID: {safePointId} | 类型: {pointType === 'specific_drug' ? '具体必考药物' : '药物分类'}
+                  </p>
+                </div>
               )}
             </div>
           )}
 
-          {highYieldCards.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">高频考法 & 易错点（应试核心区）</h2>
-              <div className="space-y-4">
-                {highYieldCards.map((rule) => (
-                  <div key={rule.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50/50">
-                    <div className="text-sm font-semibold text-gray-900 mb-2">【{formatAbbreviations(rule.bucket)}】</div>
-                    <p className="text-gray-900 leading-relaxed">{formatAbbreviations(rule.oneLiner)}</p>
-                    {rule.examMove && (
-                      <p className="text-gray-800 leading-relaxed mt-2">
-                        解题提示：{formatAbbreviations(rule.examMove)}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {coreDrugCards.length > 0 && (
+          {/* 强制引入模块「核心药物详解卡（只保留必考药）」，必须包含：为什么考它、适应证、禁忌、相互作用 */}
+          {isDrugPoint && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">核心药物详解卡（只保留必考药）</h2>
-              <div className="space-y-4">
-                {coreDrugCards.map((card) => (
-                  <div key={card.id} className="border border-gray-200 rounded-lg p-4 bg-gradient-to-br from-green-50 to-blue-50">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xl">🧠</span>
-                      <h3 className="text-lg font-bold text-gray-900">
-                        {formatAbbreviations(card.name)}
-                        {card.alias && (
-                          <span className="text-sm font-normal text-gray-600 ml-2">
-                            ({formatAbbreviations(card.alias)})
-                          </span>
+              {coreDrugCards.length > 0 ? (
+                <div className="space-y-4">
+                  {coreDrugCards.map((card) => {
+                    // 分类 bullets 到不同类别
+                    const indicationBullets = card.bullets.filter(b => 
+                      b.text.includes('适应证') || b.text.includes('适应症') || b.level === 'key'
+                    )
+                    const contraindicationBullets = card.bullets.filter(b => 
+                      b.text.includes('禁忌') || b.level === 'danger'
+                    )
+                    const interactionBullets = card.bullets.filter(b => 
+                      b.text.includes('相互作用') || b.text.includes('交互') || b.level === 'warn'
+                    )
+                    const otherBullets = card.bullets.filter(b => 
+                      !indicationBullets.includes(b) && 
+                      !contraindicationBullets.includes(b) && 
+                      !interactionBullets.includes(b)
+                    )
+
+                    return (
+                      <div key={card.id} className="border border-gray-200 rounded-lg p-4 bg-gradient-to-br from-green-50 to-blue-50">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-xl">🧠</span>
+                          <h3 className="text-lg font-bold text-gray-900">
+                            {formatAbbreviations(card.name)}
+                            {card.alias && (
+                              <span className="text-sm font-normal text-gray-600 ml-2">
+                                ({formatAbbreviations(card.alias)})
+                              </span>
+                            )}
+                          </h3>
+                        </div>
+                        
+                        {/* 为什么考它（必需） */}
+                        {card.why ? (
+                          <div className="mb-4">
+                            <div className="font-semibold text-gray-900 mb-1">【为什么考它】</div>
+                            <p className="text-gray-800 leading-relaxed">{formatAbbreviations(card.why)}</p>
+                          </div>
+                        ) : (
+                          <div className="mb-4 text-red-600 text-sm">⚠️ 缺少「为什么考它」字段</div>
                         )}
-                      </h3>
-                    </div>
-                    {card.why && (
-                      <div className="text-gray-800 leading-relaxed mb-3">
-                        {formatAbbreviations(card.why)}
+
+                        {/* 适应证（必需） */}
+                        {indicationBullets.length > 0 ? (
+                          <div className="mb-4">
+                            <div className="font-semibold text-blue-700 mb-2">【适应证】</div>
+                            <ul className="list-disc ml-5 space-y-1 text-gray-800">
+                              {indicationBullets.map((bullet) => (
+                                <li key={bullet.id} className="leading-relaxed">
+                                  {formatAbbreviations(bullet.text.replace(/【适应证】|【适应症】/g, '').trim())}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : (
+                          <div className="mb-4 text-red-600 text-sm">⚠️ 缺少「适应证」字段</div>
+                        )}
+
+                        {/* 禁忌（必需） */}
+                        {contraindicationBullets.length > 0 ? (
+                          <div className="mb-4">
+                            <div className="font-semibold text-red-700 mb-2">【禁忌】</div>
+                            <ul className="list-disc ml-5 space-y-1 text-red-700">
+                              {contraindicationBullets.map((bullet) => (
+                                <li key={bullet.id} className="leading-relaxed">
+                                  {formatAbbreviations(bullet.text.replace(/【禁忌】/g, '').trim())}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : (
+                          <div className="mb-4 text-red-600 text-sm">⚠️ 缺少「禁忌」字段</div>
+                        )}
+
+                        {/* 相互作用（必需） */}
+                        {interactionBullets.length > 0 ? (
+                          <div className="mb-4">
+                            <div className="font-semibold text-orange-700 mb-2">【相互作用】</div>
+                            <ul className="list-disc ml-5 space-y-1 text-orange-700">
+                              {interactionBullets.map((bullet) => (
+                                <li key={bullet.id} className="leading-relaxed">
+                                  {formatAbbreviations(bullet.text.replace(/【相互作用】|【交互】/g, '').trim())}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : (
+                          <div className="mb-4 text-red-600 text-sm">⚠️ 缺少「相互作用」字段</div>
+                        )}
+
+                        {/* 其他信息 */}
+                        {otherBullets.length > 0 && (
+                          <div className="mb-4">
+                            <div className="font-semibold text-gray-700 mb-2">【其他】</div>
+                            <ul className="list-disc ml-5 space-y-1 text-gray-800">
+                              {otherBullets.map((bullet) => (
+                                <li key={bullet.id} className="leading-relaxed">
+                                  {formatAbbreviations(bullet.text)}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {card.bullets.length > 0 && (
-                      <ul className="list-disc ml-5 space-y-1 text-gray-900">
-                        {card.bullets.map((bullet) => (
-                          <li key={bullet.id} className="leading-relaxed">
-                            {formatAbbreviations(bullet.text)}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-              </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-red-800 text-sm font-semibold">
+                    ⚠️ 系统错误：药物类考点必须包含「核心药物详解卡」模块
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
@@ -528,13 +853,21 @@ export default function KnowledgePointPage() {
             </div>
           )}
 
-          <PointPageActions
-            primary={actionSet.primary}
-            secondary={actionSet.secondary}
-            tertiary={actionSet.tertiary}
-            pointId={safePoint.id}
-            sticky={!isMobile}
-          />
+          {/* 底部操作区：固定布局，左右按钮 */}
+          <div className="pb-20 sm:pb-24">
+            <PointBottomActions
+              pointId={safePoint.id}
+              selfTestHref={(() => {
+                const action = actionSet.primary
+                if (!action) return '#'
+                if (action.href) return action.href
+                if (action.type === 'selfTest') {
+                  return `/practice/by-point?pointId=${safePoint.id}&mode=self-test&count=${action.payload?.count || 5}`
+                }
+                return '#'
+              })()}
+            />
+          </div>
 
           <div className="text-center">
             <Link
