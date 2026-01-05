@@ -120,7 +120,7 @@ async function main() {
       importance_level: 3,
       learn_mode: 'BOTH',
       error_pattern_tags: [],
-      memory_tips: null || undefined
+      memory_tips: null
     })
   }
 
