@@ -34,6 +34,7 @@ import {
   extractExamPatternsFromContent,
   extractDrugsFromContent,
   generateStudyAdviceFromContent,
+  generateDefaultStructure,
 } from '@/lib/knowledge/contentExtractor'
 
 /* =========================
@@ -258,8 +259,44 @@ export default function KnowledgePointPage() {
     }
   }, [examMapModule, oldConfig, safePoint])
 
+  // 结构骨架：禁止直接用表格，只用于建立脑内地图（必须在 basePointType 之前定义）
+  const hasStructureTable = useMemo(() => {
+    return safePoint?.content ? hasClassificationTable(safePoint.content) : false
+  }, [safePoint])
+
+  // 先计算基础 pointType（不依赖 coreDrugCards）
+  const basePointType = useMemo<PointType>(() => {
+    // 若核心对象是"单一具体药物"，判定为【具体必考药物】
+    if (safePoint?.drug_name) {
+      return 'specific_drug'
+    }
+    
+    // 若核心对象是"某一类药物"，判定为【药物分类】
+    if (safePoint?.point_type === 'drug' || 
+        (safePoint?.title && /类|分类|药物分类/.test(safePoint.title))) {
+      return 'drug_class'
+    }
+    
+    // 若内容围绕考试分值/策略，判定为【考试策略】
+    if (safePoint?.title && /策略|分值|考试|复习|备考/.test(safePoint.title)) {
+      return 'exam_strategy'
+    }
+    
+    // 若内容目标是建立分类关系，判定为【结构骨架】
+    if (hasStructureTable) {
+      return 'structure_skeleton'
+    }
+    
+    // 默认：根据是否有药物相关内容判断
+    if (safePoint?.title && /药|用药|治疗/.test(safePoint.title)) {
+      return 'drug_class'
+    }
+    
+    return 'structure_skeleton'
+  }, [safePoint, hasStructureTable])
+
   // 【必须模块】结构骨架 - 所有考点类型都必须显示
-  // 优先级：配置数据 > 从 content 提取 > 占位
+  // 优先级：配置数据 > 从 content 提取 > 基于标题和类型生成默认结构 > 占位
   const classificationSections = useMemo(() => {
     // 优先级1：配置数据
     if (classificationModule?.data.sections?.length) {
@@ -274,13 +311,19 @@ export default function KnowledgePointPage() {
       }
     }
     
+    // 优先级3：基于标题和类型生成默认结构（仅 drug_class 和 structure_skeleton）
+    if (basePointType === 'drug_class' || basePointType === 'structure_skeleton') {
+      const defaultStructure = generateDefaultStructure(
+        safePoint?.title || '',
+        basePointType
+      )
+      if (defaultStructure?.sections?.length) {
+        return defaultStructure.sections
+      }
+    }
+    
     return []
-  }, [classificationModule, safePoint])
-
-  // 结构骨架：禁止直接用表格，只用于建立脑内地图（必须在 basePointType 之前定义）
-  const hasStructureTable = useMemo(() => {
-    return safePoint?.content ? hasClassificationTable(safePoint.content) : false
-  }, [safePoint])
+  }, [classificationModule, safePoint, basePointType])
 
   const highYieldCards = useMemo<HighYieldCard[]>(() => {
     if (highYieldModule?.data?.rules?.length) {
@@ -304,37 +347,6 @@ export default function KnowledgePointPage() {
   }, [highYieldModule, takeaways])
 
   // 代表药物应试定位 - 优先级：配置数据 > 从 content 提取 > 占位
-  // 先计算基础 pointType（不依赖 coreDrugCards）
-  const basePointType = useMemo<PointType>(() => {
-    // 若核心对象是"单一具体药物"，判定为【具体必考药物】
-    if (safePoint?.drug_name) {
-      return 'specific_drug'
-    }
-    
-    // 若核心对象是"某一类药物"，判定为【药物分类】
-    if (safePoint?.point_type === 'drug' || 
-        (safePoint?.title && /类|分类|药物分类/.test(safePoint.title))) {
-      return 'drug_class'
-    }
-    
-    // 若内容围绕考试分值/策略，判定为【考试策略】
-    if (safePoint?.title && /策略|分值|考试|复习|备考/.test(safePoint.title)) {
-      return 'exam_strategy'
-    }
-    
-    // 若内容目标是建立分类关系，判定为【结构骨架】
-    if (classificationSections.length > 0 || hasStructureTable) {
-      return 'structure_skeleton'
-    }
-    
-    // 默认：根据是否有药物相关内容判断
-    if (safePoint?.title && /药|用药|治疗/.test(safePoint.title)) {
-      return 'drug_class'
-    }
-    
-    return 'structure_skeleton'
-  }, [safePoint, classificationSections, hasStructureTable])
-
   const coreDrugCards = useMemo<CoreDrugCardUI[]>(() => {
     // 优先级1：配置数据
     if (coreDrugsModule?.data?.cards?.length) {

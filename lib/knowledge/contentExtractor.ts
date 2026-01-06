@@ -10,6 +10,65 @@
 
 import { hasClassificationTable } from '@/lib/contentUtils'
 
+/**
+ * 基于标题和类型生成默认结构骨架
+ */
+export function generateDefaultStructure(
+  title: string,
+  pointType: 'specific_drug' | 'drug_class' | 'exam_strategy' | 'structure_skeleton'
+): ExtractedStructure | null {
+  if (!title) return null
+
+  // 对于药物分类类型，生成默认结构
+  if (pointType === 'drug_class') {
+    // 尝试从标题中提取分类信息
+    const titleMatch = title.match(/(.+?)(?:类|分类|药物)/)
+    const baseName = titleMatch ? titleMatch[1] : title
+
+    return {
+      sections: [
+        {
+          id: 'default-section-1',
+          title: '分类依据',
+          items: [
+            { id: 'default-item-1-1', text: '按作用机制分类' },
+            { id: 'default-item-1-2', text: '按选择性分类' },
+            { id: 'default-item-1-3', text: '按临床应用分类' },
+          ]
+        },
+        {
+          id: 'default-section-2',
+          title: '考试维度',
+          items: [
+            { id: 'default-item-2-1', text: '首选药物（高频考点）' },
+            { id: 'default-item-2-2', text: '不推荐/禁忌情况' },
+            { id: 'default-item-2-3', text: '同类药物对比' },
+          ]
+        }
+      ]
+    }
+  }
+
+  // 对于结构骨架类型
+  if (pointType === 'structure_skeleton') {
+    return {
+      sections: [
+        {
+          id: 'default-section-1',
+          title: '核心结构',
+          items: [
+            { id: 'default-item-1-1', text: '基本概念与定义' },
+            { id: 'default-item-1-2', text: '分类体系' },
+            { id: 'default-item-1-3', text: '关键特征' },
+          ]
+        }
+      ]
+    }
+  }
+
+  return null
+}
+
 export interface ExtractedStructure {
   sections: Array<{
     id: string
