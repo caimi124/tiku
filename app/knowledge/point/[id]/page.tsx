@@ -726,36 +726,99 @@ export default function KnowledgePointPage() {
           )}
 
           {/* 【必须模块】结构骨架（脑内地图）- 所有考点类型都必须显示 */}
-          {/* 结构骨架必须始终显示，基于考点类型使用固定模板 */}
+          {/* 结构骨架必须始终存在，但未填充的结构项不暴露给用户 */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（脑内地图）</h2>
-            {structureSections.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {structureSections.map((section) => (
-                  <div key={section.id} className="space-y-2">
-                    <h3 className="text-base font-semibold text-gray-900">
-                      {formatAbbreviations(section.title)}
-                    </h3>
-                    <ul className="space-y-1 text-gray-800 ml-1">
-                      {section.items.map((item) => (
-                        <li key={item.id} className="flex items-start gap-2">
-                          <span className="text-purple-500 mt-1">•</span>
-                          <span className={(item as any).placeholder ? 'text-gray-400 italic' : ''}>
-                            {formatAbbreviations(item.text)}
-                          </span>
+            {(() => {
+              // 过滤出有实际内容的结构项（非占位符）
+              const sectionsWithContent = structureSections.filter(section => {
+                return section.items.some(item => {
+                  const isPlaceholder = (item as any).placeholder === true
+                  const isPlaceholderText = item.text === '待补充' || item.text.trim() === ''
+                  return !isPlaceholder && !isPlaceholderText
+                })
+              })
+
+              // 统计无内容的结构项数量
+              const emptySectionsCount = structureSections.length - sectionsWithContent.length
+
+              // 如果 ≥2 个结构项无内容，使用概览式渲染
+              if (emptySectionsCount >= 2) {
+                return (
+                  <div className="space-y-4">
+                    <p className="text-gray-800 leading-relaxed font-medium">
+                      本类考点通常从以下维度考查：
+                    </p>
+                    <ul className="space-y-2 text-gray-700 ml-4">
+                      {structureSections.map((section) => (
+                        <li key={section.id} className="flex items-start gap-2">
+                          <span className="text-blue-600 mt-1">•</span>
+                          <span>{formatAbbreviations(section.title)}</span>
                         </li>
                       ))}
                     </ul>
+                    <p className="text-sm text-gray-600 leading-relaxed mt-4 pt-4 border-t border-gray-200">
+                      本考点当前以建立整体认知结构为主，具体细节可结合下方教材原文理解。
+                    </p>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                <p className="text-yellow-800 text-sm">
-                  ⚠️ 结构骨架模板加载失败（point_id: {safePointId}，类型: {pointType}）
-                </p>
-              </div>
-            )}
+                )
+              }
+
+              // 如果只有部分结构项有内容，只渲染有内容的部分
+              if (sectionsWithContent.length > 0) {
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {sectionsWithContent.map((section) => {
+                      // 过滤出非占位符的 items
+                      const validItems = section.items.filter(item => {
+                        const isPlaceholder = (item as any).placeholder === true
+                        const isPlaceholderText = item.text === '待补充' || item.text.trim() === ''
+                        return !isPlaceholder && !isPlaceholderText
+                      })
+
+                      // 只渲染有有效内容的 section
+                      if (validItems.length === 0) return null
+
+                      return (
+                        <div key={section.id} className="space-y-2">
+                          <h3 className="text-base font-semibold text-gray-900">
+                            {formatAbbreviations(section.title)}
+                          </h3>
+                          <ul className="space-y-1 text-gray-800 ml-1">
+                            {validItems.map((item) => (
+                              <li key={item.id} className="flex items-start gap-2">
+                                <span className="text-purple-500 mt-1">•</span>
+                                <span>{formatAbbreviations(item.text)}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              }
+
+              // 如果所有结构项都无内容，使用概览式渲染
+              return (
+                <div className="space-y-4">
+                  <p className="text-gray-800 leading-relaxed font-medium">
+                    本类考点通常从以下维度考查：
+                  </p>
+                  <ul className="space-y-2 text-gray-700 ml-4">
+                    {structureSections.map((section) => (
+                      <li key={section.id} className="flex items-start gap-2">
+                        <span className="text-blue-600 mt-1">•</span>
+                        <span>{formatAbbreviations(section.title)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-sm text-gray-600 leading-relaxed mt-4 pt-4 border-t border-gray-200">
+                    本考点当前以建立整体认知结构为主，具体细节可结合下方教材原文理解。
+                  </p>
+                </div>
+              )
+            })()}
           </div>
 
           {/* 【强制模块】高频考法 & 易错点（应试核心区）
