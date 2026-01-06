@@ -166,29 +166,50 @@ export function fillStructureFromContent(
     // 匹配关键词
     let matchedItems: string[] = []
 
-    if (sectionTitle.includes('药理作用') || sectionTitle.includes('作用机制')) {
+    if (sectionTitle.includes('药理作用') || sectionTitle.includes('作用特点') || sectionTitle.includes('作用机制')) {
       // 查找机制相关描述
       for (const line of lines) {
-        if (/机制|作用|通过|抑制|激活/.test(line) && line.length > 10 && line.length < 200) {
+        if (/机制|作用|特点|通过|抑制|激活/.test(line) && line.length > 10 && line.length < 200) {
+          matchedItems.push(line.trim())
+        }
+      }
+    } else if (sectionTitle.includes('临床应用')) {
+      // 查找临床应用相关描述
+      for (const line of lines) {
+        if (/临床|应用|用于|治疗|适用于|适应证/.test(line) && line.length > 10 && line.length < 200) {
+          matchedItems.push(line.trim())
+        }
+      }
+    } else if (sectionTitle.includes('用药注意事项') || sectionTitle.includes('注意事项')) {
+      // 查找用药注意事项相关描述
+      for (const line of lines) {
+        if (/注意|注意事|用药|慎用|避免|禁忌/.test(line) && line.length > 10 && line.length < 200) {
+          matchedItems.push(line.trim())
+        }
+      }
+    } else if (sectionTitle.includes('监测要点') || sectionTitle.includes('不良反应')) {
+      // 查找监测要点或不良反应相关描述
+      for (const line of lines) {
+        if (/监测|不良反应|副作用|毒性|注意观察/.test(line) && line.length > 10 && line.length < 200) {
           matchedItems.push(line.trim())
         }
       }
     } else if (sectionTitle.includes('适应证') || sectionTitle.includes('适应症')) {
-      // 查找适应证相关描述
+      // 查找适应证相关描述（兼容旧模板）
       for (const line of lines) {
         if (/适应|用于|治疗|适用于/.test(line) && line.length > 10 && line.length < 200) {
           matchedItems.push(line.trim())
         }
       }
     } else if (sectionTitle.includes('禁忌')) {
-      // 查找禁忌相关描述
+      // 查找禁忌相关描述（兼容旧模板）
       for (const line of lines) {
         if (/禁忌|禁用|禁止|不适用|避免/.test(line) && line.length > 10 && line.length < 200) {
           matchedItems.push(line.trim())
         }
       }
     } else if (sectionTitle.includes('相互作用')) {
-      // 查找相互作用相关描述
+      // 查找相互作用相关描述（兼容旧模板）
       for (const line of lines) {
         if (/相互作用|配伍|联合|合用|禁忌/.test(line) && line.length > 10 && line.length < 200) {
           matchedItems.push(line.trim())
