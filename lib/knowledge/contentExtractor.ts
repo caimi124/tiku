@@ -143,6 +143,102 @@ export function extractStructureFromContent(content: string): ExtractedStructure
     }
   }
 
+  // 方法4：从分类关键词提取（如"分为"、"包括"、"主要有"等）
+  if (sections.length === 0) {
+    const classificationKeywords = /(?:分为|包括|主要有|可分为|包括|主要分为|分为以下几类|分为以下|主要类型|主要类别)[：:]\s*([^。\n]+)/
+    const classificationKeywords2 = /(?:分为|包括|主要有|可分为|包括|主要分为|分为以下几类|分为以下|主要类型|主要类别)\s*([^。\n]+)/
+    
+    for (const line of lines) {
+      const trimmed = line.trim()
+      if (trimmed.length < 10 || trimmed.length > 200) continue
+      
+      // 匹配"分为：A、B、C"或"包括A、B、C"
+      let match = trimmed.match(classificationKeywords) || trimmed.match(classificationKeywords2)
+      if (match) {
+        const itemsText = match[1] || match[0]
+        // 分割项目（支持中文顿号、逗号、分号）
+        const items = itemsText
+          .split(/[、，,；;]/)
+          .map(item => item.trim())
+          .filter(item => item.length > 0 && item.length < 50)
+        
+        if (items.length >= 2) {
+          sections.push({
+            id: 'extracted-section-0',
+            title: '分类结构',
+            items: items.map((text, idx) => ({
+              id: `extracted-item-0-${idx}`,
+              text
+            }))
+          })
+          break
+        }
+      }
+    }
+  }
+
+  // 方法5：从段落中提取关键分类信息（识别"第一类"、"第二类"等）
+  if (sections.length === 0) {
+    const categoryPattern = /(?:第[一二三四五六七八九十\d]+[类种]|[\d一二三四五六七八九十]+[\.、]\s*)([^。\n]{5,50})/g
+    const categories: string[] = []
+    
+    for (const line of lines) {
+      const matches = Array.from(line.matchAll(categoryPattern))
+      for (const match of matches) {
+        const text = match[1]?.trim()
+        if (text && text.length >= 5 && text.length <= 50) {
+          categories.push(text)
+        }
+      }
+    }
+
+    if (categories.length >= 2) {
+      sections.push({
+        id: 'extracted-section-0',
+        title: '分类结构',
+        items: categories.map((text, idx) => ({
+          id: `extracted-item-0-${idx}`,
+          text
+        }))
+      })
+    }
+  }
+
+  // 方法6：从冒号后的列表提取（如"主要药物：A、B、C"）
+  if (sections.length === 0) {
+    for (const line of lines) {
+      const trimmed = line.trim()
+      if (trimmed.length < 10 || trimmed.length > 200) continue
+      
+      // 匹配"标题：项目1、项目2、项目3"
+      const match = trimmed.match(/^([^：:]{2,20})[：:]\s*([^。\n]+)/)
+      if (match) {
+        const title = match[1].trim()
+        const itemsText = match[2].trim()
+        
+        // 检查标题是否包含分类相关关键词
+        if (/分类|类型|种类|类别|药物|药品/.test(title)) {
+          const items = itemsText
+            .split(/[、，,；;]/)
+            .map(item => item.trim())
+            .filter(item => item.length > 0 && item.length < 50)
+          
+          if (items.length >= 2) {
+            sections.push({
+              id: 'extracted-section-0',
+              title: title,
+              items: items.map((text, idx) => ({
+                id: `extracted-item-0-${idx}`,
+                text
+              }))
+            })
+            break
+          }
+        }
+      }
+    }
+  }
+
   return sections.length > 0 ? { sections } : null
 }
 
