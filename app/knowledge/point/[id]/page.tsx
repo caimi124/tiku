@@ -269,28 +269,47 @@ export default function KnowledgePointPage() {
   }, [safePoint])
 
   // 先计算基础 pointType（不依赖 coreDrugCards）
+  // 【单一药物优先规则】：即使标题中有"临床用药评价"等字样，如果内容聚焦于单一具体药物，也要判定为 specific_drug
   const basePointType = useMemo<PointType>(() => {
-    // 若核心对象是"单一具体药物"，判定为【具体必考药物】
+    const title = safePoint?.title || ''
+    const content = safePoint?.content || ''
+    const combinedText = `${title} ${content}`.toLowerCase()
+
+    // 【一、单一药物优先规则】
+    // 1. 数据库字段明确标记为单一药物
     if (safePoint?.drug_name) {
       return 'specific_drug'
     }
+
+    // 2. 标题或内容聚焦于"某一个具体药物"（非"一类药物"）
+    // 检查是否存在单一药物特征
+    const isSingleDrugTitle = /^(【|\[)?[^类分类药物评价]{1,10}(的|临床用药评价|用药|作用|特点|应用)/.test(title)
+    const hasSingleDrugContent = /作用特点|临床应用|用药注意|监测要点|不良反应/.test(content) && 
+                                 !/多类|分类|对比|比较|各类|多种/.test(content)
     
-    // 若核心对象是"某一类药物"，判定为【药物分类】
-    if (safePoint?.point_type === 'drug' || 
-        (safePoint?.title && /类|分类|药物分类/.test(safePoint.title))) {
+    // 3. 不存在"多类药物对比"或"分类依据"
+    const hasNoComparison = !/多类|分类依据|各类代表|对比|比较|分为.*类/.test(combinedText)
+    
+    // 4. 即使标题中有"临床用药评价"，如果满足单一药物条件，也判定为 specific_drug
+    if ((isSingleDrugTitle || hasSingleDrugContent) && hasNoComparison) {
+      return 'specific_drug'
+    }
+
+    // 【二、drug_class 模板仅适用于明确的一类药物】
+    // 必须同时满足：明确为"一类药物" + 存在多个代表药 + 存在分类或对比结构
+    const isExplicitDrugClass = /类|分类|药物分类/.test(title) && 
+                                /代表药|多种|各类|不同类/.test(combinedText) &&
+                                (/分类|对比|比较|依据/.test(combinedText) || hasStructureTable)
+    
+    if (isExplicitDrugClass) {
       return 'drug_class'
     }
-    
+
     // 若内容围绕考试分值/策略，判定为【考试策略】
-    if (safePoint?.title && /策略|分值|考试|复习|备考/.test(safePoint.title)) {
+    if (/策略|分值|考试|复习|备考/.test(title)) {
       return 'strategy'
     }
-    
-    // 默认：根据是否有药物相关内容判断
-    if (safePoint?.title && /药|用药|治疗/.test(safePoint.title)) {
-      return 'drug_class'
-    }
-    
+
     // 默认使用 structure_only（概念/原理/框架型）
     return 'structure_only'
   }, [safePoint, hasStructureTable])

@@ -24,28 +24,28 @@ export function getStructureTemplate(pointType: StructurePointType): StructureSe
       return [
         {
           id: 'template-section-1',
-          title: '药理作用 / 作用机制',
+          title: '药理作用 / 作用特点',
           items: [
             { id: 'template-item-1-1', text: '待补充', placeholder: true }
           ]
         },
         {
           id: 'template-section-2',
-          title: '适应证',
+          title: '临床应用',
           items: [
             { id: 'template-item-2-1', text: '待补充', placeholder: true }
           ]
         },
         {
           id: 'template-section-3',
-          title: '禁忌',
+          title: '用药注意事项',
           items: [
             { id: 'template-item-3-1', text: '待补充', placeholder: true }
           ]
         },
         {
           id: 'template-section-4',
-          title: '相互作用',
+          title: '监测要点 / 不良反应',
           items: [
             { id: 'template-item-4-1', text: '待补充', placeholder: true }
           ]
