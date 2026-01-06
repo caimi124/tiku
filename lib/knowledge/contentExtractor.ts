@@ -459,6 +459,48 @@ export function extractDrugsFromContent(content: string): ExtractedDrug[] {
 }
 
 /**
+ * 基于标题和类型生成默认高频考法与易错点
+ */
+export function generateDefaultExamPatterns(
+  title: string,
+  pointType: 'specific_drug' | 'drug_class' | 'exam_strategy' | 'structure_skeleton'
+): ExtractedExamPattern | null {
+  if (pointType !== 'specific_drug' && pointType !== 'drug_class') {
+    return null
+  }
+
+  // 对于药物分类类型，生成默认的高频考法和易错点
+  if (pointType === 'drug_class') {
+    return {
+      patterns: [
+        '常考问法：题干问"首选药物"时，需根据疾病类型和患者情况选择',
+        '常考对比：不同类别药物的作用机制差异（如选择性、作用部位）',
+      ],
+      traps: [
+        '常见误区是将所有同类药物视为完全等同，正确理解是需区分各药物的特异性适应症和禁忌',
+        '常见误区是忽略药物相互作用，正确理解是需掌握同类药物之间的配伍禁忌',
+      ],
+    }
+  }
+
+  // 对于具体必考药物类型
+  if (pointType === 'specific_drug') {
+    return {
+      patterns: [
+        '如果题干问适应证，选该药物的主要临床应用',
+        '题干出现特定疾病时，首选该药物（需结合禁忌判断）',
+      ],
+      traps: [
+        '常见误区是混淆适应证与禁忌证，正确理解是需明确区分适用人群和禁用人群',
+        '常见误区是忽略药物相互作用，正确理解是需掌握与其他药物的配伍禁忌',
+      ],
+    }
+  }
+
+  return null
+}
+
+/**
  * 从 content 中生成学习建议
  */
 export function generateStudyAdviceFromContent(

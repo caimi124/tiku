@@ -35,6 +35,7 @@ import {
   extractDrugsFromContent,
   generateStudyAdviceFromContent,
   generateDefaultStructure,
+  generateDefaultExamPatterns,
 } from '@/lib/knowledge/contentExtractor'
 
 /* =========================
@@ -564,14 +565,30 @@ export default function KnowledgePointPage() {
       }
     }
 
+    // 优先级4：生成默认高频考法和易错点（当所有提取方法都失败时）
+    if ((patterns.length < 2 || traps.length < 2) && safePoint?.title) {
+      const defaultPatterns = generateDefaultExamPatterns(safePoint.title, pointType)
+      if (defaultPatterns) {
+        // 补充不足的部分
+        if (patterns.length < 2) {
+          const needed = 2 - patterns.length
+          patterns.push(...defaultPatterns.patterns.slice(0, needed))
+        }
+        if (traps.length < 2) {
+          const needed = 2 - traps.length
+          traps.push(...defaultPatterns.traps.slice(0, needed))
+        }
+      }
+    }
+
     // 校验数量下限
     const hasMinPatterns = patterns.length >= 2
     const hasMinTraps = traps.length >= 2
     const isComplete = hasMinPatterns && hasMinTraps
 
     return {
-      high_frequency_patterns: patterns,
-      common_traps: traps,
+      high_frequency_patterns: patterns.slice(0, 6), // 最多6条
+      common_traps: traps.slice(0, 6), // 最多6条
       isComplete,
       isPlaceholder: !isComplete && (patterns.length > 0 || traps.length > 0)
     }
