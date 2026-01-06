@@ -30,13 +30,16 @@ import { formatAbbreviations } from '@/lib/abbreviations'
 import type { Action } from '@/lib/knowledge/pointPage.types'
 import { hasClassificationTable } from '@/lib/contentUtils'
 import {
-  extractStructureFromContent,
   extractExamPatternsFromContent,
   extractDrugsFromContent,
   generateStudyAdviceFromContent,
-  generateDefaultStructure,
   generateDefaultExamPatterns,
 } from '@/lib/knowledge/contentExtractor'
+import {
+  getStructureTemplate,
+  fillStructureFromContent,
+  type StructurePointType,
+} from '@/lib/knowledge/structureTemplate'
 
 /* =========================
    类型（宽松版，避免 build 卡死）
@@ -106,7 +109,7 @@ type ExamMapData = {
   focus: { id: string; text: string }[]
 }
 
-type PointType = 'specific_drug' | 'drug_class' | 'exam_strategy' | 'structure_skeleton'
+type PointType = 'specific_drug' | 'drug_class' | 'exam_strategy' | 'structure_skeleton' | 'structure_only' | 'strategy'
 
 type ExamCoreZone = {
   high_frequency_patterns: string[]
@@ -280,12 +283,7 @@ export default function KnowledgePointPage() {
     
     // 若内容围绕考试分值/策略，判定为【考试策略】
     if (safePoint?.title && /策略|分值|考试|复习|备考/.test(safePoint.title)) {
-      return 'exam_strategy'
-    }
-    
-    // 若内容目标是建立分类关系，判定为【结构骨架】
-    if (hasStructureTable) {
-      return 'structure_skeleton'
+      return 'strategy'
     }
     
     // 默认：根据是否有药物相关内容判断
@@ -293,37 +291,42 @@ export default function KnowledgePointPage() {
       return 'drug_class'
     }
     
-    return 'structure_skeleton'
+    // 默认使用 structure_only（概念/原理/框架型）
+    return 'structure_only'
   }, [safePoint, hasStructureTable])
 
   // 【必须模块】结构骨架 - 所有考点类型都必须显示
-  // 优先级：配置数据 > 从 content 提取 > 基于标题和类型生成默认结构 > 占位
+  // 核心原则：基于考点类型使用固定模板，content 仅作为填充信息
   const classificationSections = useMemo(() => {
-    // 优先级1：配置数据
+    // 优先级1：配置数据（如果存在配置，使用配置的结构）
     if (classificationModule?.data.sections?.length) {
       return classificationModule.data.sections
     }
     
-    // 优先级2：从 content 提取
+    // 优先级2：根据考点类型获取固定结构模板
+    // 将 pointType 映射到 structure template 类型
+    let structureType: StructurePointType = 'structure_only'
+    
+    if (basePointType === 'specific_drug') {
+      structureType = 'specific_drug'
+    } else if (basePointType === 'drug_class') {
+      structureType = 'drug_class'
+    } else if (basePointType === 'strategy' || basePointType === 'exam_strategy') {
+      structureType = 'strategy'
+    } else {
+      structureType = 'structure_only'
+    }
+    
+    // 获取固定结构模板
+    const template = getStructureTemplate(structureType)
+    
+    // 优先级3：从 content 填充到固定结构（不改变结构本身）
     if (safePoint?.content) {
-      const extracted = extractStructureFromContent(safePoint.content)
-      if (extracted?.sections?.length) {
-        return extracted.sections
-      }
+      return fillStructureFromContent(template, safePoint.content)
     }
     
-    // 优先级3：基于标题和类型生成默认结构（仅 drug_class 和 structure_skeleton）
-    if (basePointType === 'drug_class' || basePointType === 'structure_skeleton') {
-      const defaultStructure = generateDefaultStructure(
-        safePoint?.title || '',
-        basePointType
-      )
-      if (defaultStructure?.sections?.length) {
-        return defaultStructure.sections
-      }
-    }
-    
-    return []
+    // 如果没有 content，返回模板（包含占位符）
+    return template
   }, [classificationModule, safePoint, basePointType])
 
   const highYieldCards = useMemo<HighYieldCard[]>(() => {
@@ -723,9 +726,10 @@ export default function KnowledgePointPage() {
           )}
 
           {/* 【必须模块】结构骨架（脑内地图）- 所有考点类型都必须显示 */}
-          {structureSections.length > 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（脑内地图）</h2>
+          {/* 结构骨架必须始终显示，基于考点类型使用固定模板 */}
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（脑内地图）</h2>
+            {structureSections.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {structureSections.map((section) => (
                   <div key={section.id} className="space-y-2">
@@ -736,25 +740,23 @@ export default function KnowledgePointPage() {
                       {section.items.map((item) => (
                         <li key={item.id} className="flex items-start gap-2">
                           <span className="text-purple-500 mt-1">•</span>
-                          <span>{formatAbbreviations(item.text)}</span>
+                          <span className={(item as any).placeholder ? 'text-gray-400 italic' : ''}>
+                            {formatAbbreviations(item.text)}
+                          </span>
                         </li>
                       ))}
                     </ul>
                   </div>
                 ))}
               </div>
-            </div>
-          ) : (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（脑内地图）</h2>
+            ) : (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                 <p className="text-yellow-800 text-sm">
-                  ⚠️ 本模块内容待补充（point_id: {safePointId}）
-                  {pointType === 'drug_class' && '：用分点或树状结构说明如何分类、从哪些维度考（首选 / 不推荐 / 对比）'}
+                  ⚠️ 结构骨架模板加载失败（point_id: {safePointId}，类型: {pointType}）
                 </p>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* 【强制模块】高频考法 & 易错点（应试核心区）
               适用范围：仅【具体必考药物】和【药物分类】
