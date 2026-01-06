@@ -433,19 +433,28 @@ export default function KnowledgePointPage() {
             patterns.push(formatAbbreviations(text))
           } else if (text.includes('题干出现') && text.includes('首选')) {
             patterns.push(formatAbbreviations(text))
+          } else if (text.includes('常考问法')) {
+            // 一类药物专用句式
+            patterns.push(formatAbbreviations(text))
           } else if (rule.level === 'key') {
             // 转换为标准句式
-            patterns.push(`如果题干问${formatAbbreviations(rule.oneLiner)}，选${formatAbbreviations(rule.bucket)}`)
+            if (pointType === 'drug_class') {
+              // 一类药物使用简化句式
+              patterns.push(`常考问法是${formatAbbreviations(rule.oneLiner)}`)
+            } else {
+              patterns.push(`如果题干问${formatAbbreviations(rule.oneLiner)}，选${formatAbbreviations(rule.bucket)}`)
+            }
           }
         }
         
         // 易错点：使用特定句式
         if (rule.level === 'warn' || rule.level === 'danger') {
           const trapText = rule.examMove || rule.oneLiner
-          if (trapText && !trapText.includes('常见误区')) {
-            traps.push(`常见误区是${formatAbbreviations(trapText)}，正确理解是${formatAbbreviations(rule.oneLiner)}`)
-          } else if (trapText) {
+          if (trapText && trapText.includes('常见误区')) {
             traps.push(formatAbbreviations(trapText))
+          } else if (trapText) {
+            // 一类药物专用句式
+            traps.push(`常见误区是${formatAbbreviations(trapText)}，正确理解是${formatAbbreviations(rule.oneLiner)}`)
           }
         }
       }
@@ -455,7 +464,11 @@ export default function KnowledgePointPage() {
     if (patterns.length < 2 || traps.length < 2) {
       for (const item of takeaways) {
         if (patterns.length < 2 && item.level === 'key') {
-          patterns.push(`如果题干问${formatAbbreviations(item.text)}，选相关药物`)
+          if (pointType === 'drug_class') {
+            patterns.push(`常考问法是${formatAbbreviations(item.text)}`)
+          } else {
+            patterns.push(`如果题干问${formatAbbreviations(item.text)}，选相关药物`)
+          }
         }
         if (traps.length < 2 && (item.level === 'warn' || item.level === 'danger')) {
           traps.push(`常见误区是${formatAbbreviations(item.text)}，正确理解需参考教材原文`)
@@ -527,7 +540,8 @@ export default function KnowledgePointPage() {
             </div>
           </div>
 
-          {examMapData && (
+          {/* 【必须模块】本考点在考什么（一类药物必须存在） */}
+          {examMapData ? (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">📌 本考点在考什么？</h2>
               <div className="space-y-3 text-gray-800 leading-relaxed">
@@ -558,10 +572,19 @@ export default function KnowledgePointPage() {
                 )}
               </div>
             </div>
-          )}
+          ) : pointType === 'drug_class' ? (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">📌 本考点在考什么？</h2>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <p className="text-yellow-800 text-sm">
+                  ⚠️ 本模块必须存在，待补充：用 1–2 句话说明该类药物的出题重点与考察角度
+                </p>
+              </div>
+            </div>
+          ) : null}
 
-          {/* 结构骨架：只用于建立脑内地图，禁止直接用表格作为主展示 */}
-          {structureSections.length > 0 && (
+          {/* 【必须模块】结构骨架（脑内地图）- 一类药物必须存在 */}
+          {structureSections.length > 0 ? (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（只建立脑内地图）</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -582,13 +605,29 @@ export default function KnowledgePointPage() {
                 ))}
               </div>
             </div>
-          )}
-
-          {/* 强制引入模块「核心药物详解卡（只保留必考药）」，必须包含：为什么考它、适应证、禁忌、相互作用
-              仅当考点类型 =【具体必考药物】时，才允许输出 */}
-          {pointType === 'specific_drug' && (
+          ) : pointType === 'drug_class' ? (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">高频考法 & 易错点（应试核心区）</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（只建立脑内地图）</h2>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <p className="text-yellow-800 text-sm">
+                  ⚠️ 本模块必须存在，待补充：用分点或树状结构说明如何分类、从哪些维度考（首选 / 不推荐 / 对比）
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {/* 【强制模块】高频考法 & 易错点（应试核心区）
+              适用范围：仅【具体必考药物】和【药物分类】
+              一类药物使用简化版：高频考法 ≥ 2 条，易错点 ≥ 2 条
+              渲染位置：结构骨架之后，核心药物详解卡之前 */}
+          {(pointType === 'specific_drug' || pointType === 'drug_class') && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                高频考法 & 易错点（应试核心区）
+                {pointType === 'drug_class' && (
+                  <span className="text-sm font-normal text-gray-500 ml-2">（简化版）</span>
+                )}
+              </h2>
               
               {examCoreZone.isComplete ? (
                 <div className="space-y-6">
@@ -683,8 +722,69 @@ export default function KnowledgePointPage() {
             </div>
           )}
 
-          {/* 强制引入模块「核心药物详解卡（只保留必考药）」，必须包含：为什么考它、适应证、禁忌、相互作用 */}
-          {isDrugPoint && (
+          {/* 【一类药物专用】代表药物应试定位（仅点名代表药，不展开成核心药物详解卡） */}
+          {pointType === 'drug_class' && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">代表药物应试定位</h2>
+              {coreDrugCards.length > 0 ? (
+                <div className="space-y-3">
+                  {coreDrugCards.map((card) => (
+                    <div key={card.id} className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50/30 rounded-r">
+                      <div className="font-semibold text-gray-900 mb-1">
+                        {formatAbbreviations(card.name)}
+                        {card.alias && (
+                          <span className="text-sm font-normal text-gray-600 ml-2">
+                            ({formatAbbreviations(card.alias)})
+                          </span>
+                        )}
+                      </div>
+                      {card.why ? (
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          {formatAbbreviations(card.why)}
+                        </p>
+                      ) : (
+                        <p className="text-sm text-gray-500 italic">
+                          为什么在考试中会出现：待补充
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <p className="text-yellow-800 text-sm">
+                    ⚠️ 代表药物应试定位待补充（point_id: {safePointId}）
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 【一类药物专用】学习建议（轻量） */}
+          {pointType === 'drug_class' && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">学习建议</h2>
+              {newConfig?.meta.studyRoute?.length ? (
+                <p className="text-gray-800 leading-relaxed">
+                  {formatAbbreviations(newConfig.meta.studyRoute.join('，侧重'))}
+                </p>
+              ) : oldConfig?.studyPath?.text ? (
+                <p className="text-gray-800 leading-relaxed">
+                  {formatAbbreviations(oldConfig.studyPath.text.replace(/学习路线：/, '').trim())}
+                </p>
+              ) : (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <p className="text-yellow-800 text-sm">
+                    ⚠️ 学习建议待补充（建议侧重对比 / 情境判断）
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 强制引入模块「核心药物详解卡（只保留必考药）」，必须包含：为什么考它、适应证、禁忌、相互作用
+              仅当考点类型 =【具体必考药物】时，才允许输出 */}
+          {pointType === 'specific_drug' && coreDrugCards.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">核心药物详解卡（只保留必考药）</h2>
               {coreDrugCards.length > 0 ? (
@@ -853,31 +953,29 @@ export default function KnowledgePointPage() {
             </div>
           )}
 
-          {/* 底部操作区：固定布局，左右按钮 */}
-          <div className="pb-20 sm:pb-24">
-            <PointBottomActions
-              pointId={safePoint.id}
-              selfTestHref={(() => {
-                const action = actionSet.primary
-                if (!action) return '#'
-                if (action.href) return action.href
-                if (action.type === 'selfTest') {
-                  return `/practice/by-point?pointId=${safePoint.id}&mode=self-test&count=${action.payload?.count || 5}`
-                }
-                return '#'
-              })()}
-            />
-          </div>
-
-          <div className="text-center">
-            <Link
-              href="/knowledge"
-              className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <ChevronUp className="w-4 h-4 rotate-[-90deg]" />
-              返回知识图谱
-            </Link>
-          </div>
+          {/* 学习完成后的行动区（纵向布局，非固定） */}
+          <PointBottomActions
+            pointId={safePoint.id}
+            sectionId={safePoint.section?.id}
+            selfTestHref={(() => {
+              const action = actionSet.primary
+              if (!action) return undefined
+              if (action.href) return action.href
+              if (action.type === 'selfTest') {
+                return `/practice/by-point?pointId=${safePoint.id}&mode=self-test&count=${action.payload?.count || 5}`
+              }
+              return undefined
+            })()}
+            practiceHref={(() => {
+              const action = actionSet.secondary
+              if (!action) return undefined
+              if (action.href) return action.href
+              if (action.type === 'practice') {
+                return `/practice/by-point?pointId=${safePoint.id}`
+              }
+              return undefined
+            })()}
+          />
         </div>
       </div>
     </div>
