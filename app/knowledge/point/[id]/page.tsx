@@ -29,6 +29,12 @@ import { getDefaultExamOverview, type Takeaway } from '@/lib/knowledge/pointPage
 import { formatAbbreviations } from '@/lib/abbreviations'
 import type { Action } from '@/lib/knowledge/pointPage.types'
 import { hasClassificationTable } from '@/lib/contentUtils'
+import {
+  extractStructureFromContent,
+  extractExamPatternsFromContent,
+  extractDrugsFromContent,
+  generateStudyAdviceFromContent,
+} from '@/lib/knowledge/contentExtractor'
 
 /* =========================
    类型（宽松版，避免 build 卡死）
@@ -199,7 +205,9 @@ export default function KnowledgePointPage() {
     return firstLine.length > 80 ? `${firstLine.slice(0, 80)}…` : firstLine
   }, [safePoint])
 
+  // 【必须模块】本考点在考什么 - 所有考点类型都必须显示
   const examMapData = useMemo<ExamMapData | null>(() => {
+    // 优先级1：配置数据
     if (examMapModule?.data) {
       return {
         prompt: examMapModule.data.prompt,
@@ -223,6 +231,8 @@ export default function KnowledgePointPage() {
         })),
       }
     }
+    
+    // 优先级2：默认生成（所有考点类型都有）
     if (safePoint?.title) {
       const overview = getDefaultExamOverview(safePoint.title)
       return {
@@ -235,12 +245,42 @@ export default function KnowledgePointPage() {
         })),
       }
     }
-    return null
+    
+    // 优先级3：完全默认（即使没有 title 也返回基础结构）
+    return {
+      prompt: '本考点需要掌握核心概念和考试重点。',
+      angles: ['基本概念与分类', '作用特点与临床应用', '注意事项与禁忌'],
+      focusTitle: '其中重点集中在：',
+      focus: [
+        { id: 'default-focus-1', text: '核心概念与分类（高频送分）' },
+        { id: 'default-focus-2', text: '临床应用与注意事项' },
+      ],
+    }
   }, [examMapModule, oldConfig, safePoint])
 
+  // 【必须模块】结构骨架 - 所有考点类型都必须显示
+  // 优先级：配置数据 > 从 content 提取 > 占位
   const classificationSections = useMemo(() => {
-    return classificationModule?.data.sections || []
-  }, [classificationModule])
+    // 优先级1：配置数据
+    if (classificationModule?.data.sections?.length) {
+      return classificationModule.data.sections
+    }
+    
+    // 优先级2：从 content 提取
+    if (safePoint?.content) {
+      const extracted = extractStructureFromContent(safePoint.content)
+      if (extracted?.sections?.length) {
+        return extracted.sections
+      }
+    }
+    
+    return []
+  }, [classificationModule, safePoint])
+
+  // 结构骨架：禁止直接用表格，只用于建立脑内地图（必须在 basePointType 之前定义）
+  const hasStructureTable = useMemo(() => {
+    return safePoint?.content ? hasClassificationTable(safePoint.content) : false
+  }, [safePoint])
 
   const highYieldCards = useMemo<HighYieldCard[]>(() => {
     if (highYieldModule?.data?.rules?.length) {
@@ -263,7 +303,40 @@ export default function KnowledgePointPage() {
     return []
   }, [highYieldModule, takeaways])
 
+  // 代表药物应试定位 - 优先级：配置数据 > 从 content 提取 > 占位
+  // 先计算基础 pointType（不依赖 coreDrugCards）
+  const basePointType = useMemo<PointType>(() => {
+    // 若核心对象是"单一具体药物"，判定为【具体必考药物】
+    if (safePoint?.drug_name) {
+      return 'specific_drug'
+    }
+    
+    // 若核心对象是"某一类药物"，判定为【药物分类】
+    if (safePoint?.point_type === 'drug' || 
+        (safePoint?.title && /类|分类|药物分类/.test(safePoint.title))) {
+      return 'drug_class'
+    }
+    
+    // 若内容围绕考试分值/策略，判定为【考试策略】
+    if (safePoint?.title && /策略|分值|考试|复习|备考/.test(safePoint.title)) {
+      return 'exam_strategy'
+    }
+    
+    // 若内容目标是建立分类关系，判定为【结构骨架】
+    if (classificationSections.length > 0 || hasStructureTable) {
+      return 'structure_skeleton'
+    }
+    
+    // 默认：根据是否有药物相关内容判断
+    if (safePoint?.title && /药|用药|治疗/.test(safePoint.title)) {
+      return 'drug_class'
+    }
+    
+    return 'structure_skeleton'
+  }, [safePoint, classificationSections, hasStructureTable])
+
   const coreDrugCards = useMemo<CoreDrugCardUI[]>(() => {
+    // 优先级1：配置数据
     if (coreDrugsModule?.data?.cards?.length) {
       return coreDrugsModule.data.cards.map((card) => ({
         id: card.id,
@@ -277,6 +350,8 @@ export default function KnowledgePointPage() {
         })),
       }))
     }
+    
+    // 优先级2：从数据库字段提取
     if (safePoint?.drug_name) {
       return [
         {
@@ -291,8 +366,22 @@ export default function KnowledgePointPage() {
         },
       ]
     }
+    
+    // 优先级3：从 content 提取（仅 drug_class 类型且有完整 content）
+    if (basePointType === 'drug_class' && safePoint?.content && safePoint.content.length > 100) {
+      const extractedDrugs = extractDrugsFromContent(safePoint.content)
+      if (extractedDrugs.length > 0) {
+        return extractedDrugs.map((drug, idx) => ({
+          id: `extracted-drug-${idx}`,
+          name: drug.name,
+          why: drug.why || '本类药物中的代表药物，考试中常用来区分不同类别或对比作用特点。',
+          bullets: [],
+        }))
+      }
+    }
+    
     return []
-  }, [coreDrugsModule, safePoint, takeaways])
+  }, [coreDrugsModule, safePoint, takeaways, basePointType])
 
   const examDistributionItems = useMemo<ExamDistributionItem[]>(() => {
     if (examDistributionModule?.data?.items?.length) {
@@ -330,43 +419,22 @@ export default function KnowledgePointPage() {
     return '学习路线：先看考什么 → 再记重点 → 最后做3题'
   }, [newConfig, oldConfig])
 
-  // 结构骨架：禁止直接用表格，只用于建立脑内地图
-  const hasStructureTable = useMemo(() => {
-    return safePoint?.content ? hasClassificationTable(safePoint.content) : false
-  }, [safePoint])
-
-  // 【步骤 1】判断考点类型
+  // 【步骤 1】判断考点类型（最终版本，考虑 coreDrugCards）
   const pointType = useMemo<PointType>(() => {
     // 若核心对象是"单一具体药物"，判定为【具体必考药物】
-    if (safePoint?.drug_name || 
+    if (basePointType === 'specific_drug' || 
         (coreDrugCards.length > 0 && coreDrugCards[0]?.name && !coreDrugCards[0]?.name.includes('类'))) {
       return 'specific_drug'
     }
     
     // 若核心对象是"某一类药物"，判定为【药物分类】
-    if (safePoint?.point_type === 'drug' || 
-        (safePoint?.title && /类|分类|药物分类/.test(safePoint.title)) ||
+    if (basePointType === 'drug_class' ||
         (coreDrugCards.length > 0 && coreDrugCards[0]?.name?.includes('类'))) {
       return 'drug_class'
     }
     
-    // 若内容围绕考试分值/策略，判定为【考试策略】
-    if (safePoint?.title && /策略|分值|考试|复习|备考/.test(safePoint.title)) {
-      return 'exam_strategy'
-    }
-    
-    // 若内容目标是建立分类关系，判定为【结构骨架】
-    if (classificationSections.length > 0 || hasStructureTable) {
-      return 'structure_skeleton'
-    }
-    
-    // 默认：根据是否有药物相关内容判断
-    if (safePoint?.title && /药|用药|治疗/.test(safePoint.title)) {
-      return 'drug_class'
-    }
-    
-    return 'structure_skeleton'
-  }, [safePoint, coreDrugCards, classificationSections, hasStructureTable])
+    return basePointType
+  }, [basePointType, coreDrugCards])
 
   // 检查是否为药物类考点（兼容旧逻辑）
   const isDrugPoint = useMemo(() => {
@@ -408,6 +476,8 @@ export default function KnowledgePointPage() {
   }, [isDrugPoint, coreDrugCards, safePointId])
 
   // 【强制模块】exam_core_zone: 高频考法 & 易错点（应试核心区）
+  // 适用范围：仅【具体必考药物】和【药物分类】
+  // 优先级：配置数据 > 从 content 提取 > takeaways 回退 > 占位
   const examCoreZone = useMemo<ExamCoreZone>(() => {
     // 适用范围：仅【具体必考药物】和【药物分类】需要生成
     if (pointType !== 'specific_drug' && pointType !== 'drug_class') {
@@ -419,10 +489,10 @@ export default function KnowledgePointPage() {
       }
     }
 
-    // 从 highYieldModule 提取数据
     const patterns: string[] = []
     const traps: string[] = []
 
+    // 优先级1：从 highYieldModule 配置提取
     if (highYieldModule?.data?.rules) {
       for (const rule of highYieldModule.data.rules) {
         // 高频考法：使用特定句式
@@ -434,12 +504,10 @@ export default function KnowledgePointPage() {
           } else if (text.includes('题干出现') && text.includes('首选')) {
             patterns.push(formatAbbreviations(text))
           } else if (text.includes('常考问法')) {
-            // 一类药物专用句式
             patterns.push(formatAbbreviations(text))
           } else if (rule.level === 'key') {
             // 转换为标准句式
             if (pointType === 'drug_class') {
-              // 一类药物使用简化句式
               patterns.push(`常考问法是${formatAbbreviations(rule.oneLiner)}`)
             } else {
               patterns.push(`如果题干问${formatAbbreviations(rule.oneLiner)}，选${formatAbbreviations(rule.bucket)}`)
@@ -453,14 +521,22 @@ export default function KnowledgePointPage() {
           if (trapText && trapText.includes('常见误区')) {
             traps.push(formatAbbreviations(trapText))
           } else if (trapText) {
-            // 一类药物专用句式
             traps.push(`常见误区是${formatAbbreviations(trapText)}，正确理解是${formatAbbreviations(rule.oneLiner)}`)
           }
         }
       }
     }
 
-    // 从 takeaways 补充数据（如果 highYieldModule 数据不足）
+    // 优先级2：从 content 提取（仅在配置数据不足时）
+    if ((patterns.length < 2 || traps.length < 2) && safePoint?.content) {
+      const extracted = extractExamPatternsFromContent(safePoint.content, pointType)
+      if (extracted) {
+        patterns.push(...extracted.patterns.slice(0, 2 - patterns.length))
+        traps.push(...extracted.traps.slice(0, 2 - traps.length))
+      }
+    }
+
+    // 优先级3：从 takeaways 补充数据
     if (patterns.length < 2 || traps.length < 2) {
       for (const item of takeaways) {
         if (patterns.length < 2 && item.level === 'key') {
@@ -487,7 +563,7 @@ export default function KnowledgePointPage() {
       isComplete,
       isPlaceholder: !isComplete && (patterns.length > 0 || traps.length > 0)
     }
-  }, [pointType, highYieldModule, takeaways])
+  }, [pointType, highYieldModule, takeaways, safePoint])
 
   // 确保高频考法模块存在（兼容旧逻辑）
   const hasHighYield = useMemo(() => {
@@ -497,6 +573,40 @@ export default function KnowledgePointPage() {
   const structureSections = useMemo(() => {
     return classificationSections.length > 0 ? classificationSections : []
   }, [classificationSections])
+
+  // 学习建议 - 仅 drug_class / exam_strategy 类型
+  // 优先级：配置数据 > 从 content 生成 > 默认
+  const studyAdvice = useMemo<string | null>(() => {
+    if (pointType !== 'drug_class' && pointType !== 'exam_strategy') {
+      return null
+    }
+    
+    // 优先级1：从配置中提取（检查 oldConfig 的 studyPath）
+    if (oldConfig?.studyPath?.text) {
+      const text = oldConfig.studyPath.text.replace(/学习路线：/, '').trim()
+      if (text && text.length > 10) {
+        return text
+      }
+    }
+    
+    // 优先级2：从 content 生成（有完整教材原文时）
+    if (safePoint?.content && safePoint.content.length > 100) {
+      const generated = generateStudyAdviceFromContent(safePoint.content, pointType)
+      if (generated) {
+        return generated
+      }
+    }
+    
+    // 优先级3：默认建议
+    if (pointType === 'drug_class') {
+      return '本考点建议侧重对比和情境判断，通过做题巩固各类药物的应用场景。'
+    }
+    if (pointType === 'exam_strategy') {
+      return '本考点建议结合真题练习，掌握考试出题规律和答题技巧。'
+    }
+    
+    return null
+  }, [pointType, oldConfig, safePoint])
 
   // 早期返回必须在所有 hooks 之后
   if (loading) return <div className="p-8">加载中…</div>
@@ -540,7 +650,7 @@ export default function KnowledgePointPage() {
             </div>
           </div>
 
-          {/* 【必须模块】本考点在考什么（一类药物必须存在） */}
+          {/* 【必须模块】本考点在考什么 - 所有考点类型都必须显示 */}
           {examMapData ? (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">📌 本考点在考什么？</h2>
@@ -572,21 +682,21 @@ export default function KnowledgePointPage() {
                 )}
               </div>
             </div>
-          ) : pointType === 'drug_class' ? (
+          ) : (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">📌 本考点在考什么？</h2>
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                 <p className="text-yellow-800 text-sm">
-                  ⚠️ 本模块必须存在，待补充：用 1–2 句话说明该类药物的出题重点与考察角度
+                  ⚠️ 本模块内容待补充（point_id: {safePointId}）
                 </p>
               </div>
             </div>
-          ) : null}
+          )}
 
-          {/* 【必须模块】结构骨架（脑内地图）- 一类药物必须存在 */}
+          {/* 【必须模块】结构骨架（脑内地图）- 所有考点类型都必须显示 */}
           {structureSections.length > 0 ? (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（只建立脑内地图）</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（脑内地图）</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {structureSections.map((section) => (
                   <div key={section.id} className="space-y-2">
@@ -605,16 +715,17 @@ export default function KnowledgePointPage() {
                 ))}
               </div>
             </div>
-          ) : pointType === 'drug_class' ? (
+          ) : (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（只建立脑内地图）</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（脑内地图）</h2>
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                 <p className="text-yellow-800 text-sm">
-                  ⚠️ 本模块必须存在，待补充：用分点或树状结构说明如何分类、从哪些维度考（首选 / 不推荐 / 对比）
+                  ⚠️ 本模块内容待补充（point_id: {safePointId}）
+                  {pointType === 'drug_class' && '：用分点或树状结构说明如何分类、从哪些维度考（首选 / 不推荐 / 对比）'}
                 </p>
               </div>
             </div>
-          ) : null}
+          )}
 
           {/* 【强制模块】高频考法 & 易错点（应试核心区）
               适用范围：仅【具体必考药物】和【药物分类】
@@ -760,22 +871,26 @@ export default function KnowledgePointPage() {
             </div>
           )}
 
-          {/* 【一类药物专用】学习建议（轻量） */}
-          {pointType === 'drug_class' && (
+          {/* 【一类药物/策略专用】学习建议 */}
+          {(pointType === 'drug_class' || pointType === 'exam_strategy') && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">学习建议</h2>
-              {newConfig?.meta.studyRoute?.length ? (
-                <p className="text-gray-800 leading-relaxed">
-                  {formatAbbreviations(newConfig.meta.studyRoute.join('，侧重'))}
+              {studyAdvice ? (
+                <p className="text-gray-700 leading-relaxed">
+                  {formatAbbreviations(studyAdvice)}
                 </p>
-              ) : oldConfig?.studyPath?.text ? (
-                <p className="text-gray-800 leading-relaxed">
-                  {formatAbbreviations(oldConfig.studyPath.text.replace(/学习路线：/, '').trim())}
-                </p>
+              ) : safePoint?.content && safePoint.content.length > 100 ? (
+                // 有完整教材原文时，必须自动生成，不允许显示占位
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <p className="text-blue-800 text-sm">
+                    📝 正在从教材原文中生成学习建议...
+                  </p>
+                </div>
               ) : (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                   <p className="text-yellow-800 text-sm">
-                    ⚠️ 学习建议待补充（建议侧重对比 / 情境判断）
+                    ⚠️ 学习建议待补充（point_id: {safePointId}）
+                    {pointType === 'drug_class' && '：建议侧重对比 / 情境判断'}
                   </p>
                 </div>
               )}
