@@ -40,6 +40,11 @@ import {
   fillStructureFromContent,
   type StructurePointType,
 } from '@/lib/knowledge/structureTemplate'
+import {
+  detectAggregationNode,
+  logAggregationNode,
+  type AggregationDetectionResult,
+} from '@/lib/knowledge/aggregationDetector'
 
 /* =========================
    类型（宽松版，避免 build 卡死）
@@ -162,6 +167,27 @@ export default function KnowledgePointPage() {
   // 使用安全的默认值，即使 point 为 null
   const safePoint = point ?? null
   const safePointId = pointId ?? ''
+
+  // 【聚合节点检测】在渲染前检测是否为聚合节点
+  const aggregationResult = useMemo<AggregationDetectionResult>(() => {
+    if (!safePoint?.content) {
+      return {
+        is_aggregation_node: false,
+        aggregation_reasons: [],
+        aggregation_candidates: []
+      }
+    }
+    return detectAggregationNode(safePointId, safePoint.content)
+  }, [safePointId, safePoint?.content])
+
+  // 记录聚合节点日志
+  useEffect(() => {
+    if (aggregationResult.is_aggregation_node) {
+      logAggregationNode(safePointId, aggregationResult)
+    }
+  }, [safePointId, aggregationResult])
+
+  const isAggregationNode = aggregationResult.is_aggregation_node
 
   // 读取配置（优先使用新配置系统）
   const newConfig = useMemo(() => getPointConfig(safePointId), [safePointId])
@@ -701,8 +727,11 @@ export default function KnowledgePointPage() {
             </div>
           </div>
 
-          {/* 【必须模块】本考点在考什么 - 所有考点类型都必须显示 */}
-          {examMapData ? (
+          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染本模块 */}
+          {!isAggregationNode && (
+            <>
+              {/* 【必须模块】本考点在考什么 - 所有考点类型都必须显示 */}
+              {examMapData ? (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">📌 本考点在考什么？</h2>
               <div className="space-y-3 text-gray-800 leading-relaxed">
@@ -743,10 +772,15 @@ export default function KnowledgePointPage() {
               </div>
             </div>
           )}
+            </>
+          )}
 
-          {/* 【必须模块】结构骨架（脑内地图）- 所有考点类型都必须显示 */}
-          {/* 结构骨架必须始终存在，但未填充的结构项不暴露给用户 */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染结构骨架 */}
+          {!isAggregationNode && (
+            <>
+              {/* 【必须模块】结构骨架（脑内地图）- 所有考点类型都必须显示 */}
+              {/* 结构骨架必须始终存在，但未填充的结构项不暴露给用户 */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（脑内地图）</h2>
             {(() => {
               // 过滤出有实际内容的结构项（非占位符）
@@ -839,8 +873,13 @@ export default function KnowledgePointPage() {
               )
             })()}
           </div>
+            </>
+          )}
 
-          {/* 【强制模块】高频考法 & 易错点（应试核心区）
+          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染高频考法 & 易错点 */}
+          {!isAggregationNode && (
+            <>
+              {/* 【强制模块】高频考法 & 易错点（应试核心区）
               适用范围：仅【具体必考药物】和【药物分类】
               一类药物使用简化版：高频考法 ≥ 2 条，易错点 ≥ 2 条
               渲染位置：结构骨架之后，核心药物详解卡之前 */}
@@ -945,8 +984,13 @@ export default function KnowledgePointPage() {
               )}
             </div>
           )}
+            </>
+          )}
 
-          {/* 【一类药物专用】代表药物应试定位（仅点名代表药，不展开成核心药物详解卡） */}
+          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染代表药物应试定位 */}
+          {!isAggregationNode && (
+            <>
+              {/* 【一类药物专用】代表药物应试定位（仅点名代表药，不展开成核心药物详解卡） */}
           {pointType === 'drug_class' && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">代表药物应试定位</h2>
@@ -983,8 +1027,13 @@ export default function KnowledgePointPage() {
               )}
             </div>
           )}
+            </>
+          )}
 
-          {/* 【一类药物/策略专用】学习建议 */}
+          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染学习建议 */}
+          {!isAggregationNode && (
+            <>
+              {/* 【一类药物/策略专用】学习建议 */}
           {(pointType === 'drug_class' || pointType === 'exam_strategy') && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">学习建议</h2>
@@ -1009,10 +1058,15 @@ export default function KnowledgePointPage() {
               )}
             </div>
           )}
+            </>
+          )}
 
-          {/* 强制引入模块「核心药物详解卡（只保留必考药）」，必须包含：为什么考它、适应证、禁忌、相互作用
-              仅当考点类型 =【具体必考药物】时，才允许输出 */}
-          {pointType === 'specific_drug' && coreDrugCards.length > 0 && (
+          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染核心药物详解卡 */}
+          {!isAggregationNode && (
+            <>
+              {/* 强制引入模块「核心药物详解卡（只保留必考药）」，必须包含：为什么考它、适应证、禁忌、相互作用
+                  仅当考点类型 =【具体必考药物】时，才允许输出 */}
+              {pointType === 'specific_drug' && coreDrugCards.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">核心药物详解卡（只保留必考药）</h2>
               {coreDrugCards.length > 0 ? (
@@ -1132,7 +1186,10 @@ export default function KnowledgePointPage() {
               )}
             </div>
           )}
+            </>
+          )}
 
+          {/* 【聚合节点降级渲染】教材原文（精选整理）- 聚合节点时允许渲染 */}
           {safePoint.content && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
               <div className="p-4 sm:p-5 border-b border-gray-100">
@@ -1165,6 +1222,21 @@ export default function KnowledgePointPage() {
             </div>
           )}
 
+          {/* 【聚合节点降级渲染】分类表（药物分类表）- 聚合节点时允许渲染 */}
+          {isAggregationNode && safePoint.content && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">分类表（药物分类表）</h2>
+              <div className="border border-gray-200 rounded-lg p-4">
+                <SmartContentRenderer
+                  content={safePoint.content}
+                  annotations={inlineAnnotations.length > 0 ? inlineAnnotations : undefined}
+                  variant="minimal"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* 【聚合节点降级渲染】考点分布（只保留一次）- 聚合节点时允许渲染 */}
           {examDistributionItems.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">考点分布（只保留一次）</h2>
@@ -1178,6 +1250,15 @@ export default function KnowledgePointPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* 【聚合节点降级渲染】提示文案 */}
+          {isAggregationNode && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-blue-800 text-sm leading-relaxed">
+                💡 本页为章节聚合概览，详细考点正在拆分完善。
+              </p>
             </div>
           )}
 
