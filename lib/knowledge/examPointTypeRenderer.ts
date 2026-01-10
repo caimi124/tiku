@@ -53,6 +53,7 @@ export function getModuleRenderConfig(examPointType: ExamPointType | null | unde
     structureSkeleton: {
       enabled: true,
       template: 'mechanism_basic',
+      placeholder: '本考点该模块内容正在完善中，当前以教材原文为准',
       sections: [
         { title: '靶点', description: '作用靶点与受体' },
         { title: '通路', description: '信号转导通路' },
@@ -107,6 +108,7 @@ export function getModuleRenderConfig(examPointType: ExamPointType | null | unde
         structureSkeleton: {
           enabled: true,
           template: 'drug_class',
+          placeholder: '本考点该模块内容正在完善中，当前以教材原文为准',
           sections: [
             { title: '分类', description: '药物分类依据与标准' },
             { title: '代表药', description: '各类代表药物' },
@@ -131,6 +133,7 @@ export function getModuleRenderConfig(examPointType: ExamPointType | null | unde
         structureSkeleton: {
           enabled: true,
           template: 'clinical_selection',
+          placeholder: '本考点该模块内容正在完善中，当前以教材原文为准',
           sections: [
             { title: '疾病', description: '目标疾病与诊断标准' },
             { title: '一线', description: '一线治疗方案' },
@@ -155,6 +158,7 @@ export function getModuleRenderConfig(examPointType: ExamPointType | null | unde
         structureSkeleton: {
           enabled: true,
           template: 'adr_interaction',
+          placeholder: '本考点该模块内容正在完善中，当前以教材原文为准',
           sections: [
             { title: '不良反应类型', description: '常见不良反应分类' },
             { title: '高危组合', description: '高风险药物组合' },
