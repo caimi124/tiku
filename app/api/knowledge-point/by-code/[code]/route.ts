@@ -4,9 +4,14 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { pool } from '@/lib/db'
+import { Pool } from 'pg'
 
 export const dynamic = 'force-dynamic'
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgresql://postgres.tparjdkxxtnentsdazfw:CwKXguB7eIA4tfTn@aws-0-us-west-2.pooler.supabase.com:6543/postgres',
+  ssl: { rejectUnauthorized: false }
+})
 
 export async function GET(
   request: NextRequest,
