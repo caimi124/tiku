@@ -15,6 +15,10 @@
 
 'use client'
 
+const DEBUG_BADGE_ENABLED =
+  process.env.NODE_ENV !== 'production' ||
+  process.env.NEXT_PUBLIC_KNOWLEDGE_POINT_DEBUG === 'true'
+
 import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -266,6 +270,12 @@ export default function KnowledgePointPage() {
   const pitfalls = useMemo(() => {
     return parseFromDatabase(safePoint?.pitfalls)
   }, [safePoint?.pitfalls])
+
+  const hfPatternCount = hfPatterns.length
+  const pitfallsCount = pitfalls.length
+  const showDebugBadge = DEBUG_BADGE_ENABLED && !!safePoint
+  const examPointTypeDisplay = safePoint?.exam_point_type ?? '未设置'
+  const isExamPointTypeMissing = !safePoint?.exam_point_type
 
   // 【必须模块】本考点在考什么 - 所有考点类型都必须显示
   const examMapData = useMemo<ExamMapData | null>(() => {
@@ -741,6 +751,24 @@ export default function KnowledgePointPage() {
               examFrequency={safePoint.exam_frequency}
               className="mb-0"
             />
+            {showDebugBadge && (
+              <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+                <span className="px-2 py-1 rounded bg-gray-100 border border-gray-200">
+                  exam_point_type: <span className="font-semibold text-gray-900">{examPointTypeDisplay}</span>
+                </span>
+                <span className="px-2 py-1 rounded bg-gray-100 border border-gray-200">
+                  hf_patterns: {hfPatternCount > 0 ? `${hfPatternCount} 条` : 'empty'}
+                </span>
+                <span className="px-2 py-1 rounded bg-gray-100 border border-gray-200">
+                  pitfalls: {pitfallsCount > 0 ? `${pitfallsCount} 条` : 'empty'}
+                </span>
+                {isExamPointTypeMissing && (
+                  <span className="px-2 py-1 rounded text-red-700 bg-red-100 border border-red-200 font-semibold">
+                    exam_point_type missing
+                  </span>
+                )}
+              </div>
+            )}
             <div className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-gray-800 leading-relaxed">
               【本页定位】
               <br />
