@@ -26,6 +26,7 @@ export interface ModuleRenderConfig {
   structureSkeleton: {
     enabled: boolean
     template: 'single_drug' | 'drug_class' | 'clinical_selection' | 'adr_interaction' | 'mechanism_basic'
+    placeholder?: string
     sections: Array<{
       title: string
       description?: string
@@ -80,6 +81,7 @@ export function getModuleRenderConfig(examPointType: ExamPointType | null | unde
         structureSkeleton: {
           enabled: true,
           template: 'single_drug',
+          placeholder: '本考点该模块内容正在完善中，当前以教材原文为准',
           sections: [
             { title: '机制', description: '作用机制与药理特点' },
             { title: '适应证', description: '临床应用与适应证' },
