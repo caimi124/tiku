@@ -45,6 +45,14 @@ import {
   logAggregationNode,
   type AggregationDetectionResult,
 } from '@/lib/knowledge/aggregationDetector'
+import {
+  getModuleRenderConfig,
+  hasModuleContent,
+  generateStructurePlaceholder,
+} from '@/lib/knowledge/examPointTypeRenderer'
+import type { ExamPointType } from '@/lib/knowledge/examPointType'
+import { isValidExamPointType } from '@/lib/knowledge/examPointType'
+import { parseFromDatabase } from '@/lib/knowledge/highFreqExtractor'
 
 /* =========================
    类型（宽松版，避免 build 卡死）
@@ -68,6 +76,10 @@ interface KnowledgePointDetail {
   correct_rate?: number
   exam_years?: number[]
   exam_frequency?: number
+  exam_point_type?: string | null
+  hf_patterns?: string | null
+  pitfalls?: string | null
+  hf_generated_at?: string | null
   related_points?: any[]
   content_item_accuracy?: any[]
   navigation?: {
@@ -235,6 +247,25 @@ export default function KnowledgePointPage() {
     if (!firstLine) return '暂无原文'
     return firstLine.length > 80 ? `${firstLine.slice(0, 80)}…` : firstLine
   }, [safePoint])
+
+  // 获取 exam_point_type 并生成模块渲染配置
+  const examPointType = useMemo<ExamPointType | null>(() => {
+    const type = safePoint?.exam_point_type
+    return isValidExamPointType(type) ? type : null
+  }, [safePoint?.exam_point_type])
+
+  const moduleRenderConfig = useMemo(() => {
+    return getModuleRenderConfig(examPointType)
+  }, [examPointType])
+
+  // 从数据库字段读取高频考法和易错点
+  const hfPatterns = useMemo(() => {
+    return parseFromDatabase(safePoint?.hf_patterns)
+  }, [safePoint?.hf_patterns])
+
+  const pitfalls = useMemo(() => {
+    return parseFromDatabase(safePoint?.pitfalls)
+  }, [safePoint?.pitfalls])
 
   // 【必须模块】本考点在考什么 - 所有考点类型都必须显示
   const examMapData = useMemo<ExamMapData | null>(() => {
@@ -779,10 +810,34 @@ export default function KnowledgePointPage() {
           {!isAggregationNode && (
             <>
               {/* 【必须模块】结构骨架（脑内地图）- 所有考点类型都必须显示 */}
-              {/* 结构骨架必须始终存在，但未填充的结构项不暴露给用户 */}
+              {/* 结构骨架必须始终存在，根据 exam_point_type 显示不同的结构模板 */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（脑内地图）</h2>
             {(() => {
+              // 如果结构骨架没有内容，使用类型感知的占位符
+              if (!hasModuleContent('structureSkeleton', moduleRenderConfig, structureSections)) {
+                return (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                    <p className="text-gray-600 text-sm mb-3">
+                      {moduleRenderConfig.structureSkeleton.placeholder || '本考点该模块内容正在完善中，当前以教材原文为准'}
+                    </p>
+                    {moduleRenderConfig.structureSkeleton.sections.length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        <p className="text-sm font-semibold text-gray-700">本类考点通常从以下维度考查：</p>
+                        <ul className="space-y-1 text-gray-600 ml-4">
+                          {moduleRenderConfig.structureSkeleton.sections.map((section, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <span className="text-blue-600 mt-1">•</span>
+                              <span>{section.title}{section.description ? `：${section.description}` : ''}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )
+              }
+              
               // 过滤出有实际内容的结构项（非占位符）
               const sectionsWithContent = structureSections.filter(section => {
                 return section.items.some(item => {
@@ -876,115 +931,59 @@ export default function KnowledgePointPage() {
             </>
           )}
 
-          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染高频考法 & 易错点 */}
-          {!isAggregationNode && (
-            <>
-              {/* 【强制模块】高频考法 & 易错点（应试核心区）
-              适用范围：仅【具体必考药物】和【药物分类】
-              一类药物使用简化版：高频考法 ≥ 2 条，易错点 ≥ 2 条
-              渲染位置：结构骨架之后，核心药物详解卡之前 */}
-          {(pointType === 'specific_drug' || pointType === 'drug_class') && (
+          {/* 【强制模块】高频考法 & 易错点（应试核心区）
+          所有考点类型都必须显示，永远渲染框架
+          渲染位置：结构骨架之后，核心药物详解卡之前 */}
+          {moduleRenderConfig.examCoreZone.enabled && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 高频考法 & 易错点（应试核心区）
-                {pointType === 'drug_class' && (
-                  <span className="text-sm font-normal text-gray-500 ml-2">（简化版）</span>
-                )}
               </h2>
               
-              {examCoreZone.isComplete ? (
-                <div className="space-y-6">
-                  {/* 高频考法 */}
-                  {examCoreZone.high_frequency_patterns.length > 0 && (
-                    <div>
-                      <h3 className="text-base font-semibold text-blue-700 mb-3">📌 高频考法</h3>
-                      <ul className="space-y-2">
-                        {examCoreZone.high_frequency_patterns.map((pattern, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
-                            <span className="text-blue-600 mt-1">•</span>
-                            <span>{pattern}</span>
-                          </li>
-                        ))}
-                      </ul>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 高频考法 */}
+                <div>
+                  <h3 className="text-base font-semibold text-blue-700 mb-3">📌 高频考法</h3>
+                  {hfPatterns.length > 0 ? (
+                    <ul className="space-y-2">
+                      {hfPatterns.map((pattern, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
+                          <span className="text-blue-600 mt-1">•</span>
+                          <span>{formatAbbreviations(pattern)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                      <p className="text-gray-600 text-sm">
+                        待补充：先从教材原文的『作用特点/适应证/用法用量』提炼
+                      </p>
                     </div>
                   )}
+                </div>
 
-                  {/* 易错点 */}
-                  {examCoreZone.common_traps.length > 0 && (
-                    <div>
-                      <h3 className="text-base font-semibold text-orange-700 mb-3">⚠️ 易错点</h3>
-                      <ul className="space-y-2">
-                        {examCoreZone.common_traps.map((trap, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
-                            <span className="text-orange-600 mt-1">•</span>
-                            <span>{trap}</span>
-                          </li>
-                        ))}
-                      </ul>
+                {/* 易错点 */}
+                <div>
+                  <h3 className="text-base font-semibold text-orange-700 mb-3">⚠️ 易错点</h3>
+                  {pitfalls.length > 0 ? (
+                    <ul className="space-y-2">
+                      {pitfalls.map((pitfall, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
+                          <span className="text-orange-600 mt-1">•</span>
+                          <span>{formatAbbreviations(pitfall)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                      <p className="text-gray-600 text-sm">
+                        待补充：先从教材原文的『禁忌/相互作用/监测/典型不良反应』提炼
+                      </p>
                     </div>
                   )}
                 </div>
-              ) : examCoreZone.isPlaceholder ? (
-                // 部分数据：显示已有内容 + 提示
-                <div className="space-y-4">
-                  {examCoreZone.high_frequency_patterns.length > 0 && (
-                    <div>
-                      <h3 className="text-base font-semibold text-blue-700 mb-3">📌 高频考法</h3>
-                      <ul className="space-y-2">
-                        {examCoreZone.high_frequency_patterns.map((pattern, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
-                            <span className="text-blue-600 mt-1">•</span>
-                            <span>{pattern}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      {examCoreZone.high_frequency_patterns.length < 2 && (
-                        <p className="text-yellow-600 text-sm mt-2">
-                          ⚠️ 高频考法不足2条（当前{examCoreZone.high_frequency_patterns.length}条），待补充
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  
-                  {examCoreZone.common_traps.length > 0 && (
-                    <div>
-                      <h3 className="text-base font-semibold text-orange-700 mb-3">⚠️ 易错点</h3>
-                      <ul className="space-y-2">
-                        {examCoreZone.common_traps.map((trap, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
-                            <span className="text-orange-600 mt-1">•</span>
-                            <span>{trap}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      {examCoreZone.common_traps.length < 2 && (
-                        <p className="text-yellow-600 text-sm mt-2">
-                          ⚠️ 易错点不足2条（当前{examCoreZone.common_traps.length}条），待补充
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
-                    <p className="text-yellow-800 text-sm">
-                      ⚠️ 本考点应试核心内容待补充（point_id: {safePointId}）
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                // 完全缺失：显示占位卡片
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <p className="text-yellow-800 text-sm font-medium">
-                    ⚠️ 本考点应试核心内容待补充
-                  </p>
-                  <p className="text-yellow-700 text-xs mt-2">
-                    考点ID: {safePointId} | 类型: {pointType === 'specific_drug' ? '具体必考药物' : '药物分类'}
-                  </p>
-                </div>
-              )}
+              </div>
             </div>
-          )}
-            </>
           )}
 
           {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染代表药物应试定位 */}
@@ -1064,12 +1063,19 @@ export default function KnowledgePointPage() {
           {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染核心药物详解卡 */}
           {!isAggregationNode && (
             <>
-              {/* 强制引入模块「核心药物详解卡（只保留必考药）」，必须包含：为什么考它、适应证、禁忌、相互作用
-                  仅当考点类型 =【具体必考药物】时，才允许输出 */}
-              {pointType === 'specific_drug' && coreDrugCards.length > 0 && (
+              {/* 强制引入模块「核心药物详解卡」，所有考点类型都必须显示
+                  根据 exam_point_type 切换模板：single_drug / drug_class / clinical_selection / adr_interaction / mechanism_basic */}
+              {moduleRenderConfig.coreDrugCard.enabled && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">核心药物详解卡（只保留必考药）</h2>
-              {coreDrugCards.length > 0 ? (
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                {moduleRenderConfig.coreDrugCard.template === 'single_drug' && '核心药物详解卡（只保留必考药）'}
+                {moduleRenderConfig.coreDrugCard.template === 'drug_class' && '分类核心卡'}
+                {moduleRenderConfig.coreDrugCard.template === 'clinical_selection' && '用药决策卡'}
+                {moduleRenderConfig.coreDrugCard.template === 'adr_interaction' && '风险专题卡'}
+                {moduleRenderConfig.coreDrugCard.template === 'mechanism_basic' && '机制说明卡'}
+                {!moduleRenderConfig.coreDrugCard.template && '核心药物详解卡'}
+              </h2>
+              {hasModuleContent('coreDrugCard', moduleRenderConfig, coreDrugCards) ? (
                 <div className="space-y-4">
                   {coreDrugCards.map((card) => {
                     // 分类 bullets 到不同类别
@@ -1178,9 +1184,9 @@ export default function KnowledgePointPage() {
                   })}
                 </div>
               ) : (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-red-800 text-sm font-semibold">
-                    ⚠️ 系统错误：药物类考点必须包含「核心药物详解卡」模块
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                  <p className="text-gray-600 text-sm">
+                    {moduleRenderConfig.coreDrugCard.placeholder || '本考点该模块内容正在完善中，当前以教材原文为准'}
                   </p>
                 </div>
               )}

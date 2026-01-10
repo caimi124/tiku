@@ -485,6 +485,7 @@ model knowledge_points {
   exam_years        Int[]
   related_questions String[]
   pdf_url           String?
+  exam_point_type   String?                   // 考点类型：single_drug/drug_class/clinical_selection/adr_interaction/mechanism_basic
   created_at        DateTime? @default(now()) @db.Timestamptz(6)
   updated_at        DateTime? @default(now()) @db.Timestamptz(6)
 

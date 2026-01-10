@@ -12,7 +12,13 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "backfill:exam-point-type": "npx tsx scripts/backfill-exam-point-type.ts",
+    "backfill:exam-point-type:dry": "npx tsx scripts/backfill-exam-point-type.ts --dry-run",
+    "backfill:highfreq": "npx tsx scripts/backfill-highfreq.ts",
+    "backfill:highfreq:dry": "npx tsx scripts/backfill-highfreq.ts --dry-run",
+    "backfill:highfreq:ids": "npx tsx scripts/backfill-highfreq.ts --ids=",
+    "backfill:highfreq:ids:dry": "npx tsx scripts/backfill-highfreq.ts --dry-run --ids="
   },
   "dependencies": {
     "@hookform/resolvers": "^3.4.0",

@@ -86,6 +86,10 @@ export interface KnowledgePointDetail {
   key_takeaway?: string
   exam_years?: number[]
   exam_frequency?: number
+  exam_point_type?: string | null
+  hf_patterns?: string | null
+  pitfalls?: string | null
+  hf_generated_at?: string | null
   tags?: PointTag[]
   // 章节和小节信息
   chapter?: { id: string; title: string; code: string }
@@ -167,12 +171,19 @@ export async function GET(
           kt.key_takeaway,
           kt.exam_years,
           kt.exam_frequency,
+          kp.exam_point_type,
+          kp.hf_patterns,
+          kp.pitfalls,
+          kp.hf_generated_at,
           ukm.mastery_score,
           ukm.is_weak_point,
           ukm.last_review_at,
           ukm.practice_count,
           ukm.correct_rate
         FROM knowledge_tree kt
+        LEFT JOIN knowledge_points kp 
+          ON kt.title = kp.point_name 
+          OR kt.code = kp.chapter || '.' || kp.section
         LEFT JOIN user_knowledge_mastery ukm 
           ON kt.id = ukm.knowledge_point_id 
           AND ukm.user_id = $2
@@ -182,27 +193,34 @@ export async function GET(
     } else {
       pointQuery = `
         SELECT 
-          id,
-          code,
-          title,
-          content,
-          node_type,
-          point_type,
-          drug_name,
-          importance,
-          importance_level,
-          learn_mode,
-          error_pattern_tags,
-          memory_tips,
-          parent_id,
-          subject_code,
-          level,
-          sort_order,
-          key_takeaway,
-          exam_years,
-          exam_frequency
-        FROM knowledge_tree
-        WHERE id = $1
+          kt.id,
+          kt.code,
+          kt.title,
+          kt.content,
+          kt.node_type,
+          kt.point_type,
+          kt.drug_name,
+          kt.importance,
+          kt.importance_level,
+          kt.learn_mode,
+          kt.error_pattern_tags,
+          kt.memory_tips,
+          kt.parent_id,
+          kt.subject_code,
+          kt.level,
+          kt.sort_order,
+          kt.key_takeaway,
+          kt.exam_years,
+          kt.exam_frequency,
+          kp.exam_point_type,
+          kp.hf_patterns,
+          kp.pitfalls,
+          kp.hf_generated_at
+        FROM knowledge_tree kt
+        LEFT JOIN knowledge_points kp 
+          ON kt.title = kp.point_name 
+          OR kt.code = kp.chapter || '.' || kp.section
+        WHERE kt.id = $1
       `
     }
     
