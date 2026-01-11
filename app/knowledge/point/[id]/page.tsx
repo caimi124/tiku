@@ -1058,6 +1058,29 @@ export default function KnowledgePointPage() {
     hasData: !!examMapData,
   })
 
+  const representativeExamFocusEntries = useMemo(() => {
+    if (coreDrugCards.length === 0) {
+      return []
+    }
+    const fallbackLine = hfPatterns[0] ?? pitfalls[0] ?? ''
+    return coreDrugCards
+      .map(card => {
+        const focusLine =
+          (card as any).examFocusLine ??
+          (card as any).whyExam ??
+          card.why ??
+          fallbackLine
+        if (!focusLine) return null
+        return {
+          id: card.id,
+          name: card.name,
+          focusLine,
+        }
+      })
+      .filter((entry): entry is { id: string; name: string; focusLine: string } => !!entry)
+      .slice(0, 4)
+  }, [coreDrugCards, hfPatterns, pitfalls])
+
   // 学习建议 - 仅 drug_class / exam_strategy 类型
   // 优先级：配置数据 > 从 content 生成 > 默认
   const studyAdvice = useMemo<string | null>(() => {
@@ -1170,42 +1193,46 @@ export default function KnowledgePointPage() {
                     ))}
                   </div>
                 )}
-                {examMapData.focus.length > 0 && (
-                  <div className="pt-2 space-y-2">
-                    <div className="text-sm font-semibold text-gray-900">
-                      {formatAbbreviations(examMapData.focusTitle || '👉 其中重点集中在：')}
-                    </div>
-                    <ul className="list-disc ml-5 space-y-1 text-gray-800">
-                      {examMapData.focus.map(item => (
-                        <li key={item.id}>{formatAbbreviations(item.text)}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
               </div>
             )}
 
-            {examMapState === 'chapter' &&
-              renderChapterPlaceholder(
-                <div className="space-y-2 text-gray-700 text-sm">
-                  <p>围绕「{chapterContext.nodeTitle}」通常从以下维度出题：</p>
-                  <ul className="space-y-1 ml-4 list-disc">
-                    <li>基本概念与分类</li>
-                    <li>作用机制与临床应用</li>
-                    <li>禁忌与注意事项</li>
-                    <li>用药监测与相互作用</li>
-                    <li>高频易错点与对比</li>
-                  </ul>
-                </div>
-              )}
+            <div className="mt-4 space-y-2">
+              <p className="text-gray-900 text-sm font-semibold">
+                本考点围绕【{chapterContext.nodeTitle}】，考试通常从 3 个角度出题：
+              </p>
+              <ul className="list-disc ml-4 space-y-1 text-gray-700">
+                {[
+                  '① 药物如何分类（同类区分、适用范围）',
+                  '② 各类药物的作用特点及关键禁忌',
+                  '③ 必考核心药物的典型考法',
+                ].map(angle => (
+                  <li key={angle}>{angle}</li>
+                ))}
+              </ul>
+            </div>
 
-            {examMapState === 'empty' && (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                <p className="text-gray-600 text-sm">
-                  该模块在当前考点下暂未形成稳定考法，已为你保留结构位置，后续出现相关出题内容将自动激活。
-                </p>
-              </div>
-            )}
+            <div className="mt-4 space-y-2">
+              <p className="text-sm font-semibold text-gray-900">👉 其中重点集中在：</p>
+              <ul className="space-y-2 text-gray-700 ml-4 list-none">
+                {[
+                  '药物分类与代表药（高频送分）',
+                  '临床用药评价中的「禁忌 / 易错点」',
+                ].map(item => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="text-blue-600 mt-1">•</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+                {representativeExamFocusEntries.map(entry => (
+                  <li key={entry.id} className="flex items-start gap-2">
+                    <span className="text-blue-600 mt-1">•</span>
+                    <span>
+                      {formatAbbreviations(entry.name)}：{formatAbbreviations(entry.focusLine)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </ModuleShell>
 
           <ModuleShell title="结构骨架（脑内地图）" description="无论是聚合还是单体，都帮助你建立梳理思路">
