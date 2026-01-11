@@ -65,6 +65,19 @@ export interface ContentItemAccuracy {
   accuracy: number      // 正确率 (0-100)
 }
 
+function getBuildVersion(): string | null {
+  return (
+    process.env.NEXT_PUBLIC_KNOWLEDGE_POINT_BUILD_VERSION ??
+    process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ??
+    process.env.VERCEL_GIT_COMMIT_SHA ??
+    process.env.GITHUB_SHA ??
+    process.env.SOURCE_VERSION ??
+    process.env.BUILD_VERSION ??
+    process.env.GIT_COMMIT_SHA ??
+    null
+  )
+}
+
 export interface KnowledgePointDetail {
   id: string
   code: string
@@ -90,6 +103,8 @@ export interface KnowledgePointDetail {
   hf_patterns?: string | null
   pitfalls?: string | null
   hf_generated_at?: string | null
+  point_missing?: boolean
+  build_version?: string | null
   tags?: PointTag[]
   // 章节和小节信息
   chapter?: { id: string; title: string; code: string }
@@ -113,6 +128,13 @@ export interface KnowledgePointDetail {
   related_points?: RelatedPoint[]
   // 内容项正确率
   content_item_accuracy?: ContentItemAccuracy[]
+}
+
+interface KnowledgePointMeta {
+  exam_point_type?: string | null
+  hf_patterns?: string | null
+  pitfalls?: string | null
+  hf_generated_at?: string | null
 }
 
 export interface BreadcrumbItem {
@@ -171,19 +193,12 @@ export async function GET(
           kt.key_takeaway,
           kt.exam_years,
           kt.exam_frequency,
-          kp.exam_point_type,
-          kp.hf_patterns,
-          kp.pitfalls,
-          kp.hf_generated_at,
           ukm.mastery_score,
           ukm.is_weak_point,
           ukm.last_review_at,
           ukm.practice_count,
           ukm.correct_rate
         FROM knowledge_tree kt
-        LEFT JOIN knowledge_points kp 
-          ON kt.title = kp.point_name 
-          OR kt.code = kp.chapter || '.' || kp.section
         LEFT JOIN user_knowledge_mastery ukm 
           ON kt.id = ukm.knowledge_point_id 
           AND ukm.user_id = $2
@@ -211,15 +226,8 @@ export async function GET(
           kt.sort_order,
           kt.key_takeaway,
           kt.exam_years,
-          kt.exam_frequency,
-          kp.exam_point_type,
-          kp.hf_patterns,
-          kp.pitfalls,
-          kp.hf_generated_at
+          kt.exam_frequency
         FROM knowledge_tree kt
-        LEFT JOIN knowledge_points kp 
-          ON kt.title = kp.point_name 
-          OR kt.code = kp.chapter || '.' || kp.section
         WHERE kt.id = $1
       `
     }
@@ -234,12 +242,20 @@ export async function GET(
     }
     
     const point = pointResult.rows[0]
+    const buildVersion = getBuildVersion()
     
     // 获取面包屑（父节点链）
     const breadcrumb = await getBreadcrumb(client, point.parent_id)
     
     // 获取章节和小节信息
     const { chapter, section } = await getChapterAndSection(client, point.parent_id)
+    
+    const knowledgePointMatch = await fetchKnowledgePointMeta(
+      client,
+      point,
+      chapter?.title ?? null,
+      section?.title ?? null
+    )
     
     // 获取导航信息（上下考点、同小节考点列表）
     const navigation = await getNavigation(client, point.parent_id, point.id, point.sort_order)
@@ -258,8 +274,17 @@ export async function GET(
     // 处理掌握状态
     const masteryStatus = getMasteryStatus(point.mastery_score)
     
+    const knowledgePointMissing = !knowledgePointMatch
     const result: KnowledgePointDetail = {
       ...point,
+      build_version: buildVersion,
+      exam_point_type: knowledgePointMatch?.meta.exam_point_type ?? null,
+      hf_patterns: knowledgePointMatch?.meta.hf_patterns ?? null,
+      pitfalls: knowledgePointMatch?.meta.pitfalls ?? null,
+      hf_generated_at: knowledgePointMatch?.meta.hf_generated_at ?? null,
+      point_missing: knowledgePointMissing,
+      match_key_used: knowledgePointMatch?.matchKey ?? 'none',
+      matched_candidates: knowledgePointMatch?.matchedCandidates ?? 0,
       chapter,
       section,
       tags,
@@ -394,6 +419,84 @@ async function getPointTags(
   }
   
   return tags
+}
+
+interface KnowledgePointMatchResult {
+  meta: KnowledgePointMeta
+  matchKey: string
+  matchedCandidates: number
+}
+
+async function fetchKnowledgePointMeta(
+  client: any,
+  point: any,
+  chapterTitle: string | null,
+  sectionTitle: string | null
+): Promise<KnowledgePointMatchResult | null> {
+  const subject = point.subject_code?.trim() || null
+  const pointName = point.title?.trim() || null
+
+  if (!subject || !pointName) {
+    console.warn(
+      `[knowledge-point] ${point.id} 缺少 subject/point_name 无法匹配 knowledge_points`
+    )
+    return null
+  }
+
+  const candidateValues: Record<string, string | null> = {
+    subject,
+    chapter: chapterTitle?.trim() || null,
+    section: sectionTitle?.trim() || null,
+    point_name: pointName,
+  }
+
+  const strategies: Array<{ name: string; columns: string[] }> = [
+    { name: 'subject+chapter+section+point_name', columns: ['subject', 'chapter', 'section', 'point_name'] },
+    { name: 'subject+chapter+point_name', columns: ['subject', 'chapter', 'point_name'] },
+    { name: 'subject+point_name', columns: ['subject', 'point_name'] },
+  ]
+
+  const baseSelect = `
+    SELECT 
+      exam_point_type,
+      hf_patterns,
+      pitfalls,
+      hf_generated_at
+    FROM knowledge_points
+  `
+
+  for (const strategy of strategies) {
+    const values = strategy.columns.map((column) => candidateValues[column])
+    if (values.some((value) => value === null)) {
+      continue
+    }
+
+    const whereClause = strategy.columns
+      .map((column, idx) => `${column} = $${idx + 1}`)
+      .join(' AND ')
+    const queryText = `
+      ${baseSelect}
+      WHERE ${whereClause}
+      ORDER BY hf_generated_at DESC NULLS LAST, created_at DESC, id ASC
+    `
+    const { rows } = await client.query(queryText, values)
+
+    if (rows.length > 0) {
+      if (rows.length > 1) {
+        console.warn(
+          `[knowledge-point] ${point.id} 匹配到 ${rows.length} 条 knowledge_points（${strategy.name}），使用 latest hf_generated_at`
+        )
+      }
+
+      return {
+        meta: rows[0],
+        matchKey: strategy.name,
+        matchedCandidates: rows.length,
+      }
+    }
+  }
+
+  return null
 }
 
 /**

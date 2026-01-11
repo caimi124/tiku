@@ -34,10 +34,8 @@ import { formatAbbreviations } from '@/lib/abbreviations'
 import type { Action } from '@/lib/knowledge/pointPage.types'
 import { hasClassificationTable } from '@/lib/contentUtils'
 import {
-  extractExamPatternsFromContent,
   extractDrugsFromContent,
   generateStudyAdviceFromContent,
-  generateDefaultExamPatterns,
 } from '@/lib/knowledge/contentExtractor'
 import {
   getStructureTemplate,
@@ -84,6 +82,10 @@ interface KnowledgePointDetail {
   hf_patterns?: string | null
   pitfalls?: string | null
   hf_generated_at?: string | null
+  point_missing?: boolean
+  match_key_used?: string | null
+  matched_candidates?: number | null
+  build_version?: string | null
   related_points?: any[]
   content_item_accuracy?: any[]
   navigation?: {
@@ -131,13 +133,6 @@ type ExamMapData = {
 }
 
 type PointType = 'specific_drug' | 'drug_class' | 'exam_strategy' | 'structure_skeleton' | 'structure_only' | 'strategy'
-
-type ExamCoreZone = {
-  high_frequency_patterns: string[]
-  common_traps: string[]
-  isComplete: boolean
-  isPlaceholder: boolean
-}
 
 const DEFAULT_ACTIONS: Record<'primary' | 'secondary' | 'tertiary', Action> = {
   primary: { label: '▶ 开始考点自测（3-5题）', type: 'selfTest', payload: { count: 5 } },
@@ -273,9 +268,84 @@ export default function KnowledgePointPage() {
 
   const hfPatternCount = hfPatterns.length
   const pitfallsCount = pitfalls.length
+  const pointMissing = safePoint?.point_missing === true
+  const matchKeyUsed = safePoint?.match_key_used ?? 'none'
+  const matchedCandidates = safePoint?.matched_candidates ?? 0
+  const chapterTitle = safePoint?.chapter?.title
+  const sectionTitle = safePoint?.section?.title
+  const chapterDescriptor = `${chapterTitle ? `章节「${chapterTitle}」` : '本章节'}${
+    sectionTitle ? ` · 小节「${sectionTitle}」` : ''
+  }`
+  const buildVersionDisplay = safePoint?.build_version ?? 'unknown'
+  const hfGeneratedAtDisplay = safePoint?.hf_generated_at
+    ? new Date(safePoint.hf_generated_at).toLocaleString()
+    : '未生成'
   const showDebugBadge = DEBUG_BADGE_ENABLED && !!safePoint
   const examPointTypeDisplay = safePoint?.exam_point_type ?? '未设置'
   const isExamPointTypeMissing = !safePoint?.exam_point_type
+  const highFreqState = hfPatternCount > 0 ? 'data' : pointMissing || isAggregationNode ? 'chapter' : 'empty'
+  const pitfallsState = pitfallsCount > 0 ? 'data' : pointMissing || isAggregationNode ? 'chapter' : 'empty'
+  const renderChapterPlaceholder = (mode: 'hf' | 'pitfall') => {
+    const descriptor =
+      mode === 'hf'
+        ? `本${chapterDescriptor}通常从作用机制/适应证与用药选择三个角度出题，值得重点掌握`
+        : `本${chapterDescriptor}的翻车点主要集中在禁忌、相互作用和监测这三类风险`
+    return (
+      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+        <p className="text-gray-700 text-sm">{descriptor}</p>
+        <p className="text-gray-500 text-xs mt-1">
+          该知识树节点尚未与 `knowledge_points` 实体建立映射，先观察章节级结构即可。
+        </p>
+      </div>
+    )
+  }
+  const renderEmptyPlaceholder = (mode: 'hf' | 'pitfall') => {
+    const descriptor =
+      mode === 'hf'
+        ? '高频考法正在从适应证、作用特点与用药决策中自动补充'
+        : '易错点正在从禁忌、不良反应与相互作用中自动提炼'
+    return (
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+        <p className="text-gray-600 text-sm">{descriptor}</p>
+      </div>
+    )
+  }
+  const renderHighFreqContent = () => {
+    if (highFreqState === 'data') {
+      return (
+        <ul className="space-y-2">
+          {hfPatterns.map((pattern, idx) => (
+            <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
+              <span className="text-blue-600 mt-1">•</span>
+              <span>{formatAbbreviations(pattern)}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    if (highFreqState === 'chapter') {
+      return renderChapterPlaceholder('hf')
+    }
+    return renderEmptyPlaceholder('hf')
+  }
+  const renderPitfallContent = () => {
+    if (pitfallsState === 'data') {
+      return (
+        <ul className="space-y-2">
+          {pitfalls.map((pitfall, idx) => (
+            <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
+              <span className="text-orange-600 mt-1">•</span>
+              <span>{formatAbbreviations(pitfall)}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    if (pitfallsState === 'chapter') {
+      return renderChapterPlaceholder('pitfall')
+    }
+    return renderEmptyPlaceholder('pitfall')
+  }
 
   // 【必须模块】本考点在考什么 - 所有考点类型都必须显示
   const examMapData = useMemo<ExamMapData | null>(() => {
@@ -577,117 +647,6 @@ export default function KnowledgePointPage() {
     return true
   }, [isDrugPoint, coreDrugCards, safePointId])
 
-  // 【强制模块】exam_core_zone: 高频考法 & 易错点（应试核心区）
-  // 适用范围：仅【具体必考药物】和【药物分类】
-  // 优先级：配置数据 > 从 content 提取 > takeaways 回退 > 占位
-  const examCoreZone = useMemo<ExamCoreZone>(() => {
-    // 适用范围：仅【具体必考药物】和【药物分类】需要生成
-    if (pointType !== 'specific_drug' && pointType !== 'drug_class') {
-      return {
-        high_frequency_patterns: [],
-        common_traps: [],
-        isComplete: false,
-        isPlaceholder: false
-      }
-    }
-
-    const patterns: string[] = []
-    const traps: string[] = []
-
-    // 优先级1：从 highYieldModule 配置提取
-    if (highYieldModule?.data?.rules) {
-      for (const rule of highYieldModule.data.rules) {
-        // 高频考法：使用特定句式
-        if (rule.examMove || rule.oneLiner) {
-          const text = rule.examMove || rule.oneLiner
-          // 检查是否符合句式要求
-          if (text.includes('如果') && text.includes('问') && text.includes('选')) {
-            patterns.push(formatAbbreviations(text))
-          } else if (text.includes('题干出现') && text.includes('首选')) {
-            patterns.push(formatAbbreviations(text))
-          } else if (text.includes('常考问法')) {
-            patterns.push(formatAbbreviations(text))
-          } else if (rule.level === 'key') {
-            // 转换为标准句式
-            if (pointType === 'drug_class') {
-              patterns.push(`常考问法是${formatAbbreviations(rule.oneLiner)}`)
-            } else {
-              patterns.push(`如果题干问${formatAbbreviations(rule.oneLiner)}，选${formatAbbreviations(rule.bucket)}`)
-            }
-          }
-        }
-        
-        // 易错点：使用特定句式
-        if (rule.level === 'warn' || rule.level === 'danger') {
-          const trapText = rule.examMove || rule.oneLiner
-          if (trapText && trapText.includes('常见误区')) {
-            traps.push(formatAbbreviations(trapText))
-          } else if (trapText) {
-            traps.push(`常见误区是${formatAbbreviations(trapText)}，正确理解是${formatAbbreviations(rule.oneLiner)}`)
-          }
-        }
-      }
-    }
-
-    // 优先级2：从 content 提取（仅在配置数据不足时）
-    if ((patterns.length < 2 || traps.length < 2) && safePoint?.content) {
-      const extracted = extractExamPatternsFromContent(safePoint.content, pointType)
-      if (extracted) {
-        patterns.push(...extracted.patterns.slice(0, 2 - patterns.length))
-        traps.push(...extracted.traps.slice(0, 2 - traps.length))
-      }
-    }
-
-    // 优先级3：从 takeaways 补充数据
-    if (patterns.length < 2 || traps.length < 2) {
-      for (const item of takeaways) {
-        if (patterns.length < 2 && item.level === 'key') {
-          if (pointType === 'drug_class') {
-            patterns.push(`常考问法是${formatAbbreviations(item.text)}`)
-          } else {
-            patterns.push(`如果题干问${formatAbbreviations(item.text)}，选相关药物`)
-          }
-        }
-        if (traps.length < 2 && (item.level === 'warn' || item.level === 'danger')) {
-          traps.push(`常见误区是${formatAbbreviations(item.text)}，正确理解需参考教材原文`)
-        }
-      }
-    }
-
-    // 优先级4：生成默认高频考法和易错点（当所有提取方法都失败时）
-    if ((patterns.length < 2 || traps.length < 2) && safePoint?.title) {
-      const defaultPatterns = generateDefaultExamPatterns(safePoint.title, pointType)
-      if (defaultPatterns) {
-        // 补充不足的部分
-        if (patterns.length < 2) {
-          const needed = 2 - patterns.length
-          patterns.push(...defaultPatterns.patterns.slice(0, needed))
-        }
-        if (traps.length < 2) {
-          const needed = 2 - traps.length
-          traps.push(...defaultPatterns.traps.slice(0, needed))
-        }
-      }
-    }
-
-    // 校验数量下限
-    const hasMinPatterns = patterns.length >= 2
-    const hasMinTraps = traps.length >= 2
-    const isComplete = hasMinPatterns && hasMinTraps
-
-    return {
-      high_frequency_patterns: patterns.slice(0, 6), // 最多6条
-      common_traps: traps.slice(0, 6), // 最多6条
-      isComplete,
-      isPlaceholder: !isComplete && (patterns.length > 0 || traps.length > 0)
-    }
-  }, [pointType, highYieldModule, takeaways, safePoint])
-
-  // 确保高频考法模块存在（兼容旧逻辑）
-  const hasHighYield = useMemo(() => {
-    return examCoreZone.high_frequency_patterns.length > 0 || examCoreZone.common_traps.length > 0
-  }, [examCoreZone])
-
   const structureSections = useMemo(() => {
     return classificationSections.length > 0 ? classificationSections : []
   }, [classificationSections])
@@ -752,7 +711,22 @@ export default function KnowledgePointPage() {
               className="mb-0"
             />
             {showDebugBadge && (
-              <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+                <span className="px-2 py-1 rounded bg-gray-100 border border-gray-200">
+                  版本: <span className="font-semibold text-gray-900">{buildVersionDisplay}</span>
+                </span>
+                <span className="px-2 py-1 rounded bg-gray-100 border border-gray-200">
+                  point_missing: <span className="font-semibold text-gray-900">{pointMissing ? 'true' : 'false'}</span>
+                </span>
+                <span className="px-2 py-1 rounded bg-gray-100 border border-gray-200">
+                  match_key_used: <span className="font-semibold text-gray-900">{matchKeyUsed}</span>
+                </span>
+                <span className="px-2 py-1 rounded bg-gray-100 border border-gray-200">
+                  matched_candidates: <span className="font-semibold text-gray-900">{matchedCandidates}</span>
+                </span>
+                <span className="px-2 py-1 rounded bg-gray-100 border border-gray-200">
+                  hf_generated_at: <span className="font-semibold text-gray-900">{hfGeneratedAtDisplay}</span>
+                </span>
                 <span className="px-2 py-1 rounded bg-gray-100 border border-gray-200">
                   exam_point_type: <span className="font-semibold text-gray-900">{examPointTypeDisplay}</span>
                 </span>
@@ -959,6 +933,17 @@ export default function KnowledgePointPage() {
             </>
           )}
 
+          {pointMissing && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-sm text-yellow-900 space-y-2">
+              <p className="font-semibold">
+                ⚠️ 该 knowledge_tree 节点尚未建立 `knowledge_points` 实体（匹配策略：{matchKeyUsed}，候选数：{matchedCandidates}）
+              </p>
+              <p>
+                当前知识树 ID（{safePointId}）暂无法映射到对应的 `knowledge_points` 记录，因此模块 5/6 暂时显示占位。建议先在数据系统中补全该实体后刷新本页。
+              </p>
+            </div>
+          )}
+
           {/* 【强制模块】高频考法 & 易错点（应试核心区）
           所有考点类型都必须显示，永远渲染框架
           渲染位置：结构骨架之后，核心药物详解卡之前 */}
@@ -971,44 +956,14 @@ export default function KnowledgePointPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* 高频考法 */}
                 <div>
-                  <h3 className="text-base font-semibold text-blue-700 mb-3">📌 高频考法</h3>
-                  {hfPatterns.length > 0 ? (
-                    <ul className="space-y-2">
-                      {hfPatterns.map((pattern, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
-                          <span className="text-blue-600 mt-1">•</span>
-                          <span>{formatAbbreviations(pattern)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                      <p className="text-gray-600 text-sm">
-                        待补充：先从教材原文的『作用特点/适应证/用法用量』提炼
-                      </p>
-                    </div>
-                  )}
+                  <h3 className="text-base font-semibold text-blue-700 mb-3">📌 高频考法（出题人视角）</h3>
+                  {renderHighFreqContent()}
                 </div>
 
                 {/* 易错点 */}
                 <div>
-                  <h3 className="text-base font-semibold text-orange-700 mb-3">⚠️ 易错点</h3>
-                  {pitfalls.length > 0 ? (
-                    <ul className="space-y-2">
-                      {pitfalls.map((pitfall, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-gray-800 leading-relaxed">
-                          <span className="text-orange-600 mt-1">•</span>
-                          <span>{formatAbbreviations(pitfall)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                      <p className="text-gray-600 text-sm">
-                        待补充：先从教材原文的『禁忌/相互作用/监测/典型不良反应』提炼
-                      </p>
-                    </div>
-                  )}
+                  <h3 className="text-base font-semibold text-orange-700 mb-3">⚠️ 易错点（考生翻车点）</h3>
+                  {renderPitfallContent()}
                 </div>
               </div>
             </div>
