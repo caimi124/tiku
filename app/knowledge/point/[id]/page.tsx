@@ -52,6 +52,7 @@ import {
   hasModuleContent,
   generateStructurePlaceholder,
 } from '@/lib/knowledge/examPointTypeRenderer'
+import { getChapterContext } from '@/lib/knowledge/getChapterContext'
 import type { ExamPointType } from '@/lib/knowledge/examPointType'
 import { isValidExamPointType } from '@/lib/knowledge/examPointType'
 import { parseFromDatabase } from '@/lib/knowledge/highFreqExtractor'
@@ -318,6 +319,41 @@ export default function KnowledgePointPage() {
   const examPointTypeDisplay = safePoint?.exam_point_type ?? '未设置'
   const isExamPointTypeMissing = !safePoint?.exam_point_type
 
+  const chapterContext = useMemo(() => {
+    return getChapterContext({
+      id: safePointId,
+      title: safePoint?.title,
+      chapter: safePoint?.chapter,
+      section: safePoint?.section,
+      breadcrumb: (safePoint as any)?.breadcrumb || null,
+    })
+  }, [
+    safePointId,
+    safePoint?.title,
+    safePoint?.chapter?.title,
+    safePoint?.chapter?.code,
+    safePoint?.section?.title,
+    safePoint?.section?.code,
+  ])
+
+  const renderChapterPlaceholder = (extra?: React.ReactNode) => (
+    <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
+      <p className="text-gray-800 font-semibold text-sm mb-2">
+        本节为章节级结构节点，尚未拆分为具体考点
+      </p>
+      <p className="text-gray-700 text-sm mb-3">
+        当前仅展示本节在教材与考试中的整体结构与出题方向。
+        <br />
+        具体药物与考点内容将在对应 knowledge points 实体建立后自动补充。
+      </p>
+      {extra}
+      <p className="text-gray-500 text-xs mt-3 pt-3 border-t border-blue-200">
+        当前 knowledge_tree_id: {chapterContext.nodeId}
+        {chapterContext.breadcrumbText ? ` · 路径：${chapterContext.breadcrumbText}` : ''}
+      </p>
+    </div>
+  )
+
   // ==================== 模块内容渲染函数 ====================
   // 结构骨架渲染
   const renderStructureContent = (state: ModuleContentState) => {
@@ -364,40 +400,7 @@ export default function KnowledgePointPage() {
     }
 
     if (state === 'chapter') {
-      // 章节级占位：显示章节级结构概览
-      const sectionsToShow = structureSections.length > 0 
-        ? structureSections 
-        : (moduleRenderConfig.structureSkeleton.sections || [])
-      
-      return (
-        <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-          <p className="text-gray-800 font-semibold text-sm mb-2">
-            本节为章节级结构节点，尚未拆分为具体考点
-          </p>
-          <p className="text-gray-700 text-sm mb-3">
-            当前仅展示本节在教材与考试中的整体结构与出题方向。
-            <br />
-            具体药物与考点内容将在对应 knowledge points 实体建立后自动补充。
-          </p>
-          {sectionsToShow.length > 0 && (
-            <div className="mb-3">
-              <p className="text-gray-700 text-sm font-medium mb-2">本{chapterDescriptor}通常从以下维度考查：</p>
-              <ul className="space-y-1 text-gray-700 ml-4">
-                {sectionsToShow.map((section: any, idx: number) => (
-                  <li key={(section as any).id || idx} className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-1">•</span>
-                    <span>{formatAbbreviations(section.title)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <p className="text-gray-500 text-xs mt-3 pt-3 border-t border-blue-200">
-            当前 knowledge_tree_id: {safePointId}
-            {chapterDescriptor !== '本章节' && ` · ${chapterDescriptor}`}
-          </p>
-        </div>
-      )
+      return renderChapterPlaceholder()
     }
 
     // 空态：有实体但结构数据为空
@@ -442,25 +445,7 @@ export default function KnowledgePointPage() {
     }
 
     if (state === 'chapter') {
-      return (
-        <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-          <p className="text-gray-800 font-semibold text-sm mb-2">
-            本节为章节级结构节点，尚未拆分为具体考点
-          </p>
-          <p className="text-gray-700 text-sm mb-3">
-            当前仅展示本节在教材与考试中的整体结构与出题方向。
-            <br />
-            具体药物与考点内容将在对应 knowledge points 实体建立后自动补充。
-          </p>
-          <p className="text-gray-700 text-sm">
-            本{chapterDescriptor}通常从作用机制/适应证与用药选择三个角度出题，值得重点掌握。
-          </p>
-          <p className="text-gray-500 text-xs mt-3 pt-3 border-t border-blue-200">
-            当前 knowledge_tree_id: {safePointId}
-            {chapterDescriptor !== '本章节' && ` · ${chapterDescriptor}`}
-          </p>
-        </div>
-      )
+      return renderChapterPlaceholder()
     }
 
     // 空态
@@ -492,25 +477,7 @@ export default function KnowledgePointPage() {
     }
 
     if (state === 'chapter') {
-      return (
-        <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-          <p className="text-gray-800 font-semibold text-sm mb-2">
-            本节为章节级结构节点，尚未拆分为具体考点
-          </p>
-          <p className="text-gray-700 text-sm mb-3">
-            当前仅展示本节在教材与考试中的整体结构与出题方向。
-            <br />
-            具体药物与考点内容将在对应 knowledge points 实体建立后自动补充。
-          </p>
-          <p className="text-gray-700 text-sm">
-            本{chapterDescriptor}的翻车点主要集中在禁忌、相互作用和监测这三类风险。
-          </p>
-          <p className="text-gray-500 text-xs mt-3 pt-3 border-t border-blue-200">
-            当前 knowledge_tree_id: {safePointId}
-            {chapterDescriptor !== '本章节' && ` · ${chapterDescriptor}`}
-          </p>
-        </div>
-      )
+      return renderChapterPlaceholder()
     }
 
     // 空态
@@ -622,24 +589,10 @@ export default function KnowledgePointPage() {
     }
 
     if (state === 'chapter') {
-      return (
-        <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-          <p className="text-gray-800 font-semibold text-sm mb-2">
-            本节为章节级结构节点，尚未拆分为具体考点
-          </p>
-          <p className="text-gray-700 text-sm mb-3">
-            当前仅展示本节在教材与考试中的整体结构与出题方向。
-            <br />
-            具体药物与考点内容将在对应 knowledge points 实体建立后自动补充。
-          </p>
-          <p className="text-gray-700 text-sm">
-            本节为汇总节点，详见下方具体考点/代表药物卡。
-          </p>
-          <p className="text-gray-500 text-xs mt-3 pt-3 border-t border-blue-200">
-            当前 knowledge_tree_id: {safePointId}
-            {chapterDescriptor !== '本章节' && ` · ${chapterDescriptor}`}
-          </p>
-        </div>
+      return renderChapterPlaceholder(
+        <p className="text-gray-700 text-sm">
+          本节为汇总节点，详见下方具体考点/代表药物卡。
+        </p>
       )
     }
 
@@ -693,24 +646,10 @@ export default function KnowledgePointPage() {
     }
 
     if (state === 'chapter') {
-      return (
-        <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-          <p className="text-gray-800 font-semibold text-sm mb-2">
-            本节为章节级结构节点，尚未拆分为具体考点
-          </p>
-          <p className="text-gray-700 text-sm mb-3">
-            当前仅展示本节在教材与考试中的整体结构与出题方向。
-            <br />
-            具体药物与考点内容将在对应 knowledge points 实体建立后自动补充。
-          </p>
-          <p className="text-gray-700 text-sm">
-            本{chapterDescriptor}的教材原文概览正在整理中，当前仅支持结构理解。
-          </p>
-          <p className="text-gray-500 text-xs mt-3 pt-3 border-t border-blue-200">
-            当前 knowledge_tree_id: {safePointId}
-            {chapterDescriptor !== '本章节' && ` · ${chapterDescriptor}`}
-          </p>
-        </div>
+      return renderChapterPlaceholder(
+        <p className="text-gray-700 text-sm">
+          本节的教材原文概览正在整理中，当前仅支持结构理解。
+        </p>
       )
     }
 
@@ -742,24 +681,10 @@ export default function KnowledgePointPage() {
     }
 
     if (state === 'chapter') {
-      return (
-        <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-          <p className="text-gray-800 font-semibold text-sm mb-2">
-            本节为章节级结构节点，尚未拆分为具体考点
-          </p>
-          <p className="text-gray-700 text-sm mb-3">
-            当前仅展示本节在教材与考试中的整体结构与出题方向。
-            <br />
-            具体药物与考点内容将在对应 knowledge points 实体建立后自动补充。
-          </p>
-          <p className="text-gray-700 text-sm">
-            考点正在按小节拆分中，当前仅展示章节级分布。
-          </p>
-          <p className="text-gray-500 text-xs mt-3 pt-3 border-t border-blue-200">
-            当前 knowledge_tree_id: {safePointId}
-            {chapterDescriptor !== '本章节' && ` · ${chapterDescriptor}`}
-          </p>
-        </div>
+      return renderChapterPlaceholder(
+        <p className="text-gray-700 text-sm">
+          考点正在按小节拆分中，当前仅展示章节级分布。
+        </p>
       )
     }
 
@@ -1126,6 +1051,13 @@ export default function KnowledgePointPage() {
     hasData: examDistributionItems.length > 0
   })
 
+  // 考什么模块状态
+  const examMapState = getModuleContentState({
+    isAggregationNode,
+    pointMissing,
+    hasData: !!examMapData,
+  })
+
   // 学习建议 - 仅 drug_class / exam_strategy 类型
   // 优先级：配置数据 > 从 content 生成 > 默认
   const studyAdvice = useMemo<string | null>(() => {
@@ -1186,7 +1118,7 @@ export default function KnowledgePointPage() {
               className="mb-0"
             />
             {showDebugBadge && (
-            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
                 <span className="px-2 py-1 rounded bg-gray-100 border border-gray-200">
                   版本: <span className="font-semibold text-gray-900">{buildVersionDisplay}</span>
                 </span>
@@ -1204,7 +1136,7 @@ export default function KnowledgePointPage() {
                 </span>
                 <span className="px-2 py-1 rounded bg-gray-100 border border-gray-200">
                   hf_generated_at: <span className="font-semibold text-gray-900">{hfGeneratedAtDisplay}</span>
-                </span>
+                  </span>
               </div>
             )}
             <div className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-gray-800 leading-relaxed">
@@ -1225,7 +1157,7 @@ export default function KnowledgePointPage() {
           </div>
 
           <ModuleShell title="📌 本考点在考什么？">
-            {examMapData ? (
+            {examMapState === 'real' && examMapData && (
               <div className="space-y-3 text-gray-800 leading-relaxed">
                 <p className="whitespace-pre-line">{formatAbbreviations(examMapData.prompt)}</p>
                 {examMapData.angles.length > 0 && (
@@ -1251,7 +1183,23 @@ export default function KnowledgePointPage() {
                   </div>
                 )}
               </div>
-            ) : (
+            )}
+
+            {examMapState === 'chapter' &&
+              renderChapterPlaceholder(
+                <div className="space-y-2 text-gray-700 text-sm">
+                  <p>围绕「{chapterContext.nodeTitle}」通常从以下维度出题：</p>
+                  <ul className="space-y-1 ml-4 list-disc">
+                    <li>基本概念与分类</li>
+                    <li>作用机制与临床应用</li>
+                    <li>禁忌与注意事项</li>
+                    <li>用药监测与相互作用</li>
+                    <li>高频易错点与对比</li>
+                  </ul>
+                </div>
+              )}
+
+            {examMapState === 'empty' && (
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                 <p className="text-gray-600 text-sm">
                   该模块在当前考点下暂未形成稳定考法，已为你保留结构位置，后续出现相关出题内容将自动激活。
@@ -1269,16 +1217,16 @@ export default function KnowledgePointPage() {
             title="高频考法 & 易错点（应试核心区）"
             description="左栏展示出题人视角的高频命题，右栏展示考生容易翻车的风险点"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
                 <h3 className="text-base font-semibold text-blue-700 mb-3">📌 高频考法（出题人视角）</h3>
                 {renderHighFreqContent(highFreqState)}
-              </div>
-              <div>
+                    </div>
+                <div>
                 <h3 className="text-base font-semibold text-orange-700 mb-3">⚠️ 易错点（考生翻车点）</h3>
                 {renderPitfallContent(pitfallsState)}
-              </div>
-            </div>
+                    </div>
+                </div>
           </ModuleShell>
 
           {pointType === 'drug_class' && (
