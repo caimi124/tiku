@@ -19,7 +19,7 @@ const DEBUG_BADGE_ENABLED =
   process.env.NODE_ENV !== 'production' ||
   process.env.NEXT_PUBLIC_KNOWLEDGE_POINT_DEBUG === 'true'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, type ReactNode } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { ChevronDown, ChevronUp } from 'lucide-react'
@@ -123,6 +123,26 @@ type ExamDistributionItem = {
   id: string
   text: string
   years: string
+}
+
+type ModuleShellProps = {
+  title: string
+  description?: string
+  children: ReactNode
+}
+
+function ModuleShell({ title, description, children }: ModuleShellProps) {
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 space-y-3">
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+        {description && (
+          <p className="text-sm text-gray-500 mt-1 leading-relaxed">{description}</p>
+        )}
+      </div>
+      <div className="space-y-3">{children}</div>
+    </div>
+  )
 }
 
 type ExamMapData = {
@@ -760,17 +780,10 @@ export default function KnowledgePointPage() {
             </div>
           </div>
 
-          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染本模块 */}
-          {!isAggregationNode && (
-            <>
-              {/* 【必须模块】本考点在考什么 - 所有考点类型都必须显示 */}
-              {examMapData ? (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">📌 本考点在考什么？</h2>
+          <ModuleShell title="📌 本考点在考什么？">
+            {examMapData ? (
               <div className="space-y-3 text-gray-800 leading-relaxed">
-                <p className="whitespace-pre-line">
-                  {formatAbbreviations(examMapData.prompt)}
-                </p>
+                <p className="whitespace-pre-line">{formatAbbreviations(examMapData.prompt)}</p>
                 {examMapData.angles.length > 0 && (
                   <div className="space-y-2">
                     {examMapData.angles.map((angle, idx) => (
@@ -787,41 +800,30 @@ export default function KnowledgePointPage() {
                       {formatAbbreviations(examMapData.focusTitle || '👉 其中重点集中在：')}
                     </div>
                     <ul className="list-disc ml-5 space-y-1 text-gray-800">
-                      {examMapData.focus.map((item) => (
+                      {examMapData.focus.map(item => (
                         <li key={item.id}>{formatAbbreviations(item.text)}</li>
                       ))}
                     </ul>
                   </div>
                 )}
               </div>
-            </div>
-          ) : (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">📌 本考点在考什么？</h2>
+            ) : (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                 <p className="text-yellow-800 text-sm">
                   ⚠️ 本模块内容待补充（point_id: {safePointId}）
                 </p>
               </div>
-            </div>
-          )}
-            </>
-          )}
+            )}
+          </ModuleShell>
 
-          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染结构骨架 */}
-          {!isAggregationNode && (
-            <>
-              {/* 【必须模块】结构骨架（脑内地图）- 所有考点类型都必须显示 */}
-              {/* 结构骨架必须始终存在，根据 exam_point_type 显示不同的结构模板 */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">结构骨架（脑内地图）</h2>
+          <ModuleShell title="结构骨架（脑内地图）" description="无论是聚合还是单体，都帮助你建立梳理思路">
             {(() => {
-              // 如果结构骨架没有内容，使用类型感知的占位符
               if (!hasModuleContent('structureSkeleton', moduleRenderConfig, structureSections)) {
                 return (
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                     <p className="text-gray-600 text-sm mb-3">
-                      {moduleRenderConfig.structureSkeleton.placeholder || '本考点该模块内容正在完善中，当前以教材原文为准'}
+                      {moduleRenderConfig.structureSkeleton.placeholder ||
+                        '本类考点正在构建中，当前以章节结构为参考。'}
                     </p>
                     {moduleRenderConfig.structureSkeleton.sections.length > 0 && (
                       <div className="mt-3 space-y-2">
@@ -830,7 +832,10 @@ export default function KnowledgePointPage() {
                           {moduleRenderConfig.structureSkeleton.sections.map((section, idx) => (
                             <li key={idx} className="flex items-start gap-2">
                               <span className="text-blue-600 mt-1">•</span>
-                              <span>{section.title}{section.description ? `：${section.description}` : ''}</span>
+                              <span>
+                                {section.title}
+                                {section.description ? `：${section.description}` : ''}
+                              </span>
                             </li>
                           ))}
                         </ul>
@@ -839,20 +844,17 @@ export default function KnowledgePointPage() {
                   </div>
                 )
               }
-              
-              // 过滤出有实际内容的结构项（非占位符）
-              const sectionsWithContent = structureSections.filter(section => {
-                return section.items.some(item => {
+
+              const sectionsWithContent = structureSections.filter(section =>
+                section.items.some(item => {
                   const isPlaceholder = (item as any).placeholder === true
                   const isPlaceholderText = item.text === '待补充' || item.text.trim() === ''
                   return !isPlaceholder && !isPlaceholderText
                 })
-              })
+              )
 
-              // 统计无内容的结构项数量
               const emptySectionsCount = structureSections.length - sectionsWithContent.length
 
-              // 如果 ≥2 个结构项无内容，使用概览式渲染
               if (emptySectionsCount >= 2) {
                 return (
                   <div className="space-y-4">
@@ -860,7 +862,7 @@ export default function KnowledgePointPage() {
                       本类考点通常从以下维度考查：
                     </p>
                     <ul className="space-y-2 text-gray-700 ml-4">
-                      {structureSections.map((section) => (
+                      {structureSections.map(section => (
                         <li key={section.id} className="flex items-start gap-2">
                           <span className="text-blue-600 mt-1">•</span>
                           <span>{formatAbbreviations(section.title)}</span>
@@ -874,19 +876,16 @@ export default function KnowledgePointPage() {
                 )
               }
 
-              // 如果只有部分结构项有内容，只渲染有内容的部分
               if (sectionsWithContent.length > 0) {
                 return (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {sectionsWithContent.map((section) => {
-                      // 过滤出非占位符的 items
+                    {sectionsWithContent.map(section => {
                       const validItems = section.items.filter(item => {
                         const isPlaceholder = (item as any).placeholder === true
                         const isPlaceholderText = item.text === '待补充' || item.text.trim() === ''
                         return !isPlaceholder && !isPlaceholderText
                       })
 
-                      // 只渲染有有效内容的 section
                       if (validItems.length === 0) return null
 
                       return (
@@ -895,7 +894,7 @@ export default function KnowledgePointPage() {
                             {formatAbbreviations(section.title)}
                           </h3>
                           <ul className="space-y-1 text-gray-800 ml-1">
-                            {validItems.map((item) => (
+                            {validItems.map(item => (
                               <li key={item.id} className="flex items-start gap-2">
                                 <span className="text-purple-500 mt-1">•</span>
                                 <span>{formatAbbreviations(item.text)}</span>
@@ -909,14 +908,13 @@ export default function KnowledgePointPage() {
                 )
               }
 
-              // 如果所有结构项都无内容，使用概览式渲染
               return (
                 <div className="space-y-4">
                   <p className="text-gray-800 leading-relaxed font-medium">
                     本类考点通常从以下维度考查：
                   </p>
                   <ul className="space-y-2 text-gray-700 ml-4">
-                    {structureSections.map((section) => (
+                    {structureSections.map(section => (
                       <li key={section.id} className="flex items-start gap-2">
                         <span className="text-blue-600 mt-1">•</span>
                         <span>{formatAbbreviations(section.title)}</span>
@@ -929,9 +927,7 @@ export default function KnowledgePointPage() {
                 </div>
               )
             })()}
-          </div>
-            </>
-          )}
+          </ModuleShell>
 
           {pointMissing && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-sm text-yellow-900 space-y-2">
@@ -944,41 +940,33 @@ export default function KnowledgePointPage() {
             </div>
           )}
 
-          {/* 【强制模块】高频考法 & 易错点（应试核心区）
-          所有考点类型都必须显示，永远渲染框架
-          渲染位置：结构骨架之后，核心药物详解卡之前 */}
-          {moduleRenderConfig.examCoreZone.enabled && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                高频考法 & 易错点（应试核心区）
-              </h2>
-              
+          <ModuleShell
+            title="高频考法 & 易错点（应试核心区）"
+            description="左栏展示出题人视角的高频命题，右栏展示考生容易翻车的风险点"
+          >
+            {moduleRenderConfig.examCoreZone.enabled ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* 高频考法 */}
                 <div>
                   <h3 className="text-base font-semibold text-blue-700 mb-3">📌 高频考法（出题人视角）</h3>
                   {renderHighFreqContent()}
                 </div>
-
-                {/* 易错点 */}
                 <div>
                   <h3 className="text-base font-semibold text-orange-700 mb-3">⚠️ 易错点（考生翻车点）</h3>
                   {renderPitfallContent()}
                 </div>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-600">
+                {moduleRenderConfig.examCoreZone.placeholder || '本模块正在建设中，当前以章节级概览为主。'}
+              </div>
+            )}
+          </ModuleShell>
 
-          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染代表药物应试定位 */}
-          {!isAggregationNode && (
-            <>
-              {/* 【一类药物专用】代表药物应试定位（仅点名代表药，不展开成核心药物详解卡） */}
           {pointType === 'drug_class' && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">代表药物应试定位</h2>
+            <ModuleShell title="代表药物应试定位" description="仅针对药物分类考点，帮助抓住代表药与不同类的差异">
               {coreDrugCards.length > 0 ? (
                 <div className="space-y-3">
-                  {coreDrugCards.map((card) => (
+                  {coreDrugCards.map(card => (
                     <div key={card.id} className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50/30 rounded-r">
                       <div className="font-semibold text-gray-900 mb-1">
                         {formatAbbreviations(card.name)}
@@ -994,7 +982,7 @@ export default function KnowledgePointPage() {
                         </p>
                       ) : (
                         <p className="text-sm text-gray-500 italic">
-                          为什么在考试中会出现：待补充
+                          代表药正在整理中，详情待完善
                         </p>
                       )}
                     </div>
@@ -1007,27 +995,19 @@ export default function KnowledgePointPage() {
                   </p>
                 </div>
               )}
-            </div>
-          )}
-            </>
+            </ModuleShell>
           )}
 
-          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染学习建议 */}
-          {!isAggregationNode && (
-            <>
-              {/* 【一类药物/策略专用】学习建议 */}
           {(pointType === 'drug_class' || pointType === 'exam_strategy') && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">学习建议</h2>
+            <ModuleShell title="学习建议">
               {studyAdvice ? (
                 <p className="text-gray-700 leading-relaxed">
                   {formatAbbreviations(studyAdvice)}
                 </p>
               ) : safePoint?.content && safePoint.content.length > 100 ? (
-                // 有完整教材原文时，必须自动生成，不允许显示占位
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <p className="text-blue-800 text-sm">
-                    📝 正在从教材原文中生成学习建议...
+                    📝 正在从教材原文中生成学习建议…
                   </p>
                 </div>
               ) : (
@@ -1038,43 +1018,40 @@ export default function KnowledgePointPage() {
                   </p>
                 </div>
               )}
-            </div>
-          )}
-            </>
+            </ModuleShell>
           )}
 
-          {/* 【聚合节点降级渲染】当 is_aggregation_node = true 时，禁止渲染核心药物详解卡 */}
-          {!isAggregationNode && (
-            <>
-              {/* 强制引入模块「核心药物详解卡」，所有考点类型都必须显示
-                  根据 exam_point_type 切换模板：single_drug / drug_class / clinical_selection / adr_interaction / mechanism_basic */}
-              {moduleRenderConfig.coreDrugCard.enabled && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                {moduleRenderConfig.coreDrugCard.template === 'single_drug' && '核心药物详解卡（只保留必考药）'}
-                {moduleRenderConfig.coreDrugCard.template === 'drug_class' && '分类核心卡'}
-                {moduleRenderConfig.coreDrugCard.template === 'clinical_selection' && '用药决策卡'}
-                {moduleRenderConfig.coreDrugCard.template === 'adr_interaction' && '风险专题卡'}
-                {moduleRenderConfig.coreDrugCard.template === 'mechanism_basic' && '机制说明卡'}
-                {!moduleRenderConfig.coreDrugCard.template && '核心药物详解卡'}
-              </h2>
-              {hasModuleContent('coreDrugCard', moduleRenderConfig, coreDrugCards) ? (
+          <ModuleShell
+            title={
+              moduleRenderConfig.coreDrugCard.template === 'single_drug'
+                ? '核心药物详解卡（只保留必考药）'
+                : moduleRenderConfig.coreDrugCard.template === 'drug_class'
+                ? '分类核心卡'
+                : moduleRenderConfig.coreDrugCard.template === 'clinical_selection'
+                ? '用药决策卡'
+                : moduleRenderConfig.coreDrugCard.template === 'adr_interaction'
+                ? '风险专题卡'
+                : moduleRenderConfig.coreDrugCard.template === 'mechanism_basic'
+                ? '机制说明卡'
+                : '核心药物详解卡'
+            }
+            description="根据考点类型展示代表药或核心药物的应试要点"
+          >
+            {moduleRenderConfig.coreDrugCard.enabled ? (
+              hasModuleContent('coreDrugCard', moduleRenderConfig, coreDrugCards) ? (
                 <div className="space-y-4">
-                  {coreDrugCards.map((card) => {
-                    // 分类 bullets 到不同类别
-                    const indicationBullets = card.bullets.filter(b => 
-                      b.text.includes('适应证') || b.text.includes('适应症') || b.level === 'key'
+                  {coreDrugCards.map(card => {
+                    const indicationBullets = card.bullets.filter(
+                      b => b.text.includes('适应证') || b.text.includes('适应症') || b.level === 'key'
                     )
-                    const contraindicationBullets = card.bullets.filter(b => 
-                      b.text.includes('禁忌') || b.level === 'danger'
+                    const contraindicationBullets = card.bullets.filter(
+                      b => b.text.includes('禁忌') || b.level === 'danger'
                     )
-                    const interactionBullets = card.bullets.filter(b => 
-                      b.text.includes('相互作用') || b.text.includes('交互') || b.level === 'warn'
+                    const interactionBullets = card.bullets.filter(
+                      b => b.text.includes('相互作用') || b.text.includes('交互') || b.level === 'warn'
                     )
-                    const otherBullets = card.bullets.filter(b => 
-                      !indicationBullets.includes(b) && 
-                      !contraindicationBullets.includes(b) && 
-                      !interactionBullets.includes(b)
+                    const otherBullets = card.bullets.filter(
+                      b => !indicationBullets.includes(b) && !contraindicationBullets.includes(b) && !interactionBullets.includes(b)
                     )
 
                     return (
@@ -1090,8 +1067,7 @@ export default function KnowledgePointPage() {
                             )}
                           </h3>
                         </div>
-                        
-                        {/* 为什么考它（必需） */}
+
                         {card.why ? (
                           <div className="mb-4">
                             <div className="font-semibold text-gray-900 mb-1">【为什么考它】</div>
@@ -1101,12 +1077,11 @@ export default function KnowledgePointPage() {
                           <div className="mb-4 text-red-600 text-sm">⚠️ 缺少「为什么考它」字段</div>
                         )}
 
-                        {/* 适应证（必需） */}
                         {indicationBullets.length > 0 ? (
                           <div className="mb-4">
                             <div className="font-semibold text-blue-700 mb-2">【适应证】</div>
                             <ul className="list-disc ml-5 space-y-1 text-gray-800">
-                              {indicationBullets.map((bullet) => (
+                              {indicationBullets.map(bullet => (
                                 <li key={bullet.id} className="leading-relaxed">
                                   {formatAbbreviations(bullet.text.replace(/【适应证】|【适应症】/g, '').trim())}
                                 </li>
@@ -1117,12 +1092,11 @@ export default function KnowledgePointPage() {
                           <div className="mb-4 text-red-600 text-sm">⚠️ 缺少「适应证」字段</div>
                         )}
 
-                        {/* 禁忌（必需） */}
                         {contraindicationBullets.length > 0 ? (
                           <div className="mb-4">
                             <div className="font-semibold text-red-700 mb-2">【禁忌】</div>
                             <ul className="list-disc ml-5 space-y-1 text-red-700">
-                              {contraindicationBullets.map((bullet) => (
+                              {contraindicationBullets.map(bullet => (
                                 <li key={bullet.id} className="leading-relaxed">
                                   {formatAbbreviations(bullet.text.replace(/【禁忌】/g, '').trim())}
                                 </li>
@@ -1133,12 +1107,11 @@ export default function KnowledgePointPage() {
                           <div className="mb-4 text-red-600 text-sm">⚠️ 缺少「禁忌」字段</div>
                         )}
 
-                        {/* 相互作用（必需） */}
                         {interactionBullets.length > 0 ? (
                           <div className="mb-4">
                             <div className="font-semibold text-orange-700 mb-2">【相互作用】</div>
                             <ul className="list-disc ml-5 space-y-1 text-orange-700">
-                              {interactionBullets.map((bullet) => (
+                              {interactionBullets.map(bullet => (
                                 <li key={bullet.id} className="leading-relaxed">
                                   {formatAbbreviations(bullet.text.replace(/【相互作用】|【交互】/g, '').trim())}
                                 </li>
@@ -1149,12 +1122,11 @@ export default function KnowledgePointPage() {
                           <div className="mb-4 text-red-600 text-sm">⚠️ 缺少「相互作用」字段</div>
                         )}
 
-                        {/* 其他信息 */}
                         {otherBullets.length > 0 && (
                           <div className="mb-4">
                             <div className="font-semibold text-gray-700 mb-2">【其他】</div>
                             <ul className="list-disc ml-5 space-y-1 text-gray-800">
-                              {otherBullets.map((bullet) => (
+                              {otherBullets.map(bullet => (
                                 <li key={bullet.id} className="leading-relaxed">
                                   {formatAbbreviations(bullet.text)}
                                 </li>
@@ -1172,44 +1144,45 @@ export default function KnowledgePointPage() {
                     {moduleRenderConfig.coreDrugCard.placeholder || '本考点该模块内容正在完善中，当前以教材原文为准'}
                   </p>
                 </div>
-              )}
-            </div>
-          )}
-            </>
-          )}
+              )
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <p className="text-yellow-800 text-sm">
+                  {moduleRenderConfig.coreDrugCard.placeholder || '本模块暂不支持该类型，敬请期待。'}
+                </p>
+              </div>
+            )}
+          </ModuleShell>
 
-          {/* 【聚合节点降级渲染】教材原文（精选整理）- 聚合节点时允许渲染 */}
-          {safePoint.content && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-              <div className="p-4 sm:p-5 border-b border-gray-100">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  {sourceModule?.title || '📘 教材原文（精选整理，用于系统复习）'}
-                </h2>
-              </div>
-              <div className="p-4 sm:p-5 space-y-3">
-                <div className="font-semibold text-gray-900">
-                  【一句话骨干】{formatAbbreviations(sourceSummary)}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setSourceExpanded(!sourceExpanded)}
-                  className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
-                >
-                  {sourceExpanded ? '收起完整原文' : '展开完整原文'}
-                  {sourceExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                </button>
-                {sourceExpanded && (
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <SmartContentRenderer
-                      content={safePoint.content}
-                      annotations={inlineAnnotations.length > 0 ? inlineAnnotations : undefined}
-                      variant="minimal"
-                    />
-                  </div>
-                )}
-              </div>
+          <ModuleShell
+            title={sourceModule?.title || '📘 教材原文（精选整理，用于系统复习）'}
+            description="精选教材原文用于系统复习，支持折叠查看"
+          >
+            <div className="font-semibold text-gray-900">
+              【一句话骨干】{formatAbbreviations(sourceSummary)}
             </div>
-          )}
+            <button
+              type="button"
+              onClick={() => setSourceExpanded(!sourceExpanded)}
+              className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
+            >
+              {sourceExpanded ? '收起完整原文' : '展开完整原文'}
+              {sourceExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+            {sourceExpanded ? (
+              <div className="border border-gray-200 rounded-lg p-4">
+                <SmartContentRenderer
+                  content={safePoint.content || '暂无内容'}
+                  annotations={inlineAnnotations.length > 0 ? inlineAnnotations : undefined}
+                  variant="minimal"
+                />
+              </div>
+            ) : !safePoint.content ? (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-600">
+                当前暂无教材原文，章节级内容正在整理中
+              </div>
+            ) : null}
+          </ModuleShell>
 
           {/* 【聚合节点降级渲染】分类表（药物分类表）- 聚合节点时允许渲染 */}
           {isAggregationNode && safePoint.content && (
@@ -1225,12 +1198,10 @@ export default function KnowledgePointPage() {
             </div>
           )}
 
-          {/* 【聚合节点降级渲染】考点分布（只保留一次）- 聚合节点时允许渲染 */}
-          {examDistributionItems.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">考点分布（只保留一次）</h2>
+          <ModuleShell title="考点分布（只保留一次）" description="考点历年分布/小节覆盖情况">
+            {examDistributionItems.length > 0 ? (
               <div className="divide-y divide-gray-100">
-                {examDistributionItems.map((item) => (
+                {examDistributionItems.map(item => (
                   <div key={item.id} className="flex items-center justify-between py-2 text-sm">
                     <span className="text-gray-800">{formatAbbreviations(item.text)}</span>
                     <span className="text-gray-500 bg-gray-50 px-2 py-1 rounded border border-gray-200">
@@ -1239,8 +1210,12 @@ export default function KnowledgePointPage() {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-600">
+                本节考点分布正在整理中，敬请期待。
+              </div>
+            )}
+          </ModuleShell>
 
           {/* 【聚合节点降级渲染】提示文案 */}
           {isAggregationNode && (
