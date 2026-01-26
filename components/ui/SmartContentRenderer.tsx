@@ -842,20 +842,41 @@ function HighlightedText({ text, variant }: { text: string; variant: 'default' |
   // 先格式化缩写
   const formattedText = formatAbbreviations(text)
   
-  // 关键词高亮规则（加粗显示）
+  // 关键词高亮规则（加粗显示，颜色匹配页面风格）
   const highlights = variant === 'minimal'
     ? [
-        { pattern: /(禁用|禁忌|严禁|不得|禁止|禁服|慎用)/g, className: 'text-red-600 font-semibold bg-red-50 px-1 rounded' },
-        { pattern: /(易错|注意|间隔|配制|稀释|只能|不宜)/g, className: 'text-amber-700 font-semibold bg-amber-50 px-1 rounded' },
+        // 危险/禁忌词 - 红色
+        { pattern: /(禁用|禁忌|严禁|不得|禁止|禁服|慎用)/g, className: 'text-red-600 font-semibold' },
+        // 注意/易错词 - 橙色（匹配 M05 amber）
+        { pattern: /(易错|注意|间隔|配制|稀释|只能|不宜|但|不明显|远期差|易混)/g, className: 'text-amber-700 font-semibold' },
+        // 药物分类缩写 - 蓝色（匹配 M02 blue）
+        { pattern: /\b(ACEI|ARB|CCB|ARNI|PDE5|SGLT2|DPP-4|GLP-1|HMG-CoA)\b/gi, className: 'text-blue-600 font-semibold' },
+        // 代表药物名称 - 紫色（匹配 M04 violet）
+        { pattern: /([\u4e00-\u9fa5]{1,4}(?:普利|沙坦|地平|洛尔|噻嗪|他汀))\b/g, className: 'text-violet-600 font-semibold' },
+        // 核心考试关键词 - 橙色（匹配 M05 amber）
+        { pattern: /(首选|一线|关键|必须|核心|典型)/g, className: 'text-amber-700 font-semibold' },
       ]
     : [
-        { pattern: /(禁用|禁忌|严禁|不得|禁止)/g, className: 'text-red-600 font-semibold bg-red-50 px-1 rounded' },
-        { pattern: /(稀释|配制|只能用|不得用)/g, className: 'text-orange-600 font-semibold bg-amber-50 px-1 rounded' },
+        // 危险/禁忌词 - 红色
+        { pattern: /(禁用|禁忌|严禁|不得|禁止)/g, className: 'text-red-600 font-semibold' },
+        // 操作注意词 - 橙色
+        { pattern: /(稀释|配制|只能用|不得用)/g, className: 'text-orange-600 font-semibold' },
+        // 核心考试关键词 - 蓝色（匹配 M02 blue）
         { pattern: /(特异性解救药|首选|一线|关键)/g, className: 'text-blue-600 font-semibold' },
-        { pattern: /(但|不明显|远期差|易混)/g, className: 'text-purple-600 font-semibold' },
+        // 易错/注意词 - 紫色（匹配 M04 violet）
+        { pattern: /(但|不明显|远期差|易混)/g, className: 'text-violet-600 font-semibold' },
+        // 慎用 - 橙色
         { pattern: /(慎用)/g, className: 'text-orange-600 font-semibold' },
+        // 不良反应 - 红色
         { pattern: /(不良反应)/g, className: 'text-red-500 font-semibold' },
+        // 适应证 - 蓝色
         { pattern: /(适应证|适用于)/g, className: 'text-blue-600 font-semibold' },
+        // 药物分类缩写 - 蓝色（匹配 M02 blue）
+        { pattern: /\b(ACEI|ARB|CCB|ARNI|PDE5|SGLT2|DPP-4|GLP-1|HMG-CoA)\b/gi, className: 'text-blue-600 font-semibold' },
+        // 代表药物名称 - 紫色（匹配 M04 violet）
+        { pattern: /([\u4e00-\u9fa5]{1,4}(?:普利|沙坦|地平|洛尔|噻嗪|他汀))\b/g, className: 'text-violet-600 font-semibold' },
+        // 核心考试关键词补充 - 橙色（匹配 M05 amber）
+        { pattern: /(必须|核心|典型)/g, className: 'text-amber-700 font-semibold' },
       ]
 
   const applyHighlights = (input: string, rules: typeof highlights) => {

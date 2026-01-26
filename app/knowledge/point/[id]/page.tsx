@@ -23,6 +23,7 @@ import { useEffect, useState, useMemo, type ReactNode } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { getModuleTheme } from '@/lib/knowledge/moduleTheme'
 
 import { ExamValueCard } from '@/components/ui/ExamValueCard'
 import { SmartContentRenderer } from '@/components/ui/SmartContentRenderer'
@@ -56,6 +57,7 @@ import { getChapterContext } from '@/lib/knowledge/getChapterContext'
 import type { ExamPointType } from '@/lib/knowledge/examPointType'
 import { isValidExamPointType } from '@/lib/knowledge/examPointType'
 import { parseFromDatabase } from '@/lib/knowledge/highFreqExtractor'
+import { highlightKeywords, shouldHighlight } from '@/lib/knowledge/highlightKeywords'
 
 /* =========================
    类型（宽松版，避免 build 卡死）
@@ -188,6 +190,18 @@ export default function KnowledgePointPage() {
   const [error, setError] = useState<string | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [sourceExpanded, setSourceExpanded] = useState(false)
+  const [pointFileContent, setPointFileContent] = useState<{
+    stages: Array<{
+      stageName: string
+      modules: Array<{
+        moduleCode: string
+        moduleName: string
+        content: string
+      }>
+    }>
+    rawContent: string
+  } | null>(null)
+  const [fileContentLoading, setFileContentLoading] = useState(false)
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024)
@@ -215,6 +229,41 @@ export default function KnowledgePointPage() {
   // 使用安全的默认值，即使 point 为 null
   const safePoint = point ?? null
   const safePointId = pointId ?? ''
+
+  // 读取考点文件内容
+  useEffect(() => {
+    if (!safePoint?.code) return
+    
+    setFileContentLoading(true)
+    fetch(`/api/knowledge-point/content/${safePoint.code}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data?.success && data.data?.stages && data.data.stages.length > 0) {
+          setPointFileContent({
+            stages: data.data.stages,
+            rawContent: data.data.rawContent || ''
+          })
+          // 调试信息（开发环境）
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`[考点文件] ${safePoint.code} 加载成功，${data.data.stages.length} 个阶段`)
+          }
+        } else {
+          // 文件不存在或解析失败时不报错，只是不显示文件内容
+          setPointFileContent(null)
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`[考点文件] ${safePoint.code} 未找到文件或解析失败`)
+          }
+        }
+      })
+      .catch((error) => {
+        // 读取失败时不报错，使用数据库内容
+        setPointFileContent(null)
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(`[考点文件] ${safePoint.code} 读取失败:`, error)
+        }
+      })
+      .finally(() => setFileContentLoading(false))
+  }, [safePoint?.code])
 
   // 【聚合节点检测】在渲染前检测是否为聚合节点
   const aggregationResult = useMemo<AggregationDetectionResult>(() => {
@@ -353,6 +402,149 @@ export default function KnowledgePointPage() {
       </p>
     </div>
   )
+
+  // ==================== 考点文件内容渲染函数 ====================
+  /**
+   * 渲染考点文件内容（三阶段结构）
+   * 按照新模板结构展示：
+   * 第一阶段：M02, M03, M04, M05
+   * 第二阶段：M03, M04, M05, M06 + 进入章节自测
+   * 第三阶段：M05, M06 + 进入冲刺检测
+   */
+  const renderPointFileContent = () => {
+    if (fileContentLoading) {
+      return (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+          <p className="text-gray-600">正在加载考点内容...</p>
+        </div>
+      )
+    }
+
+    if (!pointFileContent || pointFileContent.stages.length === 0) {
+      return null // 文件不存在时返回 null，使用原有内容
+    }
+
+    // 定义每个阶段应该显示的模块
+    const stageModuleMap: Record<number, string[]> = {
+      0: ['M02', 'M03', 'M04', 'M05'], // 第一阶段
+      1: ['M03', 'M04', 'M05', 'M06'], // 第二阶段
+      2: ['M05', 'M06'] // 第三阶段
+    }
+
+    return (
+      <div className="space-y-8">
+        {pointFileContent.stages.map((stage, stageIdx) => {
+          // 获取该阶段应该显示的模块列表
+          const allowedModules = stageModuleMap[stageIdx] || []
+          
+          // 过滤出该阶段应该显示的模块
+          const displayModules = stage.modules.filter(module => 
+            allowedModules.includes(module.moduleCode)
+          )
+
+          return (
+            <div key={stageIdx} className="space-y-6">
+              {/* 阶段标题 */}
+              <div className={`border-l-4 pl-4 py-3 rounded-r shadow-sm ${
+                stageIdx === 0 ? 'border-blue-500 bg-gradient-to-r from-blue-50 to-blue-50/50' :
+                stageIdx === 1 ? 'border-green-500 bg-gradient-to-r from-green-50 to-green-50/50' :
+                'border-orange-500 bg-gradient-to-r from-orange-50 to-orange-50/50'
+              }`}>
+                <div className="flex items-center gap-2">
+                  <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                    stageIdx === 0 ? 'bg-blue-100 text-blue-700' :
+                    stageIdx === 1 ? 'bg-green-100 text-green-700' :
+                    'bg-orange-100 text-orange-700'
+                  }`}>
+                    阶段 {stageIdx + 1}/3
+                  </span>
+                  <h2 className="text-xl font-bold text-gray-900">{formatAbbreviations(stage.stageName)}</h2>
+                </div>
+              </div>
+
+              {/* 阶段内的模块 */}
+              {displayModules.length > 0 ? (
+                <>
+                  {displayModules.map((module, moduleIdx) => {
+                    // 根据模块代码确定标题
+                    const moduleTitleMap: Record<string, string> = {
+                      'M02': '本页定位',
+                      'M03': '考什么 & 怎么考',
+                      'M04': '核心结构',
+                      'M05': '必背要点',
+                      'M06': '解题逻辑与秒杀规则'
+                    }
+
+                    const moduleTitle = module.moduleName || moduleTitleMap[module.moduleCode] || `模块 ${module.moduleCode}`
+                    
+                    // 获取模块主题配置
+                    const theme = getModuleTheme(module.moduleCode)
+                    const IconComponent = theme.icon
+                    
+                    // 图标颜色映射（Tailwind 需要完整类名）
+                    const iconColorMap: Record<string, string> = {
+                      blue: 'text-blue-600',
+                      green: 'text-green-600',
+                      violet: 'text-violet-600',
+                      amber: 'text-amber-600',
+                      rose: 'text-rose-600',
+                      gray: 'text-gray-600'
+                    }
+                    const iconColor = iconColorMap[theme.accent] || 'text-gray-600'
+
+                    return (
+                      <div key={moduleIdx} className={`${theme.card} rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow`}>
+                        <div className={`mb-4 pb-3 ${theme.leftBar} pl-3 border-b border-gray-200`}>
+                          <h3 className={`text-base ${theme.header} flex items-center gap-2`}>
+                            <IconComponent className={`w-4 h-4 ${iconColor}`} />
+                            【考点 {safePoint?.code || ''}｜{module.moduleCode}｜{formatAbbreviations(moduleTitle)}】
+                          </h3>
+                        </div>
+                        <div className="text-gray-800 leading-relaxed whitespace-pre-line">
+                          <SmartContentRenderer
+                            content={module.content}
+                            variant="minimal"
+                          />
+                        </div>
+                      </div>
+                    )
+                  })}
+                  
+                  {/* 第二阶段末尾：进入章节自测 */}
+                  {stageIdx === 1 && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                      <Link
+                        href={`/practice/by-point?pointId=${safePoint?.id}&mode=self-test&count=5`}
+                        className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-semibold"
+                      >
+                        （进入章节自测 跳转做题页）
+                      </Link>
+                    </div>
+                  )}
+                  
+                  {/* 第三阶段末尾：进入冲刺检测 */}
+                  {stageIdx === 2 && (
+                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center">
+                      <Link
+                        href={`/practice/by-point?pointId=${safePoint?.id}&mode=self-test&count=5`}
+                        className="inline-flex items-center gap-2 text-orange-700 hover:text-orange-900 font-semibold"
+                      >
+                        （进入冲刺检测 跳转做题页）
+                      </Link>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <p className="text-gray-600 text-sm">该阶段暂无模块内容</p>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
 
   // ==================== 模块内容渲染函数 ====================
   // 结构骨架渲染
@@ -926,7 +1118,7 @@ export default function KnowledgePointPage() {
     return newConfig?.actions ?? DEFAULT_ACTIONS
   }, [newConfig])
 
-  // 学习路线：仅保留一行固定提示
+  // 学习建议：仅保留一行固定提示
   const studyRouteText = useMemo(() => {
     if (newConfig?.meta.studyRoute?.length) {
       return newConfig.meta.studyRoute.join(' → ')
@@ -939,7 +1131,7 @@ export default function KnowledgePointPage() {
       }
       return text
     }
-    return '学习路线：先看考什么 → 再记重点 → 最后做3题'
+    return '学习建议：先看考什么 → 再记重点 → 最后做本页自测'
   }, [newConfig, oldConfig])
 
   // 【步骤 1】判断考点类型（最终版本，考虑 coreDrugCards）
@@ -1090,7 +1282,7 @@ export default function KnowledgePointPage() {
     
     // 优先级1：从配置中提取（检查 oldConfig 的 studyPath）
     if (oldConfig?.studyPath?.text) {
-      const text = oldConfig.studyPath.text.replace(/学习路线：/, '').trim()
+      const text = oldConfig.studyPath.text.replace(/学习(路线|建议)：/, '').trim()
       if (text && text.length > 10) {
         return text
       }
@@ -1162,201 +1354,199 @@ export default function KnowledgePointPage() {
                   </span>
               </div>
             )}
-            <div className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-gray-800 leading-relaxed">
-              【本页定位】
-              <br />
-              本页用于「考点复习与自测」，帮助你判断：
-              <br />
-              ✓ 这一考点考试怎么考
-              <br />
-              ✓ 哪些内容需要重点复习
-              <br />
-              ✓ 你目前是否掌握
-            </div>
-            {/* 学习路线：仅保留一行固定提示 */}
+            {/* 学习建议：仅保留一行固定提示 */}
             <div className="rounded-lg border border-dashed border-blue-200 bg-blue-50/60 px-4 py-2 text-sm text-blue-900">
               {formatAbbreviations(studyRouteText)}
             </div>
           </div>
 
-          <ModuleShell title="📌 本考点在考什么？">
-            {examMapState === 'real' && examMapData && (
-              <div className="space-y-3 text-gray-800 leading-relaxed">
-                <p className="whitespace-pre-line">{formatAbbreviations(examMapData.prompt)}</p>
-                {examMapData.angles.length > 0 && (
-                  <div className="space-y-2">
-                    {examMapData.angles.map((angle, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-gray-900">
-                        <span className="text-blue-600 mt-1">•</span>
-                        <span className="leading-relaxed">{formatAbbreviations(angle)}</span>
+          {/* 考点文件内容（如果存在则优先显示） */}
+          {pointFileContent && pointFileContent.stages.length > 0 ? (
+            <div className="space-y-6">
+              {renderPointFileContent()}
+            </div>
+          ) : (
+            <>
+              {/* 原有内容（文件不存在时显示） */}
+              <ModuleShell title="📌 本考点在考什么？">
+                {examMapState === 'real' && examMapData && (
+                  <div className="space-y-3 text-gray-800 leading-relaxed">
+                    <p className="whitespace-pre-line">{formatAbbreviations(examMapData.prompt)}</p>
+                    {examMapData.angles.length > 0 && (
+                      <div className="space-y-2">
+                        {examMapData.angles.map((angle, idx) => (
+                          <div key={idx} className="flex items-start gap-2 text-gray-900">
+                            <span className="text-blue-600 mt-1">•</span>
+                            <span className="leading-relaxed">{formatAbbreviations(angle)}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
-              </div>
-            )}
 
-            <div className="mt-4 space-y-2">
-              <p className="text-gray-900 text-sm font-semibold">
-                本考点围绕【{chapterContext.nodeTitle}】，考试通常从 3 个角度出题：
-              </p>
-              <ul className="list-disc ml-4 space-y-1 text-gray-700">
-                {[
-                  '① 药物如何分类（同类区分、适用范围）',
-                  '② 各类药物的作用特点及关键禁忌',
-                  '③ 必考核心药物的典型考法',
-                ].map(angle => (
-                  <li key={angle}>{angle}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="mt-4 space-y-2">
-              <p className="text-sm font-semibold text-gray-900">👉 其中重点集中在：</p>
-              <ul className="space-y-2 text-gray-700 ml-4 list-none">
-                {[
-                  '药物分类与代表药（高频送分）',
-                  '临床用药评价中的「禁忌 / 易错点」',
-                ].map(item => (
-                  <li key={item} className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-1">•</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-                {representativeExamFocusEntries.map(entry => (
-                  <li key={entry.id} className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-1">•</span>
-                    <span>
-                      {formatAbbreviations(entry.name)}：{formatAbbreviations(entry.focusLine)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </ModuleShell>
-
-          <ModuleShell title="结构骨架（脑内地图）" description="无论是聚合还是单体，都帮助你建立梳理思路">
-            {renderStructureContent(structureState)}
-          </ModuleShell>
-
-
-          <ModuleShell
-            title="高频考法 & 易错点（应试核心区）"
-            description="左栏展示出题人视角的高频命题，右栏展示考生容易翻车的风险点"
-          >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                <h3 className="text-base font-semibold text-blue-700 mb-3">📌 高频考法（出题人视角）</h3>
-                {renderHighFreqContent(highFreqState)}
-                    </div>
-                <div>
-                <h3 className="text-base font-semibold text-orange-700 mb-3">⚠️ 易错点（考生翻车点）</h3>
-                {renderPitfallContent(pitfallsState)}
-                    </div>
-                </div>
-          </ModuleShell>
-
-          {pointType === 'drug_class' && (
-            <ModuleShell title="代表药物应试定位" description="仅针对药物分类考点，帮助抓住代表药与不同类的差异">
-              {coreDrugCards.length > 0 ? (
-                <div className="space-y-3">
-                  {coreDrugCards.map(card => (
-                    <div key={card.id} className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50/30 rounded-r">
-                      <div className="font-semibold text-gray-900 mb-1">
-                        {formatAbbreviations(card.name)}
-                        {card.alias && (
-                          <span className="text-sm font-normal text-gray-600 ml-2">
-                            ({formatAbbreviations(card.alias)})
-                          </span>
-                        )}
-                      </div>
-                      {card.why ? (
-                        <p className="text-sm text-gray-700 leading-relaxed">
-                          {formatAbbreviations(card.why)}
-                        </p>
-                      ) : (
-                        <p className="text-sm text-gray-500 italic">
-                          代表药正在整理中，详情待完善
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                  <p className="text-gray-600 text-sm">
-                    该模块在当前考点下暂未形成稳定考法，已为你保留结构位置，后续出现相关出题内容将自动激活。
+                <div className="mt-4 space-y-2">
+                  <p className="text-gray-900 text-sm font-semibold">
+                    本考点围绕【{chapterContext.nodeTitle}】，考试通常从 3 个角度出题：
                   </p>
+                  <ul className="list-disc ml-4 space-y-1 text-gray-700">
+                    {[
+                      '① 药物如何分类（同类区分、适用范围）',
+                      '② 各类药物的作用特点及关键禁忌',
+                      '③ 必考核心药物的典型考法',
+                    ].map(angle => (
+                      <li key={angle}>{angle}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="mt-4 space-y-2">
+                  <p className="text-sm font-semibold text-gray-900">👉 其中重点集中在：</p>
+                  <ul className="space-y-2 text-gray-700 ml-4 list-none">
+                    {[
+                      '药物分类与代表药（高频送分）',
+                      '临床用药评价中的「禁忌 / 易错点」',
+                    ].map(item => (
+                      <li key={item} className="flex items-start gap-2">
+                        <span className="text-blue-600 mt-1">•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                    {representativeExamFocusEntries.map(entry => (
+                      <li key={entry.id} className="flex items-start gap-2">
+                        <span className="text-blue-600 mt-1">•</span>
+                        <span>
+                          {formatAbbreviations(entry.name)}：{formatAbbreviations(entry.focusLine)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </ModuleShell>
+
+              <ModuleShell title="结构骨架（脑内地图）" description="无论是聚合还是单体，都帮助你建立梳理思路">
+                {renderStructureContent(structureState)}
+              </ModuleShell>
+
+              <ModuleShell
+                title="高频考法 & 易错点（应试核心区）"
+                description="左栏展示出题人视角的高频命题，右栏展示考生容易翻车的风险点"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="text-base font-semibold text-blue-700 mb-3">📌 高频考法（出题人视角）</h3>
+                    {renderHighFreqContent(highFreqState)}
+                  </div>
+                  <div>
+                    <h3 className="text-base font-semibold text-orange-700 mb-3">⚠️ 易错点（考生翻车点）</h3>
+                    {renderPitfallContent(pitfallsState)}
+                  </div>
+                </div>
+              </ModuleShell>
+
+              {pointType === 'drug_class' && (
+                <ModuleShell title="代表药物应试定位" description="仅针对药物分类考点，帮助抓住代表药与不同类的差异">
+                  {coreDrugCards.length > 0 ? (
+                    <div className="space-y-3">
+                      {coreDrugCards.map(card => (
+                        <div key={card.id} className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50/30 rounded-r">
+                          <div className="font-semibold text-gray-900 mb-1">
+                            {formatAbbreviations(card.name)}
+                            {card.alias && (
+                              <span className="text-sm font-normal text-gray-600 ml-2">
+                                ({formatAbbreviations(card.alias)})
+                              </span>
+                            )}
+                          </div>
+                          {card.why ? (
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {formatAbbreviations(card.why)}
+                            </p>
+                          ) : (
+                            <p className="text-sm text-gray-500 italic">
+                              代表药正在整理中，详情待完善
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                      <p className="text-gray-600 text-sm">
+                        该模块在当前考点下暂未形成稳定考法，已为你保留结构位置，后续出现相关出题内容将自动激活。
+                      </p>
+                    </div>
+                  )}
+                </ModuleShell>
+              )}
+
+              {(pointType === 'drug_class' || pointType === 'exam_strategy') && (
+                <ModuleShell title="学习建议">
+                  {studyAdvice ? (
+                    <p className="text-gray-700 leading-relaxed">
+                      {formatAbbreviations(studyAdvice)}
+                    </p>
+                  ) : safePoint?.content && safePoint.content.length > 100 ? (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-blue-800 text-sm">
+                        📝 正在从教材原文中生成学习建议…
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                      <p className="text-gray-600 text-sm">
+                        该模块在当前考点下暂未形成稳定考法，已为你保留结构位置，后续出现相关出题内容将自动激活。
+                      </p>
+                    </div>
+                  )}
+                </ModuleShell>
+              )}
+
+              <ModuleShell
+                title={
+                  moduleRenderConfig.coreDrugCard.template === 'single_drug'
+                    ? '核心药物详解卡（只保留必考药）'
+                    : moduleRenderConfig.coreDrugCard.template === 'drug_class'
+                    ? '分类核心卡'
+                    : moduleRenderConfig.coreDrugCard.template === 'clinical_selection'
+                    ? '用药决策卡'
+                    : moduleRenderConfig.coreDrugCard.template === 'adr_interaction'
+                    ? '风险专题卡'
+                    : moduleRenderConfig.coreDrugCard.template === 'mechanism_basic'
+                    ? '机制说明卡'
+                    : '核心药物详解卡'
+                }
+                description="根据考点类型展示代表药或核心药物的应试要点"
+              >
+                {renderCoreDrugContent(coreDrugState)}
+              </ModuleShell>
+
+              <ModuleShell
+                title={sourceModule?.title || '📘 教材原文（精选整理，用于系统复习）'}
+                description="精选教材原文用于系统复习，支持折叠查看"
+              >
+                {renderSourceContent(sourceState)}
+              </ModuleShell>
+
+              {/* 【聚合节点降级渲染】分类表（药物分类表）- 聚合节点时允许渲染 */}
+              {isAggregationNode && safePoint.content && (
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">分类表（药物分类表）</h2>
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <SmartContentRenderer
+                      content={safePoint.content}
+                      annotations={inlineAnnotations.length > 0 ? inlineAnnotations : undefined}
+                      variant="minimal"
+                    />
+                  </div>
                 </div>
               )}
-            </ModuleShell>
+
+              <ModuleShell title="考点分布（只保留一次）" description="考点历年分布/小节覆盖情况">
+                {renderExamDistributionContent(examDistributionState)}
+              </ModuleShell>
+            </>
           )}
-
-          {(pointType === 'drug_class' || pointType === 'exam_strategy') && (
-            <ModuleShell title="学习建议">
-              {studyAdvice ? (
-                <p className="text-gray-700 leading-relaxed">
-                  {formatAbbreviations(studyAdvice)}
-                </p>
-              ) : safePoint?.content && safePoint.content.length > 100 ? (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <p className="text-blue-800 text-sm">
-                    📝 正在从教材原文中生成学习建议…
-                  </p>
-                </div>
-              ) : (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                  <p className="text-gray-600 text-sm">
-                    该模块在当前考点下暂未形成稳定考法，已为你保留结构位置，后续出现相关出题内容将自动激活。
-                  </p>
-                </div>
-              )}
-            </ModuleShell>
-          )}
-
-          <ModuleShell
-            title={
-              moduleRenderConfig.coreDrugCard.template === 'single_drug'
-                ? '核心药物详解卡（只保留必考药）'
-                : moduleRenderConfig.coreDrugCard.template === 'drug_class'
-                ? '分类核心卡'
-                : moduleRenderConfig.coreDrugCard.template === 'clinical_selection'
-                ? '用药决策卡'
-                : moduleRenderConfig.coreDrugCard.template === 'adr_interaction'
-                ? '风险专题卡'
-                : moduleRenderConfig.coreDrugCard.template === 'mechanism_basic'
-                ? '机制说明卡'
-                : '核心药物详解卡'
-            }
-            description="根据考点类型展示代表药或核心药物的应试要点"
-          >
-            {renderCoreDrugContent(coreDrugState)}
-          </ModuleShell>
-
-          <ModuleShell
-            title={sourceModule?.title || '📘 教材原文（精选整理，用于系统复习）'}
-            description="精选教材原文用于系统复习，支持折叠查看"
-          >
-            {renderSourceContent(sourceState)}
-          </ModuleShell>
-
-          {/* 【聚合节点降级渲染】分类表（药物分类表）- 聚合节点时允许渲染 */}
-          {isAggregationNode && safePoint.content && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">分类表（药物分类表）</h2>
-              <div className="border border-gray-200 rounded-lg p-4">
-                <SmartContentRenderer
-                  content={safePoint.content}
-                  annotations={inlineAnnotations.length > 0 ? inlineAnnotations : undefined}
-                  variant="minimal"
-                />
-              </div>
-            </div>
-          )}
-
-          <ModuleShell title="考点分布（只保留一次）" description="考点历年分布/小节覆盖情况">
-            {renderExamDistributionContent(examDistributionState)}
-          </ModuleShell>
 
           {/* 【聚合节点降级渲染】提示文案 */}
           {isAggregationNode && (
