@@ -33,6 +33,7 @@ find-*.ts
 *.ps1
 *.sql
 *.txt
+!shuju/**/*.txt
 *.md
 !README.md
 !package.json
