@@ -42,6 +42,7 @@ function parsePointContent(content: string): ParsedContent {
     
     // 识别阶段（第一阶段、第二阶段、第三阶段，可能包含后续文字）
     // 格式：第一阶段：新手导航——分清四类"催眠师" 或 第一阶段 建立框架 初学
+    // 支持有无冒号都可以
     const stageMatch = line.match(/^第[一二三]阶段[：:\s]/)
     if (stageMatch) {
       // 保存上一个模块
@@ -158,6 +159,136 @@ async function findPointFile(code: string): Promise<string | null> {
   }
 }
 
+/**
+ * 从数据库读取内容块并转换为前端格式
+ * 支持多种code格式的查询（原始、大写、小写）
+ */
+async function getContentBlocksFromDB(code: string): Promise<ParsedContent | null> {
+  try {
+    const { Pool } = await import('pg')
+    const pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }
+    })
+    
+    const client = await pool.connect()
+    try {
+      // 规范化code：trim并生成多个候选格式
+      const raw = code.trim()
+      const candidates = [
+        raw,
+        raw.toUpperCase(),
+        raw.toLowerCase()
+      ]
+      // 去重
+      const uniqueCandidates = Array.from(new Set(candidates))
+      
+      // 查询所有内容块（尝试多种code格式）
+      const result = await client.query(`
+        SELECT stage, module, title, content
+        FROM knowledge_point_content_blocks
+        WHERE code = ANY($1::text[])
+        ORDER BY 
+          CASE stage 
+            WHEN 'stage1' THEN 1 
+            WHEN 'stage2' THEN 2 
+            WHEN 'stage3' THEN 3 
+            ELSE 4 
+          END,
+          CASE module 
+            WHEN 'M02' THEN 1 
+            WHEN 'M03' THEN 2 
+            WHEN 'M04' THEN 3 
+            WHEN 'M05' THEN 4 
+            WHEN 'M06' THEN 5 
+            ELSE 6 
+          END
+      `, [uniqueCandidates])
+      
+      if (result.rows.length === 0) {
+        return null
+      }
+      
+      // 转换为前端需要的格式
+      const stagesMap = new Map<string, ParsedContent['stages'][0]>()
+      
+      result.rows.forEach(row => {
+        const stageKey = row.stage
+        if (!stagesMap.has(stageKey)) {
+          const stageNames: Record<string, string> = {
+            'stage1': '第一阶段 建立框架 初学',
+            'stage2': '第二阶段 复习查漏 默认推荐',
+            'stage3': '第三阶段 冲刺秒杀 考前'
+          }
+          stagesMap.set(stageKey, {
+            stageName: stageNames[stageKey] || stageKey,
+            modules: []
+          })
+        }
+        
+        const stage = stagesMap.get(stageKey)!
+        stage.modules.push({
+          moduleCode: row.module,
+          moduleName: row.title || '',
+          content: row.content
+        })
+      })
+      
+      return {
+        stages: Array.from(stagesMap.values()),
+        rawContent: '' // 数据库版本不提供原始内容
+      }
+    } finally {
+      client.release()
+      await pool.end()
+    }
+  } catch (error) {
+    console.error('从数据库读取内容块失败:', error)
+    return null
+  }
+}
+
+/**
+ * 生成占位内容结构（当内容不存在时返回）
+ */
+function createPlaceholderContent(code: string): ParsedContent {
+  return {
+    stages: [
+      {
+        stageName: '第一阶段 建立框架 初学',
+        modules: [
+          {
+            moduleCode: 'M02',
+            moduleName: '本页定位',
+            content: '本考点内容正在整理中，可先完成下方自测'
+          }
+        ]
+      },
+      {
+        stageName: '第二阶段 复习查漏 默认推荐',
+        modules: [
+          {
+            moduleCode: 'M03',
+            moduleName: '必背要点',
+            content: '本考点内容正在整理中，可先完成下方自测'
+          }
+        ]
+      },
+      {
+        stageName: '第三阶段 冲刺秒杀 考前',
+        modules: [
+          {
+            moduleCode: 'M04',
+            moduleName: '秒杀技巧',
+            content: '本考点内容正在整理中，可先完成下方自测'
+          }
+        ]
+      }
+    ],
+    rawContent: ''
+  }
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ code: string }> }
@@ -172,41 +303,74 @@ export async function GET(
       )
     }
     
-    // 查找匹配的文件
-    const filePath = await findPointFile(code)
+    // 规范化code
+    const normalizedCode = code.trim()
     
-    if (!filePath) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: `未找到考点文件: ${code}`,
-          code 
-        },
-        { status: 404 }
-      )
+    // 优先级1：尝试从文件系统读取
+    let fileContent: ParsedContent | null = null
+    let filePath: string | null = null
+    
+    try {
+      const foundPath = await findPointFile(normalizedCode)
+      
+      if (foundPath) {
+        // 读取文件内容
+        const content = await readFile(foundPath, 'utf-8')
+        
+        // 解析内容
+        fileContent = parsePointContent(content)
+        filePath = foundPath
+      }
+    } catch (fileError) {
+      // 文件读取失败，继续执行DB fallback（不提前return）
+      console.warn(`[考点文件] ${normalizedCode} 文件读取失败，尝试从数据库读取:`, fileError)
     }
     
-    // 读取文件内容
-    const content = await readFile(filePath, 'utf-8')
+    // 如果文件读取成功，直接返回
+    if (fileContent && filePath) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          code: normalizedCode,
+          filePath,
+          source: 'file',
+          ...fileContent
+        }
+      })
+    }
     
-    // 解析内容
-    const parsed = parsePointContent(content)
+    // 优先级2：从数据库读取内容块（无论文件是否失败，都要执行）
+    const dbContent = await getContentBlocksFromDB(normalizedCode)
+    if (dbContent && dbContent.stages.length > 0) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          code: normalizedCode,
+          filePath: null,
+          source: 'db',
+          ...dbContent
+        }
+      })
+    }
     
+    // 都失败：返回占位结构而不是硬错误
+    const placeholderContent = createPlaceholderContent(normalizedCode)
     return NextResponse.json({
       success: true,
       data: {
-        code,
-        filePath,
-        ...parsed
+        code: normalizedCode,
+        filePath: null,
+        source: 'placeholder',
+        ...placeholderContent
       }
     })
     
   } catch (error) {
-    console.error('读取考点文件失败:', error)
+    console.error('读取考点内容失败:', error)
     return NextResponse.json(
       { 
         success: false, 
-        error: '读取考点文件失败',
+        error: '读取考点内容失败',
         details: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
