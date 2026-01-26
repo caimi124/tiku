@@ -238,21 +238,24 @@ export default function KnowledgePointPage() {
     fetch(`/api/knowledge-point/content/${safePoint.code}`)
       .then(res => res.json())
       .then(data => {
+        // 调试信息（所有环境）
+        console.log(`[考点文件] ${safePoint.code} API 响应:`, {
+          success: data?.success,
+          hasStages: !!data?.data?.stages,
+          stagesCount: data?.data?.stages?.length || 0,
+          error: data?.error
+        })
+        
         if (data?.success && data.data?.stages && data.data.stages.length > 0) {
           setPointFileContent({
             stages: data.data.stages,
             rawContent: data.data.rawContent || ''
           })
-          // 调试信息（开发环境）
-          if (process.env.NODE_ENV !== 'production') {
-            console.log(`[考点文件] ${safePoint.code} 加载成功，${data.data.stages.length} 个阶段`)
-          }
+          console.log(`[考点文件] ${safePoint.code} 加载成功，${data.data.stages.length} 个阶段`)
         } else {
           // 文件不存在或解析失败时不报错，只是不显示文件内容
           setPointFileContent(null)
-          if (process.env.NODE_ENV !== 'production') {
-            console.log(`[考点文件] ${safePoint.code} 未找到文件或解析失败`)
-          }
+          console.warn(`[考点文件] ${safePoint.code} 未找到文件或解析失败:`, data?.error || 'stages 为空')
         }
       })
       .catch((error) => {
