@@ -388,12 +388,7 @@ export default function KnowledgePointPage() {
   const renderChapterPlaceholder = (extra?: React.ReactNode) => (
     <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
       <p className="text-gray-800 font-semibold text-sm mb-2">
-        本节为章节级结构节点，尚未拆分为具体考点
-      </p>
-      <p className="text-gray-700 text-sm mb-3">
-        当前仅展示本节在教材与考试中的整体结构与出题方向。
-        <br />
-        具体药物与考点内容将在对应 knowledge points 实体建立后自动补充。
+        💡 本页已提炼本章节的核心考法与判类要点，建议下方自测检验掌握情况。
       </p>
       {extra}
       <p className="text-gray-500 text-xs mt-3 pt-3 border-t border-blue-200">
