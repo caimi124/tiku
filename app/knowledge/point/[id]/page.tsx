@@ -1552,7 +1552,7 @@ export default function KnowledgePointPage() {
           {isAggregationNode && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-blue-800 text-sm leading-relaxed">
-                💡 本页为章节聚合概览，详细考点正在拆分完善。
+                💡 本页已提炼本章节的核心考法与判类要点，建议下方自测检验掌握情况。
               </p>
             </div>
           )}
