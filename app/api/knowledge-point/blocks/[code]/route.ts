@@ -32,7 +32,7 @@ export async function GET(
     const { code } = await params
     const { searchParams } = new URL(request.url)
     const stage = searchParams.get('stage')
-    const module = searchParams.get('module')
+    const moduleParam = searchParams.get('module')
     
     if (!code) {
       return NextResponse.json(
@@ -50,7 +50,7 @@ export async function GET(
     }
     
     // 验证 module 参数
-    if (module && !['M02', 'M03', 'M04', 'M05', 'M06'].includes(module)) {
+    if (moduleParam && !['M02', 'M03', 'M04', 'M05', 'M06'].includes(moduleParam)) {
       return NextResponse.json(
         { success: false, error: 'module 参数必须是 M02, M03, M04, M05 或 M06' },
         { status: 400 }
@@ -85,9 +85,9 @@ export async function GET(
       paramIndex++
     }
     
-    if (module) {
+    if (moduleParam) {
       query += ` AND module = $${paramIndex}`
-      queryParams.push(module)
+      queryParams.push(moduleParam)
       paramIndex++
     }
     
