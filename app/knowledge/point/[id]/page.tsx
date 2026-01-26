@@ -390,6 +390,7 @@ export default function KnowledgePointPage() {
       <p className="text-gray-800 font-semibold text-sm mb-2">
         💡 本页已提炼本章节的核心考法与判类要点，建议下方自测检验掌握情况。
       </p>
+      {/* Updated: 2024-12-18 - 文案已更新 */}
       {extra}
       <p className="text-gray-500 text-xs mt-3 pt-3 border-t border-blue-200">
         当前 knowledge_tree_id: {chapterContext.nodeId}
