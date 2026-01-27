@@ -184,10 +184,11 @@ async function getContentBlocksFromDB(code: string): Promise<ParsedContent | nul
       const uniqueCandidates = Array.from(new Set(candidates))
       
       // 查询所有内容块（尝试多种code格式）
+      // 使用 UPPER() 进行大小写不敏感匹配
       const result = await client.query(`
         SELECT stage, module, title, content
         FROM knowledge_point_content_blocks
-        WHERE code = ANY($1::text[])
+        WHERE UPPER(code) = ANY(SELECT UPPER(unnest($1::text[])))
         ORDER BY 
           CASE stage 
             WHEN 'stage1' THEN 1 
@@ -206,20 +207,42 @@ async function getContentBlocksFromDB(code: string): Promise<ParsedContent | nul
       `, [uniqueCandidates])
       
       if (result.rows.length === 0) {
+        console.warn(`[DB查询] ${raw} 未找到内容块，尝试的格式: ${uniqueCandidates.join(', ')}`)
         return null
       }
       
+      console.log(`[DB查询] ${raw} 找到 ${result.rows.length} 个内容块`)
+      
       // 转换为前端需要的格式
+      // 按 stage 分组，如果 stage 为空则按模块顺序分配到三个阶段
       const stagesMap = new Map<string, ParsedContent['stages'][0]>()
       
-      result.rows.forEach(row => {
-        const stageKey = row.stage
+      // 初始化三个阶段
+      const stageNames: Record<string, string> = {
+        'stage1': '第一阶段 建立框架 初学',
+        'stage2': '第二阶段 复习查漏 默认推荐',
+        'stage3': '第三阶段 冲刺秒杀 考前'
+      }
+      
+      // 定义模块到阶段的映射（当 stage 字段为空时使用）
+      const moduleToStageMap: Record<string, string> = {
+        'M02': 'stage1',
+        'M03': 'stage1', // M03 可能在多个阶段出现，优先分配到 stage1
+        'M04': 'stage1', // M04 可能在多个阶段出现，优先分配到 stage1
+        'M05': 'stage2', // M05 可能在多个阶段出现，优先分配到 stage2
+        'M06': 'stage2'  // M06 可能在多个阶段出现，优先分配到 stage2
+      }
+      
+      result.rows.forEach((row, index) => {
+        // 如果 stage 字段为空或无效，根据模块代码推断阶段
+        let stageKey = row.stage
+        if (!stageKey || !['stage1', 'stage2', 'stage3'].includes(stageKey)) {
+          // 根据模块代码推断阶段
+          stageKey = moduleToStageMap[row.module] || 'stage1'
+          console.warn(`[DB查询] ${raw} 记录 ${index + 1} 的 stage 字段为空，根据模块 ${row.module} 推断为 ${stageKey}`)
+        }
+        
         if (!stagesMap.has(stageKey)) {
-          const stageNames: Record<string, string> = {
-            'stage1': '第一阶段 建立框架 初学',
-            'stage2': '第二阶段 复习查漏 默认推荐',
-            'stage3': '第三阶段 冲刺秒杀 考前'
-          }
           stagesMap.set(stageKey, {
             stageName: stageNames[stageKey] || stageKey,
             modules: []
@@ -234,8 +257,32 @@ async function getContentBlocksFromDB(code: string): Promise<ParsedContent | nul
         })
       })
       
+      // 确保三个阶段都存在（即使没有数据也创建空阶段）
+      const orderedStages = ['stage1', 'stage2', 'stage3']
+      orderedStages.forEach(stageKey => {
+        if (!stagesMap.has(stageKey)) {
+          stagesMap.set(stageKey, {
+            stageName: stageNames[stageKey],
+            modules: []
+          })
+        }
+      })
+      
+      // 按顺序返回三个阶段（只返回有模块的阶段）
+      const stages = orderedStages
+        .map(key => stagesMap.get(key)!)
+        .filter(stage => stage.modules.length > 0)
+      
+      // 如果所有阶段都没有模块，返回 null（触发占位内容）
+      if (stages.length === 0) {
+        console.warn(`[DB查询] ${raw} 转换后没有有效的阶段和模块`)
+        return null
+      }
+      
+      console.log(`[DB查询] ${raw} 转换后的阶段数: ${stages.length}, 总模块数: ${stages.reduce((sum, s) => sum + s.modules.length, 0)}`)
+      
       return {
-        stages: Array.from(stagesMap.values()),
+        stages,
         rawContent: '' // 数据库版本不提供原始内容
       }
     } finally {

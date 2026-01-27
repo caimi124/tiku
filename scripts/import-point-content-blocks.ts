@@ -265,10 +265,27 @@ async function main() {
           WHERE code = $1
         `, [code])
         
-        if (existingFile.rows.length > 0 && existingFile.rows[0].file_hash === fileHash) {
+        // 检查数据库中是否存在该 code 的内容块
+        const existingBlocks = await client.query(`
+          SELECT COUNT(*) as count
+          FROM knowledge_point_content_blocks
+          WHERE code = $1
+        `, [code])
+        
+        const hasBlocks = parseInt(existingBlocks.rows[0].count) > 0
+        const fileUnchanged = existingFile.rows.length > 0 && existingFile.rows[0].file_hash === fileHash
+        
+        // 跳过逻辑：只有当文件未变化 AND 数据库中已有内容块时，才跳过
+        // 如果文件未变化但数据库中没有内容块，必须强制重新导入（修复数据不一致问题）
+        if (fileUnchanged && hasBlocks) {
           console.log(`   ⏭️  跳过（未变化）: ${filename} (${code})`)
           summary.skipped++
           continue
+        }
+        
+        // 如果文件未变化但数据库中没有内容块，记录日志并继续导入
+        if (fileUnchanged && !hasBlocks) {
+          console.log(`   🔄 强制导入（文件未变化但数据库无内容块）: ${filename} (${code})`)
         }
         
         // 解析文件内容

@@ -437,9 +437,29 @@ export default function KnowledgePointPage() {
           const allowedModules = stageModuleMap[stageIdx] || []
           
           // 过滤出该阶段应该显示的模块
-          const displayModules = stage.modules.filter(module => 
-            allowedModules.includes(module.moduleCode)
-          )
+          // 如果数据库返回的模块不在允许列表中，也显示（兼容性处理）
+          const displayModules = stage.modules.filter(module => {
+            // 如果模块在允许列表中，显示
+            if (allowedModules.includes(module.moduleCode)) {
+              return true
+            }
+            // 如果该阶段没有允许列表限制，显示所有模块
+            if (allowedModules.length === 0) {
+              return true
+            }
+            // 否则不显示
+            return false
+          })
+          
+          // 调试日志（开发环境）
+          if (process.env.NODE_ENV !== 'production' && stage.modules.length > 0) {
+            console.log(`[前端渲染] 阶段 ${stageIdx + 1} (${stage.stageName}):`, {
+              总模块数: stage.modules.length,
+              允许的模块: allowedModules,
+              实际模块: stage.modules.map(m => m.moduleCode),
+              显示的模块: displayModules.map(m => m.moduleCode)
+            })
+          }
 
           return (
             <div key={stageIdx} className="space-y-6">
