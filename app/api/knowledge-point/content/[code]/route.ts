@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { readdir, readFile } from 'fs/promises'
 import { join } from 'path'
 
+// 考点文件目录：E:\tiku\shuju\执业药师西药二考点
 const KNOWLEDGE_POINT_DIR = join(process.cwd(), 'shuju', '执业药师西药二考点')
 
 interface ParsedContent {
@@ -134,27 +135,68 @@ function escapeRegExp(str: string): string {
  */
 async function findPointFile(code: string): Promise<string | null> {
   try {
+    console.log(`[文件查找] 开始查找 ${code}，目录: ${KNOWLEDGE_POINT_DIR}`)
+    
     const files = await readdir(KNOWLEDGE_POINT_DIR)
+    console.log(`[文件查找] 目录中共有 ${files.length} 个文件`)
+    
     // 统一处理：trim() + toLowerCase()
     const codeNorm = code.trim().toLowerCase()
     
-    // 构建正则表达式：^code(?!\d) - code 开头且后不跟数字
-    const pattern = new RegExp(`^${escapeRegExp(codeNorm)}(?!\\d)`)
-    
-    // 查找匹配的文件
-    const matchedFile = files.find(file => {
+    // 方法1：精确匹配（如 c8.4.10 -> c8.4.10xxx.txt）
+    let matchedFile = files.find(file => {
       const fileName = file.toLowerCase()
-      // 必须同时满足：匹配正则 && 以 .txt 结尾
-      return pattern.test(fileName) && fileName.endsWith('.txt')
+      // 文件名以小写code开头且以.txt结尾
+      return fileName.startsWith(codeNorm) && fileName.endsWith('.txt')
     })
     
+    // 方法2：如果精确匹配失败，尝试去掉C前缀匹配（如 8.4.10）
+    if (!matchedFile && codeNorm.startsWith('c')) {
+      const codeWithoutC = codeNorm.substring(1) // 去掉开头的 'c'
+      matchedFile = files.find(file => {
+        const fileName = file.toLowerCase()
+        return fileName.startsWith(codeWithoutC) && fileName.endsWith('.txt')
+      })
+    }
+    
+    // 方法3：如果还是失败，尝试模糊匹配（包含code）
+    if (!matchedFile) {
+      matchedFile = files.find(file => {
+        const fileName = file.toLowerCase()
+        // 文件名包含code且以.txt结尾
+        return fileName.includes(codeNorm) && fileName.endsWith('.txt')
+      })
+    }
+    
     if (matchedFile) {
-      return join(KNOWLEDGE_POINT_DIR, matchedFile)
+      const filePath = join(KNOWLEDGE_POINT_DIR, matchedFile)
+      console.log(`[文件查找] ✅ ${code} -> ${matchedFile}`)
+      console.log(`[文件查找] 完整路径: ${filePath}`)
+      return filePath
+    }
+    
+    // 调试：显示前10个文件名（小写）
+    const sampleFiles = files.slice(0, 10).map(f => f.toLowerCase())
+    console.warn(`[文件查找] ❌ ${code} 未找到匹配文件`)
+    console.warn(`[文件查找] 查找的code: ${codeNorm}`)
+    console.warn(`[文件查找] 示例文件:`, sampleFiles)
+    
+    // 检查是否有相似的文件名
+    const similarFiles = files.filter(f => {
+      const fileName = f.toLowerCase()
+      // 检查是否包含code中的数字部分
+      const codeNumbers = codeNorm.match(/\d+/g)?.join('.') || ''
+      return fileName.includes(codeNumbers) && fileName.endsWith('.txt')
+    })
+    
+    if (similarFiles.length > 0) {
+      console.warn(`[文件查找] 找到相似文件:`, similarFiles.slice(0, 5))
     }
     
     return null
   } catch (error) {
-    console.error('读取考点目录失败:', error)
+    console.error(`[文件查找] ❌ ${code} 读取考点目录失败:`, error instanceof Error ? error.message : String(error))
+    console.error(`[文件查找] 目录路径: ${KNOWLEDGE_POINT_DIR}`)
     return null
   }
 }
@@ -185,8 +227,17 @@ async function getContentBlocksFromDB(code: string): Promise<ParsedContent | nul
       
       // 查询所有内容块（尝试多种code格式）
       // 使用 UPPER() 进行大小写不敏感匹配
+      // 同时尝试直接匹配和去掉C前缀的匹配（如 C8.4.10 和 8.4.10）
+      const extendedCandidates = [
+        ...uniqueCandidates,
+        ...uniqueCandidates.map(c => c.replace(/^c/i, '')), // 去掉C前缀
+        ...uniqueCandidates.map(c => c.replace(/^c/i, 'C'))  // 确保有C前缀
+      ].filter((v, i, arr) => arr.indexOf(v) === i) // 去重
+      
+      console.log(`[DB查询] ${raw} 尝试查询格式: ${extendedCandidates.join(', ')}`)
+      
       const result = await client.query(`
-        SELECT stage, module, title, content
+        SELECT stage, module, title, content, code as db_code
         FROM knowledge_point_content_blocks
         WHERE UPPER(code) = ANY(SELECT UPPER(unnest($1::text[])))
         ORDER BY 
@@ -204,14 +255,24 @@ async function getContentBlocksFromDB(code: string): Promise<ParsedContent | nul
             WHEN 'M06' THEN 5 
             ELSE 6 
           END
-      `, [uniqueCandidates])
+      `, [extendedCandidates])
       
       if (result.rows.length === 0) {
-        console.warn(`[DB查询] ${raw} 未找到内容块，尝试的格式: ${uniqueCandidates.join(', ')}`)
+        console.warn(`[DB查询] ${raw} 未找到内容块，尝试的格式: ${extendedCandidates.join(', ')}`)
+        // 尝试查询所有C8.4.10相关的记录（用于调试）
+        const debugResult = await client.query(`
+          SELECT DISTINCT code, COUNT(*) as count
+          FROM knowledge_point_content_blocks
+          WHERE code LIKE '%8.4.10%' OR code LIKE '%8_4_10%'
+          GROUP BY code
+        `)
+        if (debugResult.rows.length > 0) {
+          console.warn(`[DB查询] 调试：找到相似code:`, debugResult.rows.map(r => `${r.code} (${r.count}条)`))
+        }
         return null
       }
       
-      console.log(`[DB查询] ${raw} 找到 ${result.rows.length} 个内容块`)
+      console.log(`[DB查询] ${raw} 找到 ${result.rows.length} 个内容块，数据库中的code: ${result.rows[0].db_code}`)
       
       // 转换为前端需要的格式
       // 按 stage 分组，如果 stage 为空则按模块顺序分配到三个阶段
@@ -296,6 +357,57 @@ async function getContentBlocksFromDB(code: string): Promise<ParsedContent | nul
 }
 
 /**
+ * 获取数据库指纹与当前 code 的 blocks 数量（仅用于 debug，不影响主逻辑）
+ * 在查询 knowledge_point_content_blocks 之前可调用，用于确认实际连接的库
+ */
+async function getDbFingerprint(normalizedCode: string): Promise<{
+  db: string
+  server_ip: string
+  server_port: number | string
+  version: string
+  normalizedCode: string
+  dbBlockCount: number
+} | null> {
+  try {
+    const { Pool } = await import('pg')
+    const pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }
+    })
+    const client = await pool.connect()
+    try {
+      const fp = await client.query(`
+        SELECT
+          current_database() AS db,
+          inet_server_addr() AS server_ip,
+          inet_server_port() AS server_port,
+          version() AS version
+      `)
+      const row = fp.rows[0]
+      const codeParam = normalizedCode.trim()
+      const countResult = await client.query(
+        `SELECT COUNT(*) AS c FROM knowledge_point_content_blocks WHERE UPPER(code) = UPPER($1)`,
+        [codeParam]
+      )
+      const dbBlockCount = parseInt(String(countResult.rows[0]?.c ?? 0), 10)
+      return {
+        db: row?.db != null ? String(row.db) : '',
+        server_ip: row?.server_ip != null ? String(row.server_ip) : '',
+        server_port: row?.server_port != null ? row.server_port : '',
+        version: row?.version != null ? String(row.version) : '',
+        normalizedCode: codeParam,
+        dbBlockCount
+      }
+    } finally {
+      client.release()
+      await pool.end()
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
  * 生成占位内容结构（当内容不存在时返回）
  */
 function createPlaceholderContent(code: string): ParsedContent {
@@ -350,8 +462,14 @@ export async function GET(
       )
     }
     
-    // 规范化code
+    // 规范化 code
     const normalizedCode = code.trim()
+    const debugMode =
+      process.env.NODE_ENV !== 'production' ||
+      (request.url && new URL(request.url).searchParams.get('debug') === '1')
+    
+    console.log(`[API] 开始处理请求: code=${normalizedCode}`)
+    console.log(`[API] 文件目录: ${KNOWLEDGE_POINT_DIR}`)
     
     // 优先级1：尝试从文件系统读取
     let fileContent: ParsedContent | null = null
@@ -361,35 +479,62 @@ export async function GET(
       const foundPath = await findPointFile(normalizedCode)
       
       if (foundPath) {
+        console.log(`[API] ${normalizedCode} 找到文件，开始读取: ${foundPath}`)
+        
         // 读取文件内容
         const content = await readFile(foundPath, 'utf-8')
+        console.log(`[API] ${normalizedCode} 文件读取成功，内容长度: ${content.length} 字符`)
         
         // 解析内容
         fileContent = parsePointContent(content)
         filePath = foundPath
+        
+        console.log(`[API] ${normalizedCode} 解析完成:`)
+        console.log(`  - 阶段数: ${fileContent.stages.length}`)
+        fileContent.stages.forEach((stage, idx) => {
+          console.log(`  - 阶段 ${idx + 1}: ${stage.stageName}, 模块数: ${stage.modules.length}`)
+          stage.modules.forEach(module => {
+            console.log(`    - ${module.moduleCode}: ${module.moduleName} (${module.content.length} 字符)`)
+          })
+        })
+        
+        // 如果文件读取成功，直接返回
+        if (fileContent && fileContent.stages.length > 0) {
+          const totalModules = fileContent.stages.reduce((sum, s) => sum + s.modules.length, 0)
+          console.log(`[API] ✅ ${normalizedCode} 从文件读取成功，共 ${fileContent.stages.length} 个阶段，${totalModules} 个模块`)
+          
+          const body: Record<string, unknown> = {
+            success: true,
+            data: {
+              code: normalizedCode,
+              filePath,
+              source: 'file',
+              ...fileContent
+            }
+          }
+          if (debugMode) {
+            const debug = await getDbFingerprint(normalizedCode)
+            if (debug) body.debug = debug
+          }
+          return NextResponse.json(body)
+        } else {
+          console.warn(`[API] ⚠️ ${normalizedCode} 文件读取成功但解析失败，阶段数为0`)
+        }
+      } else {
+        console.warn(`[API] ⚠️ ${normalizedCode} 文件未找到`)
       }
     } catch (fileError) {
       // 文件读取失败，继续执行DB fallback（不提前return）
-      console.warn(`[考点文件] ${normalizedCode} 文件读取失败，尝试从数据库读取:`, fileError)
-    }
-    
-    // 如果文件读取成功，直接返回
-    if (fileContent && filePath) {
-      return NextResponse.json({
-        success: true,
-        data: {
-          code: normalizedCode,
-          filePath,
-          source: 'file',
-          ...fileContent
-        }
-      })
+      console.error(`[API] ❌ ${normalizedCode} 文件读取失败:`, fileError instanceof Error ? fileError.message : String(fileError))
+      if (fileError instanceof Error && fileError.stack) {
+        console.error(`[API] 错误堆栈:`, fileError.stack)
+      }
     }
     
     // 优先级2：从数据库读取内容块（无论文件是否失败，都要执行）
     const dbContent = await getContentBlocksFromDB(normalizedCode)
     if (dbContent && dbContent.stages.length > 0) {
-      return NextResponse.json({
+      const body: Record<string, unknown> = {
         success: true,
         data: {
           code: normalizedCode,
@@ -397,12 +542,17 @@ export async function GET(
           source: 'db',
           ...dbContent
         }
-      })
+      }
+      if (debugMode) {
+        const debug = await getDbFingerprint(normalizedCode)
+        if (debug) body.debug = debug
+      }
+      return NextResponse.json(body)
     }
     
     // 都失败：返回占位结构而不是硬错误
     const placeholderContent = createPlaceholderContent(normalizedCode)
-    return NextResponse.json({
+    const body: Record<string, unknown> = {
       success: true,
       data: {
         code: normalizedCode,
@@ -410,7 +560,12 @@ export async function GET(
         source: 'placeholder',
         ...placeholderContent
       }
-    })
+    }
+    if (debugMode) {
+      const debug = await getDbFingerprint(normalizedCode)
+      if (debug) body.debug = debug
+    }
+    return NextResponse.json(body)
     
   } catch (error) {
     console.error('读取考点内容失败:', error)
