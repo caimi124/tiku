@@ -274,9 +274,9 @@ function ContentBlockRenderer({ block, index, variant }: { block: ContentBlock; 
 function TableBlock({ content, variant }: { content: string; variant: 'default' | 'minimal' }) {
   const [isExpanded, setIsExpanded] = useState(false) // 默认折叠
   
-  const { headers, rows, tableTitle, mnemonic } = useMemo(() => {
+  const { headers, rows, tableTitle, mnemonic, useSubtleHighlight } = useMemo(() => {
     const lines = content.split('\n').filter(l => l.trim())
-    if (lines.length < 2) return { headers: [], rows: [], tableTitle: '数据表', mnemonic: null }
+    if (lines.length < 2) return { headers: [] as string[], rows: [] as string[][], tableTitle: '数据表', mnemonic: null, useSubtleHighlight: false }
     
     const parseRow = (line: string) => 
       line.split('|')
@@ -291,7 +291,7 @@ function TableBlock({ content, variant }: { content: string; variant: 'default' 
       .map(row => row.filter(cell => sanitizeText(cell ?? '') !== null))
       .filter(row => row.length > 0)
     
-    // 根据表头推断表格标题
+    // 根据表头推断表格标题，并判断是否使用克制高亮（核心考点全览类表格不用大片红色）
     let tableTitle = '数据表'
     const headerStr = headers.join('')
     if (headerStr.includes('分类') && headerStr.includes('代表药品')) {
@@ -302,7 +302,10 @@ function TableBlock({ content, variant }: { content: string; variant: 'default' 
       tableTitle = '详细说明'
     } else if (headerStr.includes('考点') && headerStr.includes('年份')) {
       tableTitle = '考点分布'
+    } else if (headerStr.includes('核心') || headerStr.includes('唯一性考点') || headerStr.includes('全览')) {
+      tableTitle = '核心考点全览'
     }
+    const useSubtleHighlight = tableTitle === '核心考点全览' || headerStr.includes('陷阱高发区')
     
     // 提取口诀（从表格内容中查找）
     let mnemonic: string | null = null
@@ -311,7 +314,7 @@ function TableBlock({ content, variant }: { content: string; variant: 'default' 
       mnemonic = mnemonicMatch[2].trim()
     }
     
-    return { headers, rows, tableTitle, mnemonic }
+    return { headers, rows, tableTitle, mnemonic, useSubtleHighlight }
   }, [content])
   
   if (headers.length === 0 || rows.length === 0) return null
@@ -378,7 +381,7 @@ function TableBlock({ content, variant }: { content: string; variant: 'default' 
                         cellIndex === 0 ? 'text-gray-800 font-medium w-32 min-w-[8rem]' : 'text-gray-600'
                       }`}
                     >
-                      <CellContent content={cell} isFirstColumn={cellIndex === 0} variant={variant} />
+                      <CellContent content={cell} isFirstColumn={cellIndex === 0} variant={variant} highlightMode={useSubtleHighlight ? 'subtle' : 'default'} />
                     </td>
                   ))}
                 </tr>
@@ -400,8 +403,9 @@ function TableBlock({ content, variant }: { content: string; variant: 'default' 
 
 /**
  * 单元格内容渲染 - 支持编号列表展开/折叠、重点标注、缩写格式化、inline贴纸
+ * highlightMode='subtle' 时（核心考点全览类表格）：不用大片红/橙背景，仅用加粗或中性色强调
  */
-function CellContent({ content, isFirstColumn = false, variant }: { content: string; isFirstColumn?: boolean; variant: 'default' | 'minimal' }) {
+function CellContent({ content, isFirstColumn = false, variant, highlightMode = 'default' }: { content: string; isFirstColumn?: boolean; variant: 'default' | 'minimal'; highlightMode?: 'default' | 'subtle' }) {
   const [isExpanded, setIsExpanded] = useState(false)
   
   // 格式化缩写
@@ -455,9 +459,9 @@ function CellContent({ content, isFirstColumn = false, variant }: { content: str
     return formattedContent.substring(0, 50) + '...'
   }, [listItems, formattedContent])
   
-  // 检测重点标注关键词和贴纸
+  // 检测重点标注关键词和贴纸；subtle 模式下不出现大片红/橙背景和贴纸
   const highlightInfo = useMemo(() => {
-    if (variant === 'minimal') {
+    if (variant === 'minimal' || highlightMode === 'subtle') {
       return { className: '', sticker: null as string | null, stickerColor: '' }
     }
     if (/禁用|禁忌|严禁|不得|禁止/.test(formattedContent)) {
@@ -489,7 +493,7 @@ function CellContent({ content, isFirstColumn = false, variant }: { content: str
       }
     }
     return { className: '', sticker: null, stickerColor: '' }
-  }, [formattedContent, variant])
+  }, [formattedContent, variant, highlightMode])
 
   if (!formattedContent) return null
   
@@ -543,12 +547,15 @@ function CellContent({ content, isFirstColumn = false, variant }: { content: str
             )}
             <ul className="space-y-1.5">
               {listItems.map((item, idx) => {
-                // 对每个列表项进行关键词加粗
-                const highlightedItem = item
-                  .replace(/(禁用|禁忌|严禁|不得|禁止)/g, '<strong class="text-red-600">$1</strong>')
-                  .replace(/(稀释|配制|只能用|不得用)/g, '<strong class="text-orange-600">$1</strong>')
-                  .replace(/(特异性解救药|首选|一线|关键)/g, variant === 'default' ? '<strong class="text-blue-600">$1</strong>' : '<strong>$1</strong>')
-                  .replace(/(但|不明显|远期差|易混)/g, variant === 'default' ? '<strong class="text-purple-600">$1</strong>' : '<strong>$1</strong>')
+                // 对每个列表项进行关键词加粗；subtle 模式下仅加粗+中性色，不用大片红
+                const subtle = highlightMode === 'subtle'
+                const highlightedItem = subtle
+                  ? item.replace(/(禁用|禁忌|严禁|不得|禁止|稀释|配制|只能用|不得用|特异性解救药|首选|一线|关键|但|不明显|远期差|易混)/g, '<strong class="font-semibold text-slate-600">$1</strong>')
+                  : item
+                      .replace(/(禁用|禁忌|严禁|不得|禁止)/g, '<strong class="text-red-600">$1</strong>')
+                      .replace(/(稀释|配制|只能用|不得用)/g, '<strong class="text-orange-600">$1</strong>')
+                      .replace(/(特异性解救药|首选|一线|关键)/g, variant === 'default' ? '<strong class="text-blue-600">$1</strong>' : '<strong>$1</strong>')
+                      .replace(/(但|不明显|远期差|易混)/g, variant === 'default' ? '<strong class="text-purple-600">$1</strong>' : '<strong>$1</strong>')
                 
                 return (
                   <li key={idx} className="text-sm leading-relaxed flex items-start gap-2">
@@ -590,11 +597,13 @@ function CellContent({ content, isFirstColumn = false, variant }: { content: str
           <div 
             className="leading-relaxed flex-1 min-w-0"
             dangerouslySetInnerHTML={{ 
-              __html: formattedContent
-                .replace(/(禁用|禁忌|严禁|不得|禁止)/g, '<strong class="text-red-600">$1</strong>')
-                .replace(/(稀释|配制|只能用|不得用)/g, '<strong class="text-orange-600">$1</strong>')
-                .replace(/(特异性解救药|首选|一线|关键)/g, variant === 'default' ? '<strong class="text-blue-600">$1</strong>' : '<strong>$1</strong>')
-                .replace(/(但|不明显|远期差|易混)/g, variant === 'default' ? '<strong class="text-purple-600">$1</strong>' : '<strong>$1</strong>')
+              __html: highlightMode === 'subtle'
+                ? formattedContent.replace(/(禁用|禁忌|严禁|不得|禁止|稀释|配制|只能用|不得用|特异性解救药|首选|一线|关键|但|不明显|远期差|易混)/g, '<strong class="font-semibold text-slate-600">$1</strong>')
+                : formattedContent
+                    .replace(/(禁用|禁忌|严禁|不得|禁止)/g, '<strong class="text-red-600">$1</strong>')
+                    .replace(/(稀释|配制|只能用|不得用)/g, '<strong class="text-orange-600">$1</strong>')
+                    .replace(/(特异性解救药|首选|一线|关键)/g, variant === 'default' ? '<strong class="text-blue-600">$1</strong>' : '<strong>$1</strong>')
+                    .replace(/(但|不明显|远期差|易混)/g, variant === 'default' ? '<strong class="text-purple-600">$1</strong>' : '<strong>$1</strong>')
             }}
           />
         </div>
