@@ -1,0 +1,30 @@
+{
+  "total_files": 311,
+  "processed": 224,
+  "skipped": 82,
+  "upserted_blocks": 2226,
+  "failed": 5,
+  "failed_files": [
+    {
+      "filename": "c1.3.6抗抑郁药的使用注意事项.txt",
+      "error": "解析失败：未找到任何阶段"
+    },
+    {
+      "filename": "c2.3.4制尿酸生成药的临床用药评价.txt",
+      "error": "解析失败：未找到任何阶段"
+    },
+    {
+      "filename": "c9.7.2药物临床用药评价.txt",
+      "error": "解析失败：未找到任何模块"
+    },
+    {
+      "filename": "c9.8.1代表药品与作用机制.txt",
+      "error": "解析失败：未找到任何模块"
+    },
+    {
+      "filename": "c9.8.2药物临床用药评价.txt",
+      "error": "解析失败：未找到任何模块"
+    }
+  ],
+  "generated_at": "2026-01-28T01:31:07.740Z"
+}

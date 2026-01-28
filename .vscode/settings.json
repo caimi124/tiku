@@ -1,3 +1,6 @@
 {
-    "typescript.autoClosingTags": false
+    "typescript.autoClosingTags": false,
+
+    "git.autorefresh": false,
+    "git.refreshOnWindowFocus": false
 }

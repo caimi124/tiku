@@ -1,0 +1,2715 @@
+{
+  "summary": {
+    "total": 172,
+    "matched": 172,
+    "missing": 0,
+    "ambiguous": 0,
+    "read_failed": 0,
+    "generated_at": "2026-01-25T05:02:04.322Z"
+  },
+  "matched": [
+    {
+      "code": "C1.1.1",
+      "title": "药物分类与代表药品",
+      "filename": "c1.1.1药物分类与作用机制.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C1.1.2",
+      "title": "第二亚类 中枢肌松药 - 药物分类与代表药品",
+      "filename": "c1.1.2镇静与催眠药的药理作用.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.2.1",
+      "title": "药物分类与代表药品",
+      "filename": "c1.2.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.2.2",
+      "title": "抗癫痫药的作用机制",
+      "filename": "c1.2.2马西平的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.2.3",
+      "title": "卡马西平的临床用药评价",
+      "filename": "c1.2.3苯妥英钠的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.2.4",
+      "title": "苯妥英钠的临床用药评价",
+      "filename": "c1.2.4丙戊酸钠的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.2.5",
+      "title": "左乙拉西坦的临床用药评价",
+      "filename": "c1.2.5左乙拉西坦的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.2.6",
+      "title": "抗癫痫药的特殊人群用药",
+      "filename": "c1.2.6拉莫三嗪的临床用药评.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.3.1",
+      "title": "药物分类与作用机制",
+      "filename": "c1.3.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.3.2",
+      "title": "米氮平的临床用药评价",
+      "filename": "c1.3.2选择性5-羟色胺再摄取抑制剂(SSRI)的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.3.3",
+      "title": "抗抑郁药的使用注意事项",
+      "filename": "c1.3.3 5-HT及去甲肾上腺素再摄取抑制剂(SNRI)的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.4.1",
+      "title": "抗记忆障碍及改善神经功能药",
+      "filename": "c1.4.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.5.1",
+      "title": "中枢镇痛药",
+      "filename": "c1.5.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.6.1",
+      "title": "药物分类与代表药品",
+      "filename": "c1.6.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.6.2",
+      "title": "左旋多巴的临床用药评价",
+      "filename": "c1.6.2左旋多巴的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.6.3",
+      "title": "恩他卡朋的临床用药评价",
+      "filename": "c1.6.3恩他卡朋的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.7.1",
+      "title": "第一代抗精神病药的临床用药评价",
+      "filename": "c1.7.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.7.2",
+      "title": "第二代抗精神病药的临床用药评价",
+      "filename": "c1.7.2第一代抗精神病药的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C1.7.3",
+      "title": "碳酸锂的临床用药评价",
+      "filename": "c1.7.3第二代抗精神病药的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C10.1.1",
+      "title": "药物分类与代表药品",
+      "filename": "c10.1.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C10.1.2",
+      "title": "破坏DNA的烷化剂的临床用药评价",
+      "filename": "c10.1.2破坏DNA的烷化剂的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C10.1.3",
+      "title": "破坏DNA的铂类化合物的临床用药评价",
+      "filename": "c10.1.3破坏DNA的铂类化合物的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C10.2.1",
+      "title": "药物分类与代表药品",
+      "filename": "c10.2.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C10.2.2",
+      "title": "干扰核酸生物合成的药物（抗代谢药）的临床用药评价",
+      "filename": "c10.2.2干扰核酸生物合成的药物(抗代谢药)的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C10.3.1",
+      "title": "葱环类抗肿瘤抗生素的临床用药评价",
+      "filename": "c10.3.1蒽环类抗肿瘤抗生素的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C10.4.1",
+      "title": "干扰有丝分裂药物",
+      "filename": "c10.4.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C10.5.1",
+      "title": "调节体内激素平衡的药物",
+      "filename": "c10.5.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C10.6.1",
+      "title": "药物分类与代表药品",
+      "filename": "c10.6.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C10.7.1",
+      "title": "药物分类与代表药品",
+      "filename": "c10.7.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C10.7.2",
+      "title": "细胞分化诱导剂的临床用药评价",
+      "filename": "c10.7.2细胞分化诱导剂的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C11.1.1",
+      "title": "葡萄糖的临床用药评价",
+      "filename": "c11.1.1葡萄糖的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C11.1.2",
+      "title": "门冬氨酸钾镁的临床用药评价",
+      "filename": "c11.1.2氯化钠的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C11.1.3",
+      "title": "其他盐类调节药的临床用药评价",
+      "filename": "c11.1.3氯化钾的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C11.2.1",
+      "title": "水溶性维生素的临床用药评价",
+      "filename": "c11.2.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C11.3.1",
+      "title": "肠内营养药的分类与临床用药评价",
+      "filename": "c11.3.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C11.4.1",
+      "title": "氨基酸类制剂的临床用药评价",
+      "filename": "c11.4.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C11.4.2",
+      "title": "脂肪乳类制剂的临床用药评价",
+      "filename": "c11.4.2氨基酸类制剂的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C12.1.1",
+      "title": "眼科用药",
+      "filename": "c12.1.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C12.2.1",
+      "title": "耳鼻咽喉科用药",
+      "filename": "c12.2.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C12.3.1",
+      "title": "口腔科用药",
+      "filename": "c12.3.1分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.1.1",
+      "title": "体外杀寄生虫与皮肤感染治疗药",
+      "filename": "c13.1.1代表药品与临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.2.1",
+      "title": "药物分类与代表药品",
+      "filename": "c13.2.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.2.2",
+      "title": "药物临床用药评价",
+      "filename": "C13.2.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.3.1",
+      "title": "抗角化药的临床用药评价",
+      "filename": "c13.3.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.3.2",
+      "title": "痤疮推荐治疗方案",
+      "filename": "c13.3.2非抗生素类抗菌药(过氧苯甲酰)的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.4.1",
+      "title": "外用糖皮质激素",
+      "filename": "c13.4.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.5.1",
+      "title": "药物分类与代表药品",
+      "filename": "c13.5.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.5.2",
+      "title": "药物临床用药评价",
+      "filename": "c13.5.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.6.1",
+      "title": "治疗银屑病药",
+      "filename": "c13.6.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.7.1",
+      "title": "考点1 药物分类与临床用药评价",
+      "filename": "c13.7.1药物分类与临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.8.1",
+      "title": "消毒防腐药",
+      "filename": "c13.8.1代表药物与临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C13.9.1",
+      "title": "抗过敏药",
+      "filename": "c13.9.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C2.1.1",
+      "title": "药物分类与作用机制",
+      "filename": "c2.1.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C2.1.2",
+      "title": "药物临床用药评价",
+      "filename": "c2.1.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C2.2.1",
+      "title": "药物分类与代表药品",
+      "filename": "c2.2.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C2.2.2",
+      "title": "药物临床用药评价",
+      "filename": "c2.2.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C2.3.1",
+      "title": "秋水仙碱的临床用药评价",
+      "filename": "c2.3.1秋水仙碱的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C2.3.2",
+      "title": "促进尿酸排泄药的临床用药评价",
+      "filename": "c2.3.2促进尿酸排泄药的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C3.1.1",
+      "title": "药物临床用药评价",
+      "filename": "c3.1.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C3.2.1",
+      "title": "药物分类与作用机制",
+      "filename": "c3.2.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C3.2.2",
+      "title": "恶心性和刺激性祛痰药的临床用药评价",
+      "filename": "c3.2.2恶心'性和剌激'性桔痰药的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C3.3.1",
+      "title": "黄嘌呤类药物（磷酸二酯酶抑制剂）的临床用药评价",
+      "filename": "c3.3.1黄嘌呤类药物（磷酸二酯酶抑制剂）的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C3.3.2",
+      "title": "过敏介质阻释剂（奥马珠单抗）的临床用药评价",
+      "filename": "c3.3.2过敏介质阻释剂(奥马珠单抗)的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C3.4.1",
+      "title": "药物临床用药评价",
+      "filename": "c3.4.1药物临床用药评价.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.1.1",
+      "title": "前列腺素类抑酸剂的临床用药评价",
+      "filename": "c4.1.1前列眼素类抑酸剂的临床用药评价.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.1.2",
+      "title": "抗酸药的临床用药评价",
+      "filename": "c4.1.2抗酸药的临床用药评价.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.2.1",
+      "title": "抗胆碱M受体药的临床用药评价",
+      "filename": "c4.2.1抗胆碱M受体药的临床用药评价.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.2.2",
+      "title": "匹维溴铵的临床用药评价",
+      "filename": "c4.2.2匹维溴铵的临床用药评价.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.2.3",
+      "title": "胃肠动力药的分类与作用机制",
+      "filename": "c4.2.3胃肠动力药的分类与作用机制.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.2.4",
+      "title": "胃肠动力药的临床用药评价",
+      "filename": "c4.2.4胃肠动力药的临床用药评价.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.2.5",
+      "title": "曲美布汀的临床用药评价",
+      "filename": "c4.2.5曲美布汀的临床用药评价.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.3.1",
+      "title": "抗肿瘤治疗相关性恶心呕吐的处理原则",
+      "filename": "c4.3.1抗肿瘤治疗相关性恶心呕吐的处理原则.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.3.2",
+      "title": "依据化疗药的催吐性选用止吐药",
+      "filename": "c4.3.2依据化疗药的催吐性选用止吐药.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.4.1",
+      "title": "肝胆疾病用药",
+      "filename": "c4.4.1肝脏疾病用药的分类与代表药品.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.5.1",
+      "title": "药物分类与代表药品",
+      "filename": "c4.5.1药物分类与代表药品.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.5.2",
+      "title": "药物临床用药评价",
+      "filename": "c4.5.2药物临床用药评价.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.6.1",
+      "title": "肠道抗感染药的临床用药评价",
+      "filename": "c4.6.1止泻药的分类与代表药品.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.6.2",
+      "title": "肠道抗炎药的分类与代表药品",
+      "filename": "c4.6.2止泻药的临床用药评价.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.6.3",
+      "title": "肠道抗炎药的临床用药评价",
+      "filename": "c4.6.3肠道抗感染药的临床用药评价.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C4.7.1",
+      "title": "助消化药的临床用药评价",
+      "filename": "c4.7.1助消化药的临床用药评价.txt",
+      "hasStages": true,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": []
+    },
+    {
+      "code": "C5.1.1",
+      "title": "抗心律失常药",
+      "filename": "c5.1.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C5.2.1",
+      "title": "三代钙通道阻滞剂（CCB）的对比",
+      "filename": "c5.2.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C5.2.2",
+      "title": "β受体拮抗剂的临床用药评价",
+      "filename": "c5.2.2ACEI类的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C5.2.3",
+      "title": "其他抗高血压药的临床用药评价",
+      "filename": "c5.2.3ARB类的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C5.3.1",
+      "title": "药物分类与代表药品",
+      "filename": "c5.3.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C5.3.2",
+      "title": "其他调血脂药的临床用药评价",
+      "filename": "c5.3.2羟甲基戊二酰辅酶A还原酶抑制剂的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C5.4.1",
+      "title": "硝酸酯类药物的临床用药评价",
+      "filename": "c5.4.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C5.5.1",
+      "title": "强心苷类药物的临床用药评价",
+      "filename": "c5.5.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C6.1.1",
+      "title": "药物分类与代表药品",
+      "filename": "c6.1.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C6.1.2",
+      "title": "肝素类的临床用药评价",
+      "filename": "c6.1.2维生素K拮抗剂的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C6.1.3",
+      "title": "直接抗凝药的临床用药评价",
+      "filename": "c6.1.3肝素类的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C6.1.4",
+      "title": "溶栓药（溶栓酶）的临床用药评价",
+      "filename": "c6.1.4直接抗凝药的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C6.2.1",
+      "title": "凝血因子的临床用药评价",
+      "filename": "c6.2.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C6.2.2",
+      "title": "蛇毒血凝酶的临床用药评价",
+      "filename": "c6.2.2维生素K类的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C6.2.3",
+      "title": "抗纤维蛋白溶解药的临床用药评价",
+      "filename": "c6.2.3凝血因子的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C6.3.1",
+      "title": "抗贫血药",
+      "filename": "c6.3.1药物分类与适应证.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C6.4.1",
+      "title": "升白细胞药",
+      "filename": "c6.4.1代表药品与临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C6.5.1",
+      "title": "药物分类与临床用药评价",
+      "filename": "c6.5.1药物分类与临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C7.1.1",
+      "title": "药物分类与作用部位",
+      "filename": "c7.1.1药物分类与作用部位.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C7.1.2",
+      "title": "袢利尿药的临床用药评价",
+      "filename": "c7.1.2袢利尿药的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C7.2.1",
+      "title": "药物分类与代表药品",
+      "filename": "c7.2.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C7.2.2",
+      "title": "5型磷酸二酯酶抑制剂的临床用药评价",
+      "filename": "c7.2.2 5型磷酸二酯酶仰制剂的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C7.3.1",
+      "title": "药物分类与作用机制",
+      "filename": "c7.3.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C7.3.2",
+      "title": "5α还原酶抑制剂的临床用药评价",
+      "filename": "c7.3.2αl受体拮抗药的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C7.4.1",
+      "title": "治疗膀胱过度活动症用药",
+      "filename": "c7.4.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.1.1",
+      "title": "生长抑素的临床用药评价",
+      "filename": "c8.1.1重组人生长激素的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.1.2",
+      "title": "促皮质素（ACTH）的临床用药评价",
+      "filename": "c8.1.2生长仰素的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.1.3",
+      "title": "醋酸去氨加压素的临床用药评价",
+      "filename": "c8.1.3促皮质素(ACTH)的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.2.1",
+      "title": "药理作用与临床应用",
+      "filename": "c8.2.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.3.1",
+      "title": "甲状腺激素的生理活性",
+      "filename": "c8.3.1甲状腺激素的生理活性.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.3.2",
+      "title": "甲状腺激素类药物的代表药品",
+      "filename": "c8.3.2甲状腺激素类药物的代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.3.3",
+      "title": "硫脲类药物的临床用药评价",
+      "filename": "c8.3.3甲状腺激素类药物的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.4.1",
+      "title": "胰岛素和胰岛素类似物的分类与代表药品",
+      "filename": "c8.4.1胰岛素和胰岛素类似物的分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.4.10",
+      "title": "钠-葡萄糖协同转运蛋白2抑制剂的临床用药评价",
+      "filename": "c8.4.10钠-葡萄糖协同转运蛋白2抑制剂的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.4.11",
+      "title": "葡萄糖激酶激活剂的临床用药评价",
+      "filename": "c8.4.11葡萄糖激酶激活剂的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.4.12",
+      "title": "肠促胰素类降糖药的临床用药评价",
+      "filename": "c8.4.12肠促胰素类降糖药的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.4.2",
+      "title": "格列奈类促胰岛素分泌药的临床用药评价",
+      "filename": "c8.4.2胰岛素和胰岛素类似物的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.4.3",
+      "title": "双胍类药物的临床用药评价",
+      "filename": "c8.4.3口服降糖药与肠促膜素类降糖药的分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.4.4",
+      "title": "胰岛素增敏剂的临床用药评价",
+      "filename": "c8.4.4磺酰胺类促胰岛素分泌药的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.4.5",
+      "title": "二肽基肽酶-4抑制剂的临床用药评价",
+      "filename": "c8.4.5格列奈类促胰岛素分泌药的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.4.6",
+      "title": "钠-葡萄糖协同转运蛋白2抑制剂的临床用药评价",
+      "filename": "c8.4.6双胍类药物的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.4.7",
+      "title": "葡萄糖激酶激活剂的临床用药评价",
+      "filename": "c8.4.7α-葡萄糖苷酶抑制剂的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.5.1",
+      "title": "维生素D及其活性代谢物的临床用药评价",
+      "filename": "c8.5.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.5.2",
+      "title": "双膦酸盐类的临床用药评价",
+      "filename": "c8.5.2钙剂的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.5.3",
+      "title": "降钙素的临床用药评价",
+      "filename": "c8.5.3维生素D及真活性代谢物的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.5.4",
+      "title": "雌激素受体调节剂的临床用药评价",
+      "filename": "c8.5.4双磷酸盐类的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.6.1",
+      "title": "药物分类与代表药品",
+      "filename": "c8.6.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.7.1",
+      "title": "药物分类与代表药品",
+      "filename": "c8.7.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C8.7.2",
+      "title": "雌激素类的临床用药评价",
+      "filename": "c8.7.2雌激素类的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.1.1",
+      "title": "抗菌药物的药代动力学/药效学",
+      "filename": "c9.1.1常用术语.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.1.2",
+      "title": "常见抗菌药物的清除途径",
+      "filename": "c9.1.2病原微生物的耐药性.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.10.1",
+      "title": "代表药品与作用机制",
+      "filename": "c9.10.1代表药品与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.10.2",
+      "title": "药物临床用药评价",
+      "filename": "c9.10.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.11.1",
+      "title": "代表药品与作用机制",
+      "filename": "c9.11.1代表药品与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.11.2",
+      "title": "药物临床用药评价",
+      "filename": "c9.11.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.12.1",
+      "title": "喹诺酮类抗菌药物",
+      "filename": "c9.12.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.13.1",
+      "title": "药物分类与代表药品",
+      "filename": "c9.13.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.13.2",
+      "title": "药物临床用药评价",
+      "filename": "c9.13.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.14.1",
+      "title": "糖肽类抗菌药物",
+      "filename": "c9.14.1代表药品与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.15.1",
+      "title": "其他抗菌药物",
+      "filename": "c9.15.1利奈唑胺的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.16.1",
+      "title": "代表药品与作用机制",
+      "filename": "c9.16.1代表药品与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.16.2",
+      "title": "药物临床用药评价",
+      "filename": "c9.16.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.17.1",
+      "title": "代表药品与作用机制",
+      "filename": "c9.17.1代表药品与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.17.2",
+      "title": "药物临床用药评价",
+      "filename": "c9.17.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.18.1",
+      "title": "药物分类与代表药品",
+      "filename": "c9.18.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.18.2",
+      "title": "异烟肼 (INH, 雷米封) 的临床用药评价",
+      "filename": "c9.18.2异烟阱(INH，雷米封)的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.18.3",
+      "title": "利福平的临床用药评价",
+      "filename": "c9.18.3利福平的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.18.4",
+      "title": "吡嗪酰胺的临床用药评价",
+      "filename": "c9.18.4吡嗪酰胺的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.19.1",
+      "title": "三唑类的临床用药评价",
+      "filename": "c9.19.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.19.2",
+      "title": "棘白菌素类的临床用药评价",
+      "filename": "c9.19.2两性霉素B的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.19.3",
+      "title": "氟胞嘧啶的临床用药评价",
+      "filename": "c9.19.3三唑类的临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.2.1",
+      "title": "青霉素类抗菌药物",
+      "filename": "c9.2.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.20.1",
+      "title": "药物分类与代表药品",
+      "filename": "c9.20.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.21.1",
+      "title": "抗流感病毒药",
+      "filename": "c9.21.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.22.1",
+      "title": "药物分类与代表药品",
+      "filename": "c9.22.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.23.1",
+      "title": "抗肝炎病毒药物",
+      "filename": "c9.23.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.24.1",
+      "title": "药物临床用药评价",
+      "filename": "c9.24.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.25.1",
+      "title": "药物分类与代表药品",
+      "filename": "c9.25.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.26.1",
+      "title": "抗蠕虫药",
+      "filename": "c9.26.1药物分类与代表药品.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.3.1",
+      "title": "药物分类与作用机制",
+      "filename": "c9.3.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.3.2",
+      "title": "各代头孢菌素类抗菌药物的对比",
+      "filename": "c9.3.2各代头抱菌素类抗菌药物的对比.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.3.3",
+      "title": "药物临床用药评价",
+      "filename": "c9.3.3药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.4.1",
+      "title": "代表药品与作用机制",
+      "filename": "c9.4.1代表药品与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.4.2",
+      "title": "β-内酰胺酶抑制剂的分类与作用机制",
+      "filename": "c9.4.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.5.1",
+      "title": "代表药品与作用机制",
+      "filename": "c9.5.1代表药品与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.5.2",
+      "title": "临床用药评价",
+      "filename": "c9.5.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.6.1",
+      "title": "代表药品与作用机制",
+      "filename": "c9.6.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.7.1",
+      "title": "代表药品与作用机制",
+      "filename": "c9.7.1代表药品与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.7.2",
+      "title": "临床用药评价",
+      "filename": "c9.7.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [],
+      "warnings": []
+    },
+    {
+      "code": "C9.8.1",
+      "title": "药物临床用药评价",
+      "filename": "c9.8.1代表药品与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [],
+      "warnings": []
+    },
+    {
+      "code": "C9.9.1",
+      "title": "药物分类与作用机制",
+      "filename": "c9.9.1药物分类与作用机制.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    },
+    {
+      "code": "C9.9.2",
+      "title": "药物临床用药评价",
+      "filename": "c9.9.2药物临床用药评价.txt",
+      "hasStages": false,
+      "modulesFound": [
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "warnings": [
+        "找到模块标记，但未检测到阶段标题"
+      ]
+    }
+  ],
+  "missing": [],
+  "ambiguous": [],
+  "read_failed": []
+}
